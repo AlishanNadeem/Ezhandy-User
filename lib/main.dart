@@ -1,125 +1,111 @@
+import 'package:bot_toast/bot_toast.dart';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/utils/routes/app_router.dart';
+import 'package:ezhandy_user/utils/app_colors.dart';
+import 'package:ezhandy_user/utils/app_size.dart';
+import 'package:ezhandy_user/utils/app_strings.dart';
+import 'package:ezhandy_user/utils/constant.dart';
+import 'package:ezhandy_user/utils/keyboard_dismiss_overser.dart';
+import 'package:ezhandy_user/utils/routes/app_router.dart';
+import 'package:ezhandy_user/utils/scroll_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  // HttpOverrides.global = MyHttpOverrides();
+  WidgetsFlutterBinding.ensureInitialized();
+  //  Stripe.publishableKey = AppConstant.STRIPE_KEY;
+  // await Firebase.initializeApp();
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      // Set the color of the enter key
+
+      // systemNavigationBarColor:
+      //     AppColors.gradient_3, // Change this color to whatever you want
+      ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AuthController auth_controller = Get.put(AuthController());
+  final HomeController core_controller = Get.put(HomeController());
 
+  MyApp({super.key});
+  static const MaterialColor customColor = MaterialColor(
+    0xFFC52D83,
+    <int, Color>{
+      50: Color(0xFFFFE3EC),
+      100: Color(0xFFFFB3CF),
+      200: Color(0xFFFF80AF),
+      300: Color(0xFFFF4D8F),
+      400: Color(0xFFFF2676),
+      500: Color(0xFFC52D83),
+      600: Color(0xFFB82878),
+      700: Color(0xFFA22468),
+      800: Color(0xFF8C1F58),
+      900: Color(0xFF6C1740),
+    },
+  );
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    return ScreenUtilInit(
+        designSize:
+            const Size(AppSize.fullScreenWidth, AppSize.fullScreenHeight),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          final botToastBuilder = BotToastInit();
+          return GetMaterialApp(
+            title: AppStrings.appTitle,
+            debugShowCheckedModeBanner: false,
+            // home: MainMenu(
+            //   selectedTab: 0,
+            // ),
+            // initialRoute: "/",
+            // getPages: AppPages.routes,
+            onGenerateRoute: AppRouter.onGenerateRoute,
+
+            theme: ThemeData(
+                useMaterial3: false,
+                // primaryColor: Colors.blue, // Set your primary color here
+                // scaffoldBackgroundColor: Colors.white,
+                scaffoldBackgroundColor: AppColors.black,
+                fontFamily: AppStrings.montserrat,
+                primarySwatch: customColor,
+                unselectedWidgetColor: AppColors.transparent,
+                colorScheme: ColorScheme.fromSwatch()
+                    .copyWith(primary: AppColors.green)),
+            navigatorObservers: [
+              KeyboardDismissObserver(),
+              BotToastNavigatorObserver()
+            ],
+            navigatorKey: Constants.navigatorKey,
+            builder: (context, child) {
+              child = botToastBuilder(context, child);
+              return ScrollConfiguration(
+                  behavior: MyScrollBehavior(),
+                  child: MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(textScaler: TextScaler.linear(1.0)),
+                      child: child));
+            },
+          );
+        });
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context) {
+//     return super.createHttpClient(context)
+//       ..badCertificateCallback =
+//           (X509Certificate cert, String host, int port) => true;
+//   }
+// }
