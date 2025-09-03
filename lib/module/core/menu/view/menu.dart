@@ -25,12 +25,13 @@ class _MenuState extends State<Menu> {
   void initState() {
     tapList = [
       _myProfileTap,
-      _customerSupportChatbotTap,
-      _subscriptionTap,
-      _privacyPolicyTap,
+      _transcationHistoryTap,
+      _affiliateEarningTap,
+      _historyOfBookingsTap,
       _aboutUsTap,
-      _faqsTap,
       _contactUsTap,
+      _privacyPolicyTap,
+      _refundPolicyTap,
       _signOutTap,
       _deleteAccountTap,
     ];
@@ -43,6 +44,7 @@ class _MenuState extends State<Menu> {
     return Expanded(
       child: Column(
         children: [
+          10.verticalSpace,
           AppLogo(),
           10.verticalSpace,
           profileHeader(),
@@ -79,7 +81,7 @@ class _MenuState extends State<Menu> {
         },
         separatorBuilder: (BuildContext context, int index) {
           return Divider(
-            color: AppColors.blueDark,
+            color: AppColors.grey,
           );
         },
       ),
@@ -115,7 +117,7 @@ class _MenuState extends State<Menu> {
             isArrowShow
                 ? Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: AppColors.blueDark,
+                    color: AppColors.orange,
                   )
                 : SizedBox.shrink()
           ],
@@ -161,11 +163,11 @@ class _MenuState extends State<Menu> {
     AppNavigation.navigateTo(context, AppRoutes.userProfileScreenRoute);
   }
 
-  void _customerSupportChatbotTap() {
-    AppNavigation.navigateTo(context, AppRoutes.customerSupportScreenRoute);
+  void _transcationHistoryTap() {
+    AppNavigation.navigateTo(context, AppRoutes.transactionHistoryScreenRoute);
   }
 
-  void _subscriptionTap() {
+  void _affiliateEarningTap() {
     AppNavigation.navigateTo(context, AppRoutes.subscriptionSettingScreenRoute);
   }
 
@@ -181,11 +183,17 @@ class _MenuState extends State<Menu> {
             title: AppStrings.aboutUs, type: WebContentType.ap.name));
   }
 
-  void _faqsTap() {
-    AppNavigation.navigateTo(context, AppRoutes.faqsScreenRoute);
+  void _refundPolicyTap() {
+       AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
+        arguments: ContentRoutingArgument(
+            title: AppStrings.refundPolicy, type: WebContentType.rp.name));
   }
 
   void _contactUsTap() {
+    AppNavigation.navigateTo(context, AppRoutes.contactUsScreenRoute);
+  }
+
+  void _historyOfBookingsTap() {
     AppNavigation.navigateTo(context, AppRoutes.contactUsScreenRoute);
   }
 

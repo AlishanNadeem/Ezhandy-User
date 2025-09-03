@@ -95,7 +95,7 @@ class SuccessfulDialog extends StatelessWidget {
   CustomText titleWidget() {
     return CustomText(
       text: title,
-      color: AppColors.blueDark,
+      // color: AppColors.blueDark,
       textDecoration: TextDecoration.none,
       fontSize: 24.sp,
       fontWeight: FontWeight.w500,

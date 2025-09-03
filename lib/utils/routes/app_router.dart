@@ -8,7 +8,14 @@ import 'package:ezhandy_user/module/auth/splash/screen/splash_screen.dart';
 import 'package:ezhandy_user/module/auth/splash/screen/splash_slider_screen.dart';
 import 'package:ezhandy_user/module/auth/verification/routing_arguments/otp_verification_routing_arguments.dart';
 import 'package:ezhandy_user/module/auth/verification/view/otp_verification_screen.dart';
+import 'package:ezhandy_user/module/core/booking/view/booking_details.dart';
+import 'package:ezhandy_user/module/core/contact_us/view/contact_us.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
+import 'package:ezhandy_user/module/core/notification/notification.dart';
+import 'package:ezhandy_user/module/core/profile/view/edit_user_profile.dart';
+import 'package:ezhandy_user/module/core/profile/view/user_profile.dart';
+import 'package:ezhandy_user/module/core/transaction_history/transaction_history.dart';
+import 'package:ezhandy_user/utils/routes/routing_arguments/booking_routing_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:ezhandy_user/module/auth/verification/view/verification_selection_screen.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
@@ -61,10 +68,10 @@ case AppRoutes.splash1ScreenRoute:
           //   return SubscriptionScreen(
           //       // isFromAuth: subscriptionArguments?.isFromAuth ?? false,
           //       );
-          // case AppRoutes.userProfileScreenRoute:
-          //   return UserProfile();
-          // case AppRoutes.editProfileScreenRoute:
-          //   return EditUserProfile();
+          case AppRoutes.userProfileScreenRoute:
+            return UserProfile();
+          case AppRoutes.editProfileScreenRoute:
+            return EditUserProfile();
           case AppRoutes.changePasswordScreenRoute:
             return ChangePassword();
           case AppRoutes.contentScreenRoute:
@@ -74,10 +81,10 @@ case AppRoutes.splash1ScreenRoute:
               type: contentArgument?.type,
               title: contentArgument?.title,
             );
-          // case AppRoutes.contactUsScreenRoute:
-          //   return ContactUs();
-          // case AppRoutes.subscriptionSettingScreenRoute:
-          //   return SubscriptionSetting();
+          case AppRoutes.contactUsScreenRoute:
+            return ContactUs();
+          case AppRoutes.transactionHistoryScreenRoute:
+            return TransactionHistory();
           // case AppRoutes.subscriptionLogScreenRoute:
           //   return SubscriptionLog();
           // case AppRoutes.faqsScreenRoute:
@@ -94,12 +101,12 @@ case AppRoutes.splash1ScreenRoute:
           //   return RatingScreen();
           // case AppRoutes.MyAppointmentScreenRoute:
           //   return MyAppointment();
-          // case AppRoutes.bookingScreenRoute:
-          //   BookingRoutingArgument bookingArgument =
-          //       routeSettings.arguments as BookingRoutingArgument;
-          //   return BookingScreen(
-          //     status: bookingArgument.Status,
-          //   );
+          case AppRoutes.bookingScreenRoute:
+            BookingRoutingArgument bookingArgument =
+                routeSettings.arguments as BookingRoutingArgument;
+            return BookingDetails(
+              status: bookingArgument.Status,
+            );
           // case AppRoutes.videoCallScreenRoute:
           //   return VideoCallScreen();
           // case AppRoutes.writeReviewScreenRoute:
@@ -444,8 +451,8 @@ case AppRoutes.splash1ScreenRoute:
           //     itemDetails: productArguments?.itemDetails,
           //     itemName: productArguments?.itemName,
           //   );
-          // case AppRoutes.notificationScreenRoute:
-          //   return NotificationScreen();
+          case AppRoutes.notificationScreenRoute:
+            return NotificationScreen();
           // case AppRoutes.favoriteProductsScreenRoute:
           //   return FavoriteProductsScreen();
           case AppRoutes.viewFullImageScreenRoute:

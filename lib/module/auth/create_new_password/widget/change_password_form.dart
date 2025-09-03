@@ -72,7 +72,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
               ? Icons.visibility_off_outlined
               : Icons.visibility_outlined,
           size: 20.sp,
-          color: AppColors.blueDark,
+          color: AppColors.orange,
         ),
         obscureText: FieldValidator.isHideoldpassword,
         onclickSufix: () {
@@ -99,7 +99,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
               ? Icons.visibility_off_outlined
               : Icons.visibility_outlined,
           size: 20.sp,
-          color: AppColors.blueDark,
+          color: AppColors.orange,
         ),
         obscureText: FieldValidator.isHidepassword,
         onclickSufix: () {
@@ -124,10 +124,10 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
         inputFormatters: [LengthLimitingTextInputFormatter(35)],
         sufixImage: Icon(
           FieldValidator.isHideconfirmpassword
-              ? Icons.visibility_off
-              : Icons.visibility,
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
           size: 20.sp,
-          color: AppColors.blueDark,
+          color: AppColors.orange,
         ),
         obscureText: FieldValidator.isHideconfirmpassword,
         onclickSufix: () {

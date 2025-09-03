@@ -24,9 +24,12 @@ class AssetPath {
   /// --------------- ICONS -----------------------------
 
   static const String forwardIcon = "$_icons/ic_forward.png";
+  static const String searchIcon = "$_icons/ic_search.png";
   static const String earningIcon = "$_icons/ic_earning.png";
+  static const String earningMenuIcon = "$_icons/ic_earning_menu.png";
   static const String homeUserIcon = "$_icons/ic_home_user.png";
   static const String tab2Icon = "$_icons/ic_tab2.png";
+  static const String deleteRedIcon = "$_icons/ic_delete_red.png";
   static const String tab1Icon = "$_icons/ic_tab1.png";
   static const String homeCalendarIcon = "$_icons/ic_home_calendar.png";
   static const String homeTimeIcon = "$_icons/ic_home_time.png";
@@ -37,7 +40,7 @@ class AssetPath {
   static const String myProfileIcon = "$_icons/ic_profile_menu.png";
   static const String backIcon = "$_icons/ic_back.png";
   static const String aiDocumentIcon = "$_icons/ic_ai_document.png";
-  static const String customerSupportChatBotIcon = "$_icons/ic_airdrop.png";
+  static const String airdropIcon = "$_icons/ic_airdrop.png";
   static const String appleIcon = "$_icons/ic_apple.png";
   static const String archiveIcon = "$_icons/ic_archive.png";
   static const String arrowDownIcon = "$_icons/ic_arrow_down.png";
@@ -66,11 +69,10 @@ class AssetPath {
   static const String convertIcon = "$_icons/ic_convert.png";
   static const String cooledIcon = "$_icons/ic_cooled.png";
   static const String crossIcon = "$_icons/ic_cross.png";
-  static const String deleteRedIcon = "$_icons/ic_delete_red.png";
   static const String deleteIcon = "$_icons/ic_delete.png";
   static const String designBgIcon = "$_icons/ic_design_bg.png";
   static const String documentTotalIcon = "$_icons/ic_document_total.png";
-  static const String privacyIcon = "$_icons/ic_document_code.png";
+  static const String bookingMenuIcon = "$_icons/ic_document_code.png";
   static const String documentIcon = "$_icons/ic_document.png";
   static const String driverRefreshIcon = "$_icons/ic_driver_refresh.png";
   static const String editIcon = "$_icons/ic_edit.png";
@@ -85,11 +87,12 @@ class AssetPath {
   static const String smsIcon = "$_icons/ic_sms.png";
   static const String smsFillIcon = "$_icons/ic_sms_fill.png";
   static const String aboutIcon = "$_icons/ic_info_circle.png";
+  static const String messageIcon = "$_icons/ic_message.png";
   static const String faqsIcon = "$_icons/ic_faq.png";
   static const String infoIcon = "$_icons/ic_info.png";
   static const String instagramIcon = "$_icons/ic_instagram.png";
   static const String interactiveIcon = "$_icons/ic_interactive.png";
-  static const String subscriptionIcon = "$_icons/ic_keyboard.png";
+  static const String keyboardIcon = "$_icons/ic_keyboard.png";
   static const String legalAssistantIcon = "$_icons/ic_legal_assistant.png";
   static const String lockIcon = "$_icons/ic_lock.png";
   static const String logoutIcon = "$_icons/ic_logout.png";
@@ -117,6 +120,7 @@ class AssetPath {
   static const String contactUsIcon = "$_icons/ic_contact_us.png";
   static const String deleteAccountIcon = "$_icons/ic_delete_account.png";
   static const String downloadIcon = "$_icons/ic_download.png";
+  static const String privacyIcon = "$_icons/ic_privacy.png";
 
 // Drawer
   // static const List<String> drawerIconList = [
@@ -150,13 +154,14 @@ class AssetPath {
     peopleIcon
   ];
   static const List<String> menuIconList = [
-    myProfileIcon,
-    customerSupportChatBotIcon,
-    subscriptionIcon,
-    privacyIcon,
+    airdropIcon,
+    keyboardIcon,
+    earningMenuIcon,
+    bookingMenuIcon,
     aboutIcon,
-    faqsIcon,
     contactUsIcon,
+    privacyIcon,
+    convertIcon,
     logoutIcon,
     deleteAccountIcon,
   ];

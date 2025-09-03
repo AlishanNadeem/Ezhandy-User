@@ -52,12 +52,13 @@ class AppStrings {
 
   static const List<String> menuList = [
     myProfile,
-    customerSupportChatbot,
-    subscriptionSetting,
-    privacyPolicy,
+    transactionHistory,
+    affiliateEarning,
+    historyOfBookings,
     aboutUs,
-    faqs,
     contactUs,
+    privacyPolicy,
+    refundPolicy,
     signOut,
     deleteAccount,
   ];
@@ -320,14 +321,20 @@ class AppStrings {
   static const String earnWithUs = "Earn With Us";
   static const String clickHere = "Click here";
   static const String loginSignUp = "Login/ Sign Up";
-  static const String inOrderToAccessThis = "In order to access this you must login or sign up first";
-  // static const String appointmentScheduling = "Appointment Scheduling";
-  // static const String educationalHub = "Educational Hub";
-  // static const String legalIntelligenceSupport = "Legal Intelligence & Support";
-  // static const String corporateGrowthPackage = "Corporate Growth Package";
-  // static const String myAppointment = "My Appointment";
-  // static const String brandStrategySponsorships =
-  //     "Brand Strategy & Sponsorships";
+  static const String inOrderToAccessThis =
+      "In order to access this you must login or sign up first";
+
+//   Transaction History
+  static const String visit = "Visit";
+
+//   Booking History
+  static const String visitCharges = "Visit Charges";
+  static const String hourlyRate = "Hourly rate";
+  static const String bookingId = "Booking ID";
+  static const String bookingDate = "Booking Date";
+  static const String serviceDate = "Service Date";
+  static const String serviceTime = "Service Time";
+
 //   Subscription
   static const String subscriptionRequiredMessage =
       "You need to purchase a Subscription to access this feature.";
@@ -361,16 +368,18 @@ class AppStrings {
   static const String notifications = "Notifications";
   static const String showing = "Showing";
 
-  /// Notification
+  /// Menu
 
-  static const String customerSupportChatbot = "Customer Support Chatbot";
-  static const String privacyPolicy = "Privacy Policy";
+  static const String myProfile = "My Profile";
+  static const String transactionHistory = "Transaction History";
+  static const String affiliateEarning = "Affiliate Earning";
+  static const String historyOfBookings = "History Of Bookings";
   static const String aboutUs = "About Us";
-  static const String faqs = "FAQ's";
   static const String contactUs = "Contact Us";
+  static const String privacyPolicy = "Privacy Policy";
+  static const String refundPolicy = "Refund Policy";
   static const String signOut = "sign out";
   static const String deleteAccount = "Delete Account";
-  static const String myProfile = "My Profile";
 
 //   Profile
   static const String editProfile = 'Edit Profile';
@@ -410,6 +419,7 @@ class AppStrings {
 
 //   Appoinyment
   static const String serviceName = "Service Name";
+  static const String service = "Service";
   static const String serviceReview = "Service Review";
   static const String serviceCharges = "Service Charges";
   static const String schedule = "Schedule";
@@ -425,6 +435,12 @@ class AppStrings {
 //   My Appointments
   static const String all = "All";
   static const String pending = "Pending";
+  static const String started = "Started";
+  static const String completedPaid = "Completed Paid";
+  static const String completedUnPaid = "Completed Un-Paid";
+  static const String completedPaidUrgent = "Completed Paid Urgent";
+  static const String assigned = "Assigned";
+  static const String inRoute = "In - Route";
   static const String rejected = "Rejected";
   static const String reschedule = "Reschedule";
   static const String upcoming = "Upcoming";
@@ -433,19 +449,33 @@ class AppStrings {
   static const String completed = "Completed";
   static const String past = "Past";
   static const String appointmentType = "Appointment Type";
-  static const String bookingId = "Booking ID";
+  // static const String bookingId = "Booking ID";
   static const String charges = "Charges";
 
 //   Booking
   static const String booking = "Booking";
+  static const String refund = "Refund";
+  static const String endWork = "End Work";
+  static const String payFurtherAmount = "Pay Further Amount";
+  static const String reportIssue = "Report Issue";
+  static const String review = "Review";
+    static const String goToHome = "Go To Home";
+
+  static const String refundPolicyWork = "Refund policy works according to the client-provided system";
+  static const String refundRequestSubmitted = "Refund Request Submitted";
+  static const String oneOfOurRepresentative = "One of our representative will contact you for further process";
+  static const String additional = "Additional";
   static const String bookingDetails = "Booking Details";
-  static const String bookingDate = "Booking Date";
+  static const String providerDetails = "Provider Details";
+  static const String details = "Details";
+  static const String workDocuments = "Work Documents";
+  static const String invoice = "Invoice";
   static const String userName = "User Name";
-  static const String serviceDate = "Service Date";
   static const String reScheduleTimeAndDate = "Re-Schedule Time And Date";
   static const String sessionDate = "Session Date";
   static const String sessionTime = "Session Time";
   static const String reject = "Reject";
+  static const String starttime = "Start Time";
   static const String approve = "Approve";
   static const String leave = "Leave";
   static const String rejectReason = "Reject Reason";
@@ -1375,7 +1405,7 @@ class AppStrings {
   static const String invalidEmergencyNumber =
       "You have enter invalid emergency number.";
   static const String emptyPhoneNumber = "Phone number field can't be empty.";
-  static const String review = "Review";
+  // static const String review = "Review";
   static const String submitReview = "Submit Review";
   static const String invalidEmailAddress = "Please enter valid email address.";
   static const String emptyEmailAddress = "Email field can't be empty.";

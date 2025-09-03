@@ -23,6 +23,7 @@ class AppRoutes {
   static const String editProfileScreenRoute = "edit_profile_screenRoute";
   static const String contentScreenRoute = "/content_screenRoute";
   static const String contactUsScreenRoute = "contact_us_screenRoute";
+  static const String transactionHistoryScreenRoute = "transaction_history_screenRoute";
   static const String subscriptionSettingScreenRoute =
       "/subscription_setting_screenRoute";
   static const String subscriptionLogScreenRoute =

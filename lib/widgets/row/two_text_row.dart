@@ -7,9 +7,9 @@ import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class TwoTextRow extends StatelessWidget {
   String firstText, secondText;
-  Color? firstColor;
+  Color? firstColor,secondColor;
   bool? withPadding;
-  TwoTextRow({required this.firstText, required this.secondText, this.firstColor, this.withPadding = true, super.key});
+  TwoTextRow({required this.firstText, required this.secondText,this.secondColor, this.firstColor, this.withPadding = true, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class TwoTextRow extends StatelessWidget {
           child: textWidget(text: firstText, fontcolor: firstColor, fontWeight: FontWeight.w400),
         ),
         Expanded(
-          child: textWidget(text: secondText, fontcolor: AppColors.blueDark,fontWeight: FontWeight.bold),
+          child: textWidget(text: secondText, fontcolor:secondColor?? AppColors.orange,fontWeight: FontWeight.bold),
         )
       ]),
     );

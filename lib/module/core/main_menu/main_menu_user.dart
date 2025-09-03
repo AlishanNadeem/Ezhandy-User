@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ezhandy_user/module/core/booking/view/my_booking.dart';
 import 'package:ezhandy_user/module/core/home/view/home.dart';
 import 'package:ezhandy_user/module/core/menu/view/menu.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _MainMenuState extends State<MainMenu> {
     // Menu()
     // Container(),
     Container(),
-    Container(),
+    MyBooking(),
     Menu(),
   ];
 

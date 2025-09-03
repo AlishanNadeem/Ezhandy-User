@@ -55,7 +55,7 @@ class ProfilePictureWidget extends StatelessWidget {
           decoration: BoxDecoration(
             boxShadow: AppShadows.shadow1,
             shape: BoxShape.circle,
-            border: Border.all(color: borderColor ?? AppColors.blueDark, width: 2.sp),
+            border: Border.all(color: borderColor ?? AppColors.orange, width: 2.sp),
           ),
           child: Container(
             height: size ?? 100.h,
@@ -87,7 +87,7 @@ class ProfilePictureWidget extends StatelessWidget {
                   border: Border.all(color: AppColors.white, width: 2.sp),
                   shape: BoxShape.circle,
                   // gradient: AppGradients.backgroundGradient,
-                  color: AppColors.green,
+                  color: AppColors.orange,
                   image: DecorationImage(image: AssetImage(AssetPath.cameraUploadIcon), scale: 3.sp)),
             ),
           ),

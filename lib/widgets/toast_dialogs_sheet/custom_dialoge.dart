@@ -60,7 +60,6 @@ class _CustomDialogsState extends State<CustomDialogs>
       },
       child: Center(
         child: ScaleTransition(
-          
           scale: _scaleAnimation,
           child: Padding(
             padding:
@@ -122,8 +121,9 @@ class _CustomDialogsState extends State<CustomDialogs>
                     child: CustomButton(
                       text: widget.btnTxt1 ?? "",
                       width: 150.w,
-                      borderRadius:35.r,
+                      borderRadius: 35.r,
                       onclick: widget.onTap1,
+                      borderColor: AppColors.white,
                     ),
                   ),
                 ),

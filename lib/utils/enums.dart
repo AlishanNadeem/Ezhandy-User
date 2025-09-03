@@ -1,6 +1,6 @@
 // enum AuthRole { email, phone, google, apple }
 
-enum BookingType { Pending, Rejected, Reschedule, Upcoming, InProcess, Past }
+enum BookingType { Pending, Completed, Assigned, InRoute }
 
 enum CampaignType { Pending, Rejected, Accepted,New}
 
@@ -16,7 +16,7 @@ enum OtpCodeType { phone, email }
 
 // enum SocialType { email, google,facebook, apple, phone }
 
-enum WebContentType { tc, pp, ap }
+enum WebContentType { tc, pp, ap, rp }
 
 // enum ProfileType { create, edit, bottomBar, none }
 

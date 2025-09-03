@@ -20,15 +20,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<String> navigationList = [
-    AppRoutes.appointmentSchedulingScreenRoute,
-    AppRoutes.educationsScreenScreenRoute,
-    AppRoutes.legalIntelligenceSupportScreenRoute,
-    AppRoutes.corporateGrowthPackageScreenRoute,
-    AppRoutes.MyAppointmentScreenRoute,
-    AppRoutes.brandStrategySponsorshipScreenRoute
-  ];
-  bool isSubscribe = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +80,8 @@ class _HomeState extends State<Home> {
             ),
           ),
         ] else ...[
-          Column(crossAxisAlignment: CrossAxisAlignment.start,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(text: "$greeting 🔥", fontSize: 14.sp),
               CustomText(
