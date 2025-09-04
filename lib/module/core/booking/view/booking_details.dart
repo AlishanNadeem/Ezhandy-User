@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -43,7 +44,9 @@ class _BookingDetailsState extends State<BookingDetails> {
                 padding: const EdgeInsets.only(right: AppPadding.padding12),
                 child: GestureDetector(
                     onTap: () {
-                      AppNavigation.navigateTo(context, AppRoutes.chatWithAdminScreenRoute);
+                      AppNavigation.navigateTo(
+                          context, AppRoutes.chatScreenRoute,
+                          arguments: ChatRoutingArgument(isBooking: false));
                     },
                     child: (Image.asset(
                       AssetPath.messageIcon,
@@ -168,15 +171,33 @@ class _BookingDetailsState extends State<BookingDetails> {
                                   child: Row(
                                     children: [
                                       10.horizontalSpace,
-                                      Image.asset(AssetPath.documentTotalIcon,
-                                          width: 50.w, height: 50.h),
+                                      GestureDetector(
+                                        onTap: () {
+                                          AppNavigation.navigateTo(
+                                              context,
+                                              AppRoutes
+                                                  .workDocumentsScreenRoute);
+                                        },
+                                        child: Image.asset(
+                                            AssetPath.documentTotalIcon,
+                                            width: 50.w,
+                                            height: 50.h),
+                                      ),
                                       Spacer(),
                                       widget.status == AppStrings.started
                                           ? SizedBox.shrink()
-                                          : Image.asset(
-                                              AssetPath.documentTotalIcon,
-                                              width: 50.w,
-                                              height: 50.h),
+                                          : GestureDetector(
+                                              onTap: () {
+                                                AppNavigation.navigateTo(
+                                                    context,
+                                                    AppRoutes
+                                                        .invoiceScreenRoute);
+                                              },
+                                              child: Image.asset(
+                                                  AssetPath.documentTotalIcon,
+                                                  width: 50.w,
+                                                  height: 50.h),
+                                            ),
                                       10.horizontalSpace,
                                     ],
                                   ),
@@ -369,7 +390,10 @@ class _BookingDetailsState extends State<BookingDetails> {
                       //             context, AppRoutes.videoCallScreenRoute);
                       //       }
                       //     :
-                      () {}),
+                      () {
+                    AppNavigation.navigateTo(
+                        context, AppRoutes.reportIssueScreenRoute);
+                  }),
             ),
             10.horizontalSpace,
             Expanded(
@@ -389,7 +413,10 @@ class _BookingDetailsState extends State<BookingDetails> {
                       //             context, AppRoutes.videoCallScreenRoute);
                       //       }
                       //     :
-                      () {}),
+                      () {
+                    AppNavigation.navigateTo(
+                        context, AppRoutes.writeReviewScreenRoute);
+                  }),
             ),
           ],
         ));

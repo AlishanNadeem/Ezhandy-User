@@ -8,12 +8,21 @@ import 'package:ezhandy_user/module/auth/splash/screen/splash_screen.dart';
 import 'package:ezhandy_user/module/auth/splash/screen/splash_slider_screen.dart';
 import 'package:ezhandy_user/module/auth/verification/routing_arguments/otp_verification_routing_arguments.dart';
 import 'package:ezhandy_user/module/auth/verification/view/otp_verification_screen.dart';
+import 'package:ezhandy_user/module/core/affiliate_earning/view/affiliate_earning.dart';
 import 'package:ezhandy_user/module/core/booking/view/booking_details.dart';
+import 'package:ezhandy_user/module/core/booking/view/booking_history.dart';
+import 'package:ezhandy_user/module/core/booking/view/invoice_screen.dart';
+import 'package:ezhandy_user/module/core/booking/view/work_document.dart';
+import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/chat/view/chat.dart';
 import 'package:ezhandy_user/module/core/contact_us/view/contact_us.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/module/core/notification/notification.dart';
 import 'package:ezhandy_user/module/core/profile/view/edit_user_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/user_profile.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/view/rating_screen.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/view/report_issue.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/view/write_review_screen.dart';
 import 'package:ezhandy_user/module/core/transaction_history/transaction_history.dart';
 import 'package:ezhandy_user/utils/routes/routing_arguments/booking_routing_arguments.dart';
 import 'package:flutter/material.dart';
@@ -97,8 +106,8 @@ case AppRoutes.splash1ScreenRoute:
           //   return VideoDetail();
           // case AppRoutes.appointmentSchedulingScreenRoute:
           //   return AppointmentScheduling();
-          // case AppRoutes.ratingScreenRoute:
-          //   return RatingScreen();
+          case AppRoutes.ratingScreenRoute:
+            return RatingScreen();
           // case AppRoutes.MyAppointmentScreenRoute:
           //   return MyAppointment();
           case AppRoutes.bookingScreenRoute:
@@ -109,8 +118,20 @@ case AppRoutes.splash1ScreenRoute:
             );
           // case AppRoutes.videoCallScreenRoute:
           //   return VideoCallScreen();
-          // case AppRoutes.writeReviewScreenRoute:
-          //   return WriteReviewScreen();
+          case AppRoutes.workDocumentsScreenRoute:
+            return WorkDocuments();
+          case AppRoutes.invoiceScreenRoute:
+            return InvoiceScreen();
+          case AppRoutes.writeReviewScreenRoute:
+            return WriteReviewScreen();
+          case AppRoutes.reportIssueScreenRoute:
+            return ReportIssue();
+          case AppRoutes.favouritesScreenRoute:
+            return ReportIssue();
+             case AppRoutes.chatScreenRoute:
+            ChatRoutingArgument chatArgument =
+                routeSettings.arguments as ChatRoutingArgument;
+            return ChatScreen(isBooking: chatArgument.isBooking??false,);
           // case AppRoutes.legalIntelligenceSupportScreenRoute:
           //   return LegalIntelligenceSupport();
           // case AppRoutes.corporateGrowthPackageScreenRoute:
@@ -453,8 +474,10 @@ case AppRoutes.splash1ScreenRoute:
           //   );
           case AppRoutes.notificationScreenRoute:
             return NotificationScreen();
-          // case AppRoutes.favoriteProductsScreenRoute:
-          //   return FavoriteProductsScreen();
+          case AppRoutes.bookingHistoryScreenRoute:
+            return BookingHistory();
+          case AppRoutes.affiliateEarningScreenRoute:
+            return AffiliateEarning();
           case AppRoutes.viewFullImageScreenRoute:
             ViewFullImageRoutingArgumentss? viewFullImageRoutingArguments =
                 routeSettings.arguments as ViewFullImageRoutingArgumentss?;

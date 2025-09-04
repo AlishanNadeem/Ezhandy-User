@@ -28,6 +28,7 @@ class _MenuState extends State<Menu> {
       _transcationHistoryTap,
       _affiliateEarningTap,
       _historyOfBookingsTap,
+      _favouritesTap,
       _aboutUsTap,
       _contactUsTap,
       _privacyPolicyTap,
@@ -168,7 +169,7 @@ class _MenuState extends State<Menu> {
   }
 
   void _affiliateEarningTap() {
-    AppNavigation.navigateTo(context, AppRoutes.subscriptionSettingScreenRoute);
+    AppNavigation.navigateTo(context, AppRoutes.affiliateEarningScreenRoute);
   }
 
   void _privacyPolicyTap() {
@@ -194,7 +195,10 @@ class _MenuState extends State<Menu> {
   }
 
   void _historyOfBookingsTap() {
-    AppNavigation.navigateTo(context, AppRoutes.contactUsScreenRoute);
+    AppNavigation.navigateTo(context, AppRoutes.bookingHistoryScreenRoute);
+  }
+  void _favouritesTap() {
+    AppNavigation.navigateTo(context, AppRoutes.bookingHistoryScreenRoute);
   }
 
   void _signOutTap() {

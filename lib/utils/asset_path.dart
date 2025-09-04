@@ -93,6 +93,7 @@ class AssetPath {
   static const String instagramIcon = "$_icons/ic_instagram.png";
   static const String interactiveIcon = "$_icons/ic_interactive.png";
   static const String keyboardIcon = "$_icons/ic_keyboard.png";
+  static const String heartIcon = "$_icons/ic_heart.png";
   static const String legalAssistantIcon = "$_icons/ic_legal_assistant.png";
   static const String lockIcon = "$_icons/ic_lock.png";
   static const String logoutIcon = "$_icons/ic_logout.png";
@@ -158,6 +159,7 @@ class AssetPath {
     keyboardIcon,
     earningMenuIcon,
     bookingMenuIcon,
+    heartIcon,
     aboutIcon,
     contactUsIcon,
     privacyIcon,

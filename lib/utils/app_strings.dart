@@ -55,6 +55,7 @@ class AppStrings {
     transactionHistory,
     affiliateEarning,
     historyOfBookings,
+    favourites,
     aboutUs,
     contactUs,
     privacyPolicy,
@@ -367,6 +368,9 @@ class AppStrings {
 
   static const String notifications = "Notifications";
   static const String showing = "Showing";
+  static const String yourReferralCode = "Your Referral Code";
+  static const String totalEarnings = "Total Earnings";
+  static const String dummyRefCode = "30OFFDEC10BI";
 
   /// Menu
 
@@ -374,6 +378,7 @@ class AppStrings {
   static const String transactionHistory = "Transaction History";
   static const String affiliateEarning = "Affiliate Earning";
   static const String historyOfBookings = "History Of Bookings";
+  static const String favourites = "Favourites";
   static const String aboutUs = "About Us";
   static const String contactUs = "Contact Us";
   static const String privacyPolicy = "Privacy Policy";
@@ -392,6 +397,9 @@ class AppStrings {
   static const String areYouSureWantToDeleteThisAccount =
       "Are You Sure Want To Delete This \n Account?";
   static const confirmationDialogLogoutDescription = 'Do you want to Logout?';
+//   Work Document
+  static const String beforeImage = "Before Image";
+  static const String afterImage = "After Image";
 
 //   Contact Us
   static const String pleaseLetUsKnowHowWeCanImproveYourExperience =
@@ -414,7 +422,7 @@ class AppStrings {
   static const String videos = 'Videos';
   static const String guides = 'Guides';
   static const String titleName = 'Title Name';
-  static const String download = 'Download';
+  static const String downloadPdf = 'Download PDF';
   static const String similarVideos = 'Similar Videos';
 
 //   Appoinyment
@@ -460,7 +468,9 @@ class AppStrings {
   static const String reportIssue = "Report Issue";
   static const String review = "Review";
     static const String goToHome = "Go To Home";
+    static const String withdraw = "Withdraw";
 
+  static const String amountToBankAccount = "Are you sure you want to withdraw this amount to your bank account?";
   static const String refundPolicyWork = "Refund policy works according to the client-provided system";
   static const String refundRequestSubmitted = "Refund Request Submitted";
   static const String oneOfOurRepresentative = "One of our representative will contact you for further process";
@@ -494,7 +504,8 @@ class AppStrings {
   static const String yourRescheduleRejectText =
       "Your reschedule request has been Reject successfully.";
   static const String writeAReview = "Write A Review";
-  static const String ratebooking = "Rate Booking";
+  static const String saySomeThing = "Say Something";
+  static const String rateProvider = "Rate Provider";
 
   /// Legal intelligence Support
   static const String aiPoweredLegalAssistantTerms =
@@ -592,6 +603,8 @@ class AppStrings {
       "I authorize [Your Company Name] to submit this EIN application to the IRS on my behalf.";
   static const String iConfirm =
       "I confirm that the information provided is accurate and complete.";
+  static const String confirm =
+      "Confirm";
   static const String submitRequest = "Submit Request";
   static const String selectOption = "Select Option";
 
@@ -804,6 +817,7 @@ class AppStrings {
   static const String dropShipperProfile = "Drop Shipper Profile";
   static const String bookings = "Bookings";
   static const String myBookings = "My Bookings";
+  static const String messages = "Messages";
   static const String restaurantProfile = "Restaurant Profile";
 
   /// drawer
@@ -1132,6 +1146,7 @@ class AppStrings {
   static const String payment = "Payment";
   static const String billToPay = "Bill To Pay";
   static const String arrivalTime = "Arrival Time";
+  static const String cost = "Cost";
   static const String totalCost = "Total Cost";
   static const String payNow = "Pay Now";
 

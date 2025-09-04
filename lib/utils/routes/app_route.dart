@@ -29,8 +29,8 @@ class AppRoutes {
   static const String subscriptionLogScreenRoute =
       "/subscription_log_screenRoute";
   static const String faqsScreenRoute = "/faqs_screenRoute";
-  static const String customerSupportScreenRoute =
-      "/customer_support_screenRoute";
+  static const String chatScreenRoute =
+      "/chat_screenRoute";
 
   static const String educationsScreenScreenRoute =
       "/educations_screen_screenRoute";
@@ -42,6 +42,9 @@ class AppRoutes {
   static const String bookingScreenRoute = "/booking_screen_screenRoute";
   static const String videoCallScreenRoute = "/video_call_screen_screenRoute";
   static const String writeReviewScreenRoute = "write_review_screenRoute";
+  static const String workDocumentsScreenRoute = "work_documents_screenRoute";
+  static const String invoiceScreenRoute = "invoice_screenRoute";
+  static const String reportIssueScreenRoute = "report_issue_screenRoute";
   static const String legalIntelligenceSupportScreenRoute =
       "legal_intelligence_support_screenRoute";
   static const String corporateGrowthPackageScreenRoute =
@@ -78,6 +81,9 @@ class AppRoutes {
   static const String chatWithAdminScreenRoute = "/chat_with_admin_screenRoute";
   static const String allDocumentsScreenRoute = "/all_documents_screenRoute";
   static const String notificationScreenRoute = "notification_screenRoute";
+  static const String affiliateEarningScreenRoute = "affiliate_earning_screenRoute";
+  static const String bookingHistoryScreenRoute = "booking_history_screenRoute";
+  static const String favouritesScreenRoute = "favourites_screenRoute";
 
   // static const String changePasswordScreenRoute = "/change_password_screen";
 
@@ -115,7 +121,6 @@ class AppRoutes {
   // static const String ordersHistorySellerScreenRoute = "orders_history_seller_screenRoute";
   // static const String myEventsUserScreenRoute = "my_events_user_screenRoute";
   // static const String eventsSellerScreenRoute = "events_seller_screenRoute";
-  // static const String bookingHistorySellerScreenRoute = "booking_history_seller_screenRoute";
   // static const String bookingRequestSellerScreenRoute = "booking_request_seller_screenRoute";
   // static const String itsAMatchSingleUserScreenRoute = "its_a_match_single_user_screenRoute";
   // static const String wouldYouRatherUserScreenRoute = "would_you_rather_user_screenRoute";

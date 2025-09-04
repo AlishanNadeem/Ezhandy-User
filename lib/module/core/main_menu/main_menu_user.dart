@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:ezhandy_user/module/core/booking/view/my_booking.dart';
+import 'package:ezhandy_user/module/core/chat/view/messages.dart';
 import 'package:ezhandy_user/module/core/home/view/home.dart';
 import 'package:ezhandy_user/module/core/menu/view/menu.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _MainMenuState extends State<MainMenu> {
     // NotificationScreen(),
     // Menu()
     // Container(),
-    Container(),
+    MessagesScreen(),
     MyBooking(),
     Menu(),
   ];
@@ -100,6 +101,7 @@ class _MainMenuState extends State<MainMenu> {
         padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
         child: Column(
           children: [
+     Platform.isAndroid?       10.verticalSpace:
             50.verticalSpace,
             _widgetOptions.elementAt(HomeController.i.selectedTab.value),
           ],
@@ -203,7 +205,9 @@ class _MainMenuState extends State<MainMenu> {
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         Image.asset(
           iconSelected,
-          scale: 3.5.sp,
+          width: 20.w,
+          height: 20.h,
+          // scale: 3.5.sp,
           // color: HomeController.i.selectedTab.value == inIndex
           //     ? AppColors.blueDark
           //     : null

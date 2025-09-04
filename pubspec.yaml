@@ -53,6 +53,8 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^29.1.38
   dropdown_button2: ^2.3.9
   file_picker: ^10.3.2
+  percent_indicator: ^4.2.5
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:

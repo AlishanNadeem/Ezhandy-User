@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
     return Expanded(
       child: Column(
         children: [
-          10.verticalSpace,
+          // 10.verticalSpace,
           appbarWidget(greeting, context),
           20.verticalSpace,
           Expanded(
