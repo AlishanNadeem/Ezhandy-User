@@ -84,6 +84,9 @@ class AppRoutes {
   static const String affiliateEarningScreenRoute = "affiliate_earning_screenRoute";
   static const String bookingHistoryScreenRoute = "booking_history_screenRoute";
   static const String favouritesScreenRoute = "favourites_screenRoute";
+  static const String listOfServicesScreenRoute = "list_of_services_screenRoute";
+  static const String servicesScreenRoute = "services_screenRoute";
+  static const String providerProfileScreenRoute = "provider_profile_screenRoute";
 
   // static const String changePasswordScreenRoute = "/change_password_screen";
 

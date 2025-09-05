@@ -9,6 +9,9 @@ import 'package:ezhandy_user/module/auth/splash/screen/splash_slider_screen.dart
 import 'package:ezhandy_user/module/auth/verification/routing_arguments/otp_verification_routing_arguments.dart';
 import 'package:ezhandy_user/module/auth/verification/view/otp_verification_screen.dart';
 import 'package:ezhandy_user/module/core/affiliate_earning/view/affiliate_earning.dart';
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/all_services/view/list_of_services.dart';
+import 'package:ezhandy_user/module/core/all_services/view/single_service.dart';
 import 'package:ezhandy_user/module/core/booking/view/booking_details.dart';
 import 'package:ezhandy_user/module/core/booking/view/booking_history.dart';
 import 'package:ezhandy_user/module/core/booking/view/invoice_screen.dart';
@@ -19,6 +22,7 @@ import 'package:ezhandy_user/module/core/contact_us/view/contact_us.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/module/core/notification/notification.dart';
 import 'package:ezhandy_user/module/core/profile/view/edit_user_profile.dart';
+import 'package:ezhandy_user/module/core/profile/view/provider_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/user_profile.dart';
 import 'package:ezhandy_user/module/core/rating_review_report/view/rating_screen.dart';
 import 'package:ezhandy_user/module/core/rating_review_report/view/report_issue.dart';
@@ -128,6 +132,14 @@ case AppRoutes.splash1ScreenRoute:
             return ReportIssue();
           case AppRoutes.favouritesScreenRoute:
             return ReportIssue();
+          case AppRoutes.listOfServicesScreenRoute:
+            return ListOfServices();
+          case AppRoutes.providerProfileScreenRoute:
+            return ProviderProfile();
+             case AppRoutes.servicesScreenRoute:
+            ServiceRoutingArgument serviceArgument =
+                routeSettings.arguments as ServiceRoutingArgument;
+            return SingleService(serviceName: serviceArgument.serviceName,);
              case AppRoutes.chatScreenRoute:
             ChatRoutingArgument chatArgument =
                 routeSettings.arguments as ChatRoutingArgument;

@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
         width: 1.sw,
         height: 1.sh,
         decoration: const BoxDecoration(
-          color: AppColors.orange
+          color: AppColors.black
             // image: DecorationImage(
             //     image: AssetImage(AssetPath.splashImage), fit: BoxFit.cover)
                 ),

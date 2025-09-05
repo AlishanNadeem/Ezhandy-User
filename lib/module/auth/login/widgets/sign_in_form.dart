@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 import 'dart:io';
 
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/auth/verification/routing_arguments/otp_verification_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -237,6 +238,8 @@ class _SignInFormState extends State<SignInForm> {
           // if (AuthController.i.role.value == RoleType.single.name || AuthController.i.role.value == RoleType.committed.name) {
           // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
           // } else {
+                              AuthController.i.isLoginSignUp.value = true;
+
           AppNavigation.navigateToRemovingAll(
               context, AppRoutes.mainMenuScreenRoute);
           // }

@@ -125,7 +125,7 @@ class _RatingScreenState extends State<RatingScreen> {
               text: AppStrings.dummyRating,
               fontSize: 30.sp,
               fontWeight: FontWeight.bold,
-              color: AppColors.blueDark,
+              color: AppColors.black,
             ),
             Align(
               alignment: Alignment.topRight,

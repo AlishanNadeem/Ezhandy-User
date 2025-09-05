@@ -442,29 +442,31 @@ class _BookingDetailsState extends State<BookingDetails> {
                 //       }
                 //     :
                 () {
-              AppDialogs.showSuccessDialog(context,
-                  description: AppStrings.refundPolicyWork,
-                  // title: AppStrings.deleteAccount,
-                  image: AssetPath.tumbIcon,
-                  isDoneShow: false,
-                  btnTxt1: AppStrings.refund,
-                  onTap1: () {
-                    AppNavigation.navigatorPop(context);
-                    AppDialogs.showSuccessDialog(
-                      context,
-                      description: AppStrings.oneOfOurRepresentative,
-                      title: AppStrings.refundRequestSubmitted,
-                      btnTxt1: AppStrings.goToHome,
-                      onTap1: () {
-                        AppNavigation.navigatorPopUntil(
-                            context, AppRoutes.mainMenuScreenRoute);
-                      },
-                    );
-                  },
-                  btnTxt2: AppStrings.cancel,
-                  onTap2: () {
-                    AppNavigation.navigatorPop(context);
-                  });
+              // AppDialogs.showSuccessDialog(context,
+              //     description: AppStrings.refundPolicyWork,
+              //     // title: AppStrings.deleteAccount,
+              //     image: AssetPath.tumbIcon,
+              //     isDoneShow: false,
+              //     btnTxt1: AppStrings.refund,
+              //     onTap1: () {
+              //       AppNavigation.navigatorPop(context);
+              //       AppDialogs.showSuccessDialog(
+              //         context,
+              //         description: AppStrings.oneOfOurRepresentative,
+              //         title: AppStrings.refundRequestSubmitted,
+              //         btnTxt1: AppStrings.goToHome,
+              //         onTap1: () {
+              //           AppNavigation.navigatorPopUntil(
+              //               context, AppRoutes.mainMenuScreenRoute);
+              //         },
+              //       );
+              //     },
+              //     btnTxt2: AppStrings.cancel,
+              //     onTap2: () {
+              //       AppNavigation.navigatorPop(context);
+              //     });
+           
+           
             }));
   }
 

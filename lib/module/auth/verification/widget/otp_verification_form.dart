@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/app_logo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -130,6 +131,8 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
                 context, AppRoutes.resetPasswordScreenRoute);
             // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
           } else {
+                                AuthController.i.isLoginSignUp.value = true;
+
             AppNavigation.navigateToRemovingAll(context, AppRoutes.mainMenuScreenRoute);
           }
           // AppNavigation.navigateTo(

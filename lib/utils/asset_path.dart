@@ -8,6 +8,7 @@ class AssetPath {
 
   static const String tempImage1 = "$_temp_images/dummy_image.png";
   static const String tempImage = "$_temp_images/temp.png";
+  static const String tempCleaningImage = "$_temp_images/temp_cleaning.png";
 
   ///----------------- IMAGES ----------------------------
   static const String splashImage = "$_images/splash_image.png";
@@ -16,6 +17,7 @@ class AssetPath {
   static const String splash3Image = "$_images/splash_image_1.png";
   static const String splashLogoImage = "$_images/app_icon.png";
   static const String adImage = "$_images/ad_image.png";
+  static const String certificateImage = "$_images/certificate_image.png";
   static const String appLogoImage = "$_images/app_logo.png";
   static const String temp1Image = "$_images/temp1_image.png";
   static const String temp2Image = "$_images/temp2_image.png";
@@ -94,6 +96,7 @@ class AssetPath {
   static const String interactiveIcon = "$_icons/ic_interactive.png";
   static const String keyboardIcon = "$_icons/ic_keyboard.png";
   static const String heartIcon = "$_icons/ic_heart.png";
+  static const String heartFillIcon = "$_icons/ic_heart_fill.png";
   static const String legalAssistantIcon = "$_icons/ic_legal_assistant.png";
   static const String lockIcon = "$_icons/ic_lock.png";
   static const String logoutIcon = "$_icons/ic_logout.png";

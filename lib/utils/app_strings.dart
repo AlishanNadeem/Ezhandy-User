@@ -239,6 +239,7 @@ class AppStrings {
   static const String sport = "Sport";
   static const String enterSport = "Enter Sport";
   static const String status = "Status";
+  static const String activeNow = "Active Now";
   static const String active = "Active";
   static const String EnterStatus = "Enter Status";
   static const String uploadProfileImage = "Upload Profile Image";
@@ -335,6 +336,8 @@ class AppStrings {
   static const String bookingDate = "Booking Date";
   static const String serviceDate = "Service Date";
   static const String serviceTime = "Service Time";
+    static const String listOfServices =
+      "List of Services";
 
 //   Subscription
   static const String subscriptionRequiredMessage =
@@ -429,7 +432,7 @@ class AppStrings {
   static const String serviceName = "Service Name";
   static const String service = "Service";
   static const String serviceReview = "Service Review";
-  static const String serviceCharges = "Service Charges";
+  static const String services = "Services";
   static const String schedule = "Schedule";
   static const String availabilityHour = "Availability Hour";
   static const String bookAnAppointment = "Book An Appointment";
@@ -505,6 +508,13 @@ class AppStrings {
       "Your reschedule request has been Reject successfully.";
   static const String writeAReview = "Write A Review";
   static const String saySomeThing = "Say Something";
+  static const String providerProfile = "Provider Profile";
+  static const String experience = "Experience";
+  static const String language = "Language";
+  static const String certificateDetails = "Certificate Details";
+  static const String insituteName = "Insitute Name";
+  static const String certificateTitle = "Certificate Title";
+  static const String gender = "Gender";
   static const String rateProvider = "Rate Provider";
 
   /// Legal intelligence Support
@@ -742,7 +752,6 @@ class AppStrings {
   static const username = 'Username';
   static const firstName = 'First Name';
   static const lastName = 'Last Name';
-  static const gender = 'Gender';
   static const selectGender = 'Select Gender';
   static const selectAge = 'Select Age';
   static const aboutYourself = 'About Yourself';

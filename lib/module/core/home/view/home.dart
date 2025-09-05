@@ -1,4 +1,5 @@
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +21,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -158,8 +157,11 @@ class _HomeState extends State<Home> {
                     onclick: () {
                       !AuthController.i.isLoginSignUp.value
                           ? signinSignUpPopup()
-                          : AppNavigation.navigateTo(
-                              context, AppRoutes.MyAppointmentScreenRoute);
+                          : 
+                          null
+                          // AppNavigation.navigateTo(
+                          //     context, AppRoutes.MyAppointmentScreenRoute)
+                          ;
                     },
                     height: 40.h,
                     borderRadius: 35.r,
@@ -185,8 +187,10 @@ class _HomeState extends State<Home> {
           ontap: () {
             !AuthController.i.isLoginSignUp.value
                 ? signinSignUpPopup()
-                : AppNavigation.navigateTo(
-                    context, AppRoutes.MyAppointmentScreenRoute);
+                :   null
+                          // AppNavigation.navigateTo(
+                          //     context, AppRoutes.MyAppointmentScreenRoute)
+                          ;
           },
           image1: AssetPath.tab1Icon,
           image2: AssetPath.homeTimeIcon,
@@ -196,8 +200,10 @@ class _HomeState extends State<Home> {
           ontap: () {
             !AuthController.i.isLoginSignUp.value
                 ? signinSignUpPopup()
-                : AppNavigation.navigateTo(
-                    context, AppRoutes.MyAppointmentScreenRoute);
+                :   null
+                          // AppNavigation.navigateTo(
+                          //     context, AppRoutes.MyAppointmentScreenRoute)
+                          ;
           },
           image1: AssetPath.tab2Icon,
           image2: AssetPath.homeCalendarIcon,
@@ -216,7 +222,9 @@ class _HomeState extends State<Home> {
               !AuthController.i.isLoginSignUp.value
                   ? signinSignUpPopup()
                   : AppNavigation.navigateTo(
-                      context, AppRoutes.MyAppointmentScreenRoute);
+                      context, AppRoutes.servicesScreenRoute,
+                      arguments: ServiceRoutingArgument(
+                          serviceName: AppStrings.cleaning));
             },
             text: AppStrings.cleaning,
             image: AssetPath.cleaningIcon),
@@ -225,7 +233,9 @@ class _HomeState extends State<Home> {
               !AuthController.i.isLoginSignUp.value
                   ? signinSignUpPopup()
                   : AppNavigation.navigateTo(
-                      context, AppRoutes.MyAppointmentScreenRoute);
+                      context, AppRoutes.servicesScreenRoute,
+                      arguments: ServiceRoutingArgument(
+                          serviceName: AppStrings.painting));
             },
             text: AppStrings.painting,
             image: AssetPath.paintIcon),
@@ -234,7 +244,9 @@ class _HomeState extends State<Home> {
               !AuthController.i.isLoginSignUp.value
                   ? signinSignUpPopup()
                   : AppNavigation.navigateTo(
-                      context, AppRoutes.MyAppointmentScreenRoute);
+                      context, AppRoutes.servicesScreenRoute,
+                      arguments: ServiceRoutingArgument(
+                          serviceName: AppStrings.electric));
             },
             text: AppStrings.electric,
             image: AssetPath.electricIcon),
@@ -243,7 +255,9 @@ class _HomeState extends State<Home> {
               !AuthController.i.isLoginSignUp.value
                   ? signinSignUpPopup()
                   : AppNavigation.navigateTo(
-                      context, AppRoutes.MyAppointmentScreenRoute);
+                      context, AppRoutes.servicesScreenRoute,
+                      arguments: ServiceRoutingArgument(
+                          serviceName: AppStrings.plumber));
             },
             text: AppStrings.plumber,
             image: AssetPath.plumberIcon),
@@ -326,7 +340,7 @@ class _HomeState extends State<Home> {
               !AuthController.i.isLoginSignUp.value
                   ? signinSignUpPopup()
                   : AppNavigation.navigateTo(
-                      context, AppRoutes.MyAppointmentScreenRoute);
+                      context, AppRoutes.listOfServicesScreenRoute);
             },
             child: CustomText(
               text: AppStrings.seeAll,

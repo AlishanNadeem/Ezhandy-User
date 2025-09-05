@@ -17,7 +17,7 @@ class PercentageIndicator extends StatelessWidget {
       lineHeight: 8.h,
       percent: percent,
       backgroundColor: AppColors.white,
-      progressColor: AppColors.green,
+      progressColor: AppColors.orange,
       barRadius: Radius.circular(9),
     );
   }
