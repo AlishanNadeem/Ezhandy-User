@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/booking/view/my_booking.dart';
 import 'package:ezhandy_user/module/core/chat/view/messages.dart';
 import 'package:ezhandy_user/module/core/home/view/home.dart';
 import 'package:ezhandy_user/module/core/menu/view/menu.dart';
+import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -101,8 +103,7 @@ class _MainMenuState extends State<MainMenu> {
         padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
         child: Column(
           children: [
-     Platform.isAndroid?       10.verticalSpace:
-            50.verticalSpace,
+            Platform.isAndroid ? 10.verticalSpace : 50.verticalSpace,
             _widgetOptions.elementAt(HomeController.i.selectedTab.value),
           ],
         ),
@@ -135,14 +136,18 @@ class _MainMenuState extends State<MainMenu> {
       5.horizontalSpace,
       GestureDetector(
           onTap: () {
-            setState(() {
-              HomeController.i.selectedTab.value = 0;
-              // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
-              // AppStrings.home;
-              // SocketService.instance?.dispose();
-              // HomeController.i.allOrderList.clear();
-              // HomeController.i.allOrderList.refresh();
-            });
+            if (!AuthController.i.isLoginSignUp.value) {
+              signinSignUpPopup();
+            } else {
+              setState(() {
+                HomeController.i.selectedTab.value = 0;
+                // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
+                // AppStrings.home;
+                // SocketService.instance?.dispose();
+                // HomeController.i.allOrderList.clear();
+                // HomeController.i.allOrderList.refresh();
+              });
+            }
           },
           child: bottom_items(
               0,
@@ -152,10 +157,14 @@ class _MainMenuState extends State<MainMenu> {
               AppStrings.bottomBarList[0])),
       GestureDetector(
           onTap: () {
-            setState(() {
-              HomeController.i.selectedTab.value = 1;
-              // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
-            });
+            if (!AuthController.i.isLoginSignUp.value) {
+              signinSignUpPopup();
+            } else {
+              setState(() {
+                HomeController.i.selectedTab.value = 1;
+                // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
+              });
+            }
           },
           child: bottom_items(
               1,
@@ -165,10 +174,14 @@ class _MainMenuState extends State<MainMenu> {
               AppStrings.bottomBarList[1])),
       GestureDetector(
           onTap: () {
-            setState(() {
-              HomeController.i.selectedTab.value = 2;
-              // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
-            });
+            if (!AuthController.i.isLoginSignUp.value) {
+              signinSignUpPopup();
+            } else {
+              setState(() {
+                HomeController.i.selectedTab.value = 2;
+                // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
+              });
+            }
           },
           child: bottom_items(
               2,
@@ -178,10 +191,14 @@ class _MainMenuState extends State<MainMenu> {
               AppStrings.bottomBarList[2])),
       GestureDetector(
           onTap: () {
-            setState(() {
-              HomeController.i.selectedTab.value = 3;
-              // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
-            });
+            if (!AuthController.i.isLoginSignUp.value) {
+              signinSignUpPopup();
+            } else {
+              setState(() {
+                HomeController.i.selectedTab.value = 3;
+                // title = AppStrings.committedUserList[HomeController.i.selectedTab.value];
+              });
+            }
           },
           child: bottom_items(
               3,
@@ -223,6 +240,29 @@ class _MainMenuState extends State<MainMenu> {
               text: text),
         ),
       ]),
+    );
+  }
+
+  void signinSignUpPopup() {
+    AppDialogs.showSuccessDialog(
+      context,
+      barrierDismissible: true,
+      description: AppStrings.inOrderToAccessThis,
+      // title: AppStrings.deleteDocument,
+      image: AssetPath.tumbIcon,
+      isDoneShow: false,
+      btnTxt1: AppStrings.logIn.toUpperCase(),
+      onTap1: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+      },
+      btnTxt2: AppStrings.signUp.toUpperCase(),
+      onTap2: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+        AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
+        // AppNavigation.navigatorPop(context);
+      },
     );
   }
 }

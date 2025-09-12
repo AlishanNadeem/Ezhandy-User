@@ -34,8 +34,8 @@ class _EditUserProfileState extends State<EditUserProfile> {
   /// Text Editing Controllers
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController sportController = TextEditingController();
-  final TextEditingController statusController = TextEditingController();
+  // final TextEditingController sportController = TextEditingController();
+  // final TextEditingController statusController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   File? _profileImage;
 
@@ -84,10 +84,10 @@ class _EditUserProfileState extends State<EditUserProfile> {
                         10.verticalSpace,
                         _phoneNumberTextField(),
                         SizedBox(height: 0.02.sh),
-                        CustomText(text: AppStrings.sport + "*"),
-                        10.verticalSpace,
-                        _sportTextField(),
-                        SizedBox(height: 0.02.sh),
+                        // CustomText(text: AppStrings.referralCode + "*"),
+                        // 10.verticalSpace,
+                        // _sportTextField(),
+                        // SizedBox(height: 0.02.sh),
                         // CustomText(text: AppStrings.status + "*"),
                         // 10.verticalSpace,
                         // _statusTextField(),
@@ -139,39 +139,39 @@ class _EditUserProfileState extends State<EditUserProfile> {
     );
   }
 
-  Widget _sportTextField() {
-    return CustomTextField(
-      hint: AppStrings.enterSport,
-      divider: false,
-      prefxicon: AssetPath.convertIcon,
-      label: false,
+  // Widget _sportTextField() {
+  //   return CustomTextField(
+  //     hint: AppStrings.enterReferralCode,
+  //     divider: false,
+  //     prefxicon: AssetPath.convertIcon,
+  //     label: false,
 
-      // keyboardType: TextInputType.emailAddress,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(Constants.nameMaxLength)
-      ],
-      controller: sportController,
-      validator: (value) => value?.validateEmpty(AppStrings.sport),
-      // error_text: error_email,
-    );
-  }
+  //     // keyboardType: TextInputType.emailAddress,
+  //     inputFormatters: [
+  //       LengthLimitingTextInputFormatter(Constants.nameMaxLength)
+  //     ],
+  //     controller: sportController,
+  //     validator: (value) => value?.validateEmpty(AppStrings.referralCode),
+  //     // error_text: error_email,
+  //   );
+  // }
 
-  Widget _statusTextField() {
-    return CustomTextField(
-      hint: AppStrings.EnterStatus,
-      divider: false,
-      prefxicon: AssetPath.statusUpIcon,
-      label: false,
+  // Widget _statusTextField() {
+  //   return CustomTextField(
+  //     hint: AppStrings.EnterStatus,
+  //     divider: false,
+  //     prefxicon: AssetPath.statusUpIcon,
+  //     label: false,
 
-      // keyboardType: TextInputType.emailAddress,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(Constants.nameMaxLength)
-      ],
-      controller: statusController,
-      validator: (value) => value?.validateEmpty(AppStrings.status),
-      // error_text: error_email,
-    );
-  }
+  //     // keyboardType: TextInputType.emailAddress,
+  //     inputFormatters: [
+  //       LengthLimitingTextInputFormatter(Constants.nameMaxLength)
+  //     ],
+  //     controller: statusController,
+  //     validator: (value) => value?.validateEmpty(AppStrings.status),
+  //     // error_text: error_email,
+  //   );
+  // }
 
   Widget _phoneNumberTextField() {
     return CustomTextField(

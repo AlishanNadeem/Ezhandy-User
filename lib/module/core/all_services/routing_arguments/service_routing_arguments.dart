@@ -1,4 +1,5 @@
 class ServiceRoutingArgument {
-  String serviceName;
-  ServiceRoutingArgument({required this.serviceName});
+  String? serviceName;
+  String? type;
+  ServiceRoutingArgument({ this.serviceName,this.type});
 }

@@ -235,9 +235,11 @@ class AppStrings {
   static const String enterFullName = "Enter Full Name";
   static const String phoneNumber = "Phone Number";
   static const String enterPhoneNumber = "Enter Phone Number";
+  static const String enterMobileNumberToGetStart = "Enter your mobile number to get started.";
+  static const String receiveSms = "You'll receive an SMS to confirm your number. Standard message and data rates apply.";
   static const String optional = "(Optional)";
-  static const String sport = "Sport";
-  static const String enterSport = "Enter Sport";
+  static const String referralCode = "Referral Code";
+  static const String enterReferralCode = "Enter Referral Code";
   static const String status = "Status";
   static const String activeNow = "Active Now";
   static const String active = "Active";
@@ -336,8 +338,7 @@ class AppStrings {
   static const String bookingDate = "Booking Date";
   static const String serviceDate = "Service Date";
   static const String serviceTime = "Service Time";
-    static const String listOfServices =
-      "List of Services";
+  static const String listOfServices = "List of Services";
 
 //   Subscription
   static const String subscriptionRequiredMessage =
@@ -393,9 +394,16 @@ class AppStrings {
   static const String editProfile = 'Edit Profile';
   static const String changePassword = 'Change Password';
   static const String update = "Update";
+  static const String primaryService = "Section 1 - Primary Service";
+  static const String secondaryService = "Section 2 - Secondary Service";
+  static const String discussAndConfirmDetails =
+      "You can discuss and confirm this with the service provider later. Charges will be added only if agreed.";
   static const String congratulation = "Congratulation";
   static const String done = "Done";
   static const String ok = "Ok";
+  static const String bookQuiceServiceDetails =
+      "Are you sure you want to book the Quick Service";
+  static const String yourBookingHasBeenDone = "Your Booking Has Been Done";
   static const String accountDeleteSuccessfully = "Account Delete Successfully";
   static const String areYouSureWantToDeleteThisAccount =
       "Are You Sure Want To Delete This \n Account?";
@@ -431,6 +439,8 @@ class AppStrings {
 //   Appoinyment
   static const String serviceName = "Service Name";
   static const String service = "Service";
+  static const String selectService = "Select Service";
+  static const String serviceDetails = "Service Details";
   static const String serviceReview = "Service Review";
   static const String services = "Services";
   static const String schedule = "Schedule";
@@ -459,6 +469,7 @@ class AppStrings {
   static const String hold = "Hold";
   static const String completed = "Completed";
   static const String past = "Past";
+  static const String pastWork = "Past Work";
   static const String appointmentType = "Appointment Type";
   // static const String bookingId = "Booking ID";
   static const String charges = "Charges";
@@ -470,14 +481,18 @@ class AppStrings {
   static const String payFurtherAmount = "Pay Further Amount";
   static const String reportIssue = "Report Issue";
   static const String review = "Review";
-    static const String goToHome = "Go To Home";
-    static const String withdraw = "Withdraw";
+  static const String goToHome = "Go To Home";
+  static const String withdraw = "Withdraw";
 
-  static const String amountToBankAccount = "Are you sure you want to withdraw this amount to your bank account?";
-  static const String refundPolicyWork = "Refund policy works according to the client-provided system";
+  static const String amountToBankAccount =
+      "Are you sure you want to withdraw this amount to your bank account?";
+  static const String refundPolicyWork =
+      "Refund policy works according to the client-provided system";
   static const String refundRequestSubmitted = "Refund Request Submitted";
-  static const String oneOfOurRepresentative = "One of our representative will contact you for further process";
+  static const String oneOfOurRepresentative =
+      "One of our representative will contact you for further process";
   static const String additional = "Additional";
+  static const String additionalServices = "Additional Services";
   static const String bookingDetails = "Booking Details";
   static const String providerDetails = "Provider Details";
   static const String details = "Details";
@@ -613,8 +628,7 @@ class AppStrings {
       "I authorize [Your Company Name] to submit this EIN application to the IRS on my behalf.";
   static const String iConfirm =
       "I confirm that the information provided is accurate and complete.";
-  static const String confirm =
-      "Confirm";
+  static const String confirm = "Confirm";
   static const String submitRequest = "Submit Request";
   static const String selectOption = "Select Option";
 
@@ -732,6 +746,13 @@ class AppStrings {
   static const String areYouSureWantToDeleteThisDocument =
       "Are You Sure Want To Delete This \n Document?";
 
+  static const String payment3 = "\$200.00/Mo";
+  static const String payment6 = "\$102.10/Mo";
+  static const String payment12 = "\$53.40/Mo";
+  static const String creditCard = "Credit Card";
+  static const String googlePlay = "Google Play";
+  static const String applePay = "Apple Pay";
+  static const String affirm = "Affirm";
   static const String termsAndConditions = "Terms & Conditions";
 
   static const String thisFeatureIsUnderDiscussionRightNow =
@@ -1029,6 +1050,12 @@ class AppStrings {
   /// Plan Out
   static const appRecommended = 'App Recommended';
   static const bookAReservation = 'Book a Reservation';
+  static const bookQuickServices = 'Book Quick Services';
+  static const serviceSelection = 'Service Selection';
+  static const choosePaymentMethod = 'Choose Your Payment Method';
+  static const selectAPaymentPlan = 'Select A Payment Plan';
+  static const payOverTime = 'Pay Over Time';
+  static const signInWithAffirm = 'Sign In With Affirm';
   static const dateTime = 'Date & Time';
   static const reservationPlaced =
       'Your Reservation Has Been Successfully Placed!';

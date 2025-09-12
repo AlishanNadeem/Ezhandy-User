@@ -58,30 +58,30 @@ class _CustomCalendarState extends State<CustomCalendar> {
         leftChevronMargin: EdgeInsets.zero,
         leftChevronIcon: CustomContainer(
             isPadding: false,
-            borderColor: AppColors.green,
+            borderColor: AppColors.orange,
             child: Icon(
               Icons.chevron_left,
-              color: AppColors.blueDark,
+              color: AppColors.orange,
               size: 30.sp,
             )),
         rightChevronIcon: CustomContainer(
             isPadding: false,
-            borderColor: AppColors.green,
+            borderColor: AppColors.orange,
             child: Icon(
               Icons.chevron_right,
-              color: AppColors.blueDark,
+              color: AppColors.orange,
               size: 30.sp,
             )),
       ),
       calendarStyle: CalendarStyle(
-        outsideTextStyle: TextStyle(color: AppColors.green),
+        outsideTextStyle: TextStyle(color: AppColors.greyLight),
         defaultTextStyle: TextStyle(color: Colors.black),
         weekendTextStyle: TextStyle(color: Colors.black),
         todayDecoration: const BoxDecoration(
           color: Colors.transparent,
         ),
         selectedDecoration: BoxDecoration(
-            color: AppColors.green,
+            color: AppColors.orange,
             // shape: BoxShape.circle,
             borderRadius: BorderRadius.circular(10.r)),
         selectedTextStyle: const TextStyle(color: Colors.white),
@@ -97,8 +97,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
             decoration: highlighted
                 ? BoxDecoration(
                     color: isSameDay(selectedDay!, day)
-                        ? AppColors.blueDark
-                        : AppColors.blueDark,
+                        ? AppColors.orange
+                        : AppColors.orange.withOpacity(0.7),
                     // : Colors.deepPurple.withOpacity(0.7),
                     // shape: BoxShape.circle,
                     borderRadius: BorderRadius.circular(10.r))
@@ -115,7 +115,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
           return Center(
             child: Text(
               '${day.day}',
-              style: const TextStyle(color: AppColors.green),
+              style: const TextStyle(color: AppColors.red),
             ),
           );
         },

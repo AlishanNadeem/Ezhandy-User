@@ -198,7 +198,7 @@ class _MenuState extends State<Menu> {
     AppNavigation.navigateTo(context, AppRoutes.bookingHistoryScreenRoute);
   }
   void _favouritesTap() {
-    // AppNavigation.navigateTo(context, AppRoutes.bookingHistoryScreenRoute);
+    AppNavigation.navigateTo(context, AppRoutes.favouritesScreenRoute);
   }
 
   void _signOutTap() {

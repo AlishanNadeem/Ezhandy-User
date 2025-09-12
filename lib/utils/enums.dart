@@ -12,6 +12,8 @@ enum OtpType { signup, forget }
 
 enum OtpCodeType { phone, email }
 
+enum ServiceType { instant, schedule }
+
 // enum OptionType { message, call, email }
 
 // enum SocialType { email, google,facebook, apple, phone }

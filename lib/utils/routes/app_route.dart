@@ -87,6 +87,13 @@ class AppRoutes {
   static const String listOfServicesScreenRoute = "list_of_services_screenRoute";
   static const String servicesScreenRoute = "services_screenRoute";
   static const String providerProfileScreenRoute = "provider_profile_screenRoute";
+  static const String serviceDetailsScreenRoute = "service_details_screenRoute";
+  static const String serviceSelectionScreenRoute = "service_selection_screenRoute";
+  static const String chooseYourPaymentMethodScreenRoute = "choose_your_payment_method_screenRoute";
+  static const String signInWithAffirmScreenRoute = "signin_with_affirm_screenRoute";
+  static const String selectAPaymentPlanScreenRoute = "select_a_payment_plan_screenRoute";
+  static const String payOverTimeScreenRoute = "pay_over_time_screenRoute";
+  static const String scheduleBookingScreenRoute = "schedule_booking_screenRoute";
 
   // static const String changePasswordScreenRoute = "/change_password_screen";
 

@@ -18,13 +18,15 @@ import 'package:ezhandy_user/widgets/row/two_text_row.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class ProviderProfile extends StatefulWidget {
-  const ProviderProfile({super.key});
+  String? type;
+  ProviderProfile({this.type, super.key});
 
   @override
   State<ProviderProfile> createState() => _ProviderProfileState();
 }
 
 class _ProviderProfileState extends State<ProviderProfile> {
+  bool isFav = false;
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -117,6 +119,31 @@ class _ProviderProfileState extends State<ProviderProfile> {
                 ],
               ),
               10.verticalSpace,
+              singleContainer(
+                height: 200.h,
+                amount: 2 + 13,
+                index: 3,
+                isFav: isFav,
+                ontapLike: () {
+                  setState(() {
+                    isFav = !isFav;
+                  });
+                },
+                onTap: () {
+                  AppNavigation.navigateTo(
+                    context,
+                    AppRoutes.serviceDetailsScreenRoute,
+                    arguments: ServiceRoutingArgument(type: widget.type),
+                  );
+                },
+              ),
+              10.verticalSpace,
+              CustomText(
+                text: AppStrings.additionalServices,
+                fontWeight: FontWeight.w700,
+                fontSize: 16.sp,
+              ),
+              10.verticalSpace,
               SizedBox(
                 height: 0.3.sh,
                 child: ListView.separated(
@@ -124,16 +151,21 @@ class _ProviderProfileState extends State<ProviderProfile> {
                   scrollDirection: Axis.horizontal,
                   itemCount: 10,
                   itemBuilder: (context, index) {
-                    return singleContainer(amount: index+13,
+                    return singleContainer(
+                      amount: index + 13,
                       index: index,
+                      isFav: isFav,
+                      ontapLike: () {
+                        setState(() {
+                          isFav = !isFav;
+                        });
+                      },
                       onTap: () {
-                        // AppNavigation.navigateTo(
-                        //   context,
-                        //   AppRoutes.servicesScreenRoute,
-                        //   arguments: ServiceRoutingArgument(
-                        //     serviceName: AppStrings.titleName,
-                        //   ),
-                        // );
+                        AppNavigation.navigateTo(
+                          context,
+                          AppRoutes.serviceDetailsScreenRoute,
+                          arguments: ServiceRoutingArgument(type: widget.type),
+                        );
                       },
                     );
                   },
@@ -149,30 +181,43 @@ class _ProviderProfileState extends State<ProviderProfile> {
   }
 
   Widget singleContainer(
-      {required VoidCallback onTap, required int index, amount}) {
+      {required VoidCallback onTap,
+      required int index,
+      amount,
+      ontapLike,
+      isFav,
+      height}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: height,
         width: 0.95.sw, // fixed width for horizontal scrolling
         margin: EdgeInsets.only(bottom: 10.h),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.r),
-          image: const DecorationImage(
-            fit: BoxFit.cover,
-             image: 
-                
-                AssetImage(AssetPath.tempCleaningImage)
-                
+            borderRadius: BorderRadius.circular(10.r),
+            image: const DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(AssetPath.tempCleaningImage)
+
                 // NetworkImage(
                 //     "https://www.pristinehome.com.au/wp-content/uploads/2018/07/How-to-Choose-the-Best-House-Cleaning-Service.jpg")
-                    )),
+                )),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.end,
           children: [
             10.verticalSpace,
             Row(
               children: [
-                SizedBox(),
+                GestureDetector(
+                    onTap: ontapLike,
+                    child: Icon(
+                      isFav
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      size: 30.sp,
+                    )),
+                // Icon(Icons.favorite_border_rounded),
+
                 Spacer(),
                 Container(
                   padding: const EdgeInsets.all(15),

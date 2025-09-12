@@ -10,8 +10,17 @@ import 'package:ezhandy_user/module/auth/verification/routing_arguments/otp_veri
 import 'package:ezhandy_user/module/auth/verification/view/otp_verification_screen.dart';
 import 'package:ezhandy_user/module/core/affiliate_earning/view/affiliate_earning.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/all_services/view/choose_payment_method.dart';
+import 'package:ezhandy_user/module/core/all_services/view/favourites_services.dart';
 import 'package:ezhandy_user/module/core/all_services/view/list_of_services.dart';
+import 'package:ezhandy_user/module/core/all_services/view/pay_over_time.dart';
+import 'package:ezhandy_user/module/core/all_services/view/schedule_booking.dart';
+import 'package:ezhandy_user/module/core/all_services/view/select_a_payment_plan.dart';
+import 'package:ezhandy_user/module/core/all_services/view/service_details.dart';
+import 'package:ezhandy_user/module/core/all_services/view/service_selection.dart';
+import 'package:ezhandy_user/module/core/all_services/view/signin_with_affirm.dart';
 import 'package:ezhandy_user/module/core/all_services/view/single_service.dart';
+import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/booking/view/booking_details.dart';
 import 'package:ezhandy_user/module/core/booking/view/booking_history.dart';
 import 'package:ezhandy_user/module/core/booking/view/invoice_screen.dart';
@@ -28,7 +37,6 @@ import 'package:ezhandy_user/module/core/rating_review_report/view/rating_screen
 import 'package:ezhandy_user/module/core/rating_review_report/view/report_issue.dart';
 import 'package:ezhandy_user/module/core/rating_review_report/view/write_review_screen.dart';
 import 'package:ezhandy_user/module/core/transaction_history/transaction_history.dart';
-import 'package:ezhandy_user/utils/routes/routing_arguments/booking_routing_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:ezhandy_user/module/auth/verification/view/verification_selection_screen.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
@@ -44,7 +52,7 @@ class AppRouter {
         switch (routeSettings.name) {
           case AppRoutes.splashScreenRoute:
             return const SplashScreen();
-case AppRoutes.splash1ScreenRoute:
+          case AppRoutes.splash1ScreenRoute:
             return const SplashSliderScreen();
           case AppRoutes.loginScreenRoute:
             return LogIn();
@@ -130,22 +138,49 @@ case AppRoutes.splash1ScreenRoute:
             return WriteReviewScreen();
           case AppRoutes.reportIssueScreenRoute:
             return ReportIssue();
-          case AppRoutes.favouritesScreenRoute:
-            return ReportIssue();
+          // case AppRoutes.favouritesScreenRoute:
+          //   return ReportIssue();
           case AppRoutes.listOfServicesScreenRoute:
-            return ListOfServices();
-          case AppRoutes.providerProfileScreenRoute:
-            return ProviderProfile();
-             case AppRoutes.servicesScreenRoute:
             ServiceRoutingArgument serviceArgument =
                 routeSettings.arguments as ServiceRoutingArgument;
-            return SingleService(serviceName: serviceArgument.serviceName,);
-             case AppRoutes.chatScreenRoute:
+          
+            return ListOfServices(type: serviceArgument.type,);
+          case AppRoutes.providerProfileScreenRoute:
+            ServiceRoutingArgument serviceArgument =
+                routeSettings.arguments as ServiceRoutingArgument;
+            return ProviderProfile(type: serviceArgument.type,);
+          case AppRoutes.servicesScreenRoute:
+            ServiceRoutingArgument serviceArgument =
+                routeSettings.arguments as ServiceRoutingArgument;
+            return SingleService(
+              serviceName: serviceArgument.serviceName,
+              type: serviceArgument.type,
+            );
+          case AppRoutes.chatScreenRoute:
             ChatRoutingArgument chatArgument =
                 routeSettings.arguments as ChatRoutingArgument;
-            return ChatScreen(isBooking: chatArgument.isBooking??false,);
-          // case AppRoutes.legalIntelligenceSupportScreenRoute:
-          //   return LegalIntelligenceSupport();
+            return ChatScreen(
+              isBooking: chatArgument.isBooking ?? false,
+            );
+          case AppRoutes.serviceDetailsScreenRoute:
+            ServiceRoutingArgument serviceArgument =
+                routeSettings.arguments as ServiceRoutingArgument;
+          
+            return ServiceDetails(type:serviceArgument.type);
+          case AppRoutes.serviceSelectionScreenRoute:
+            return ServiceSelection();
+          case AppRoutes.chooseYourPaymentMethodScreenRoute:
+            return ChoosePaymentMethod();
+          case AppRoutes.signInWithAffirmScreenRoute:
+            return SignInWithAffirm();
+          case AppRoutes.selectAPaymentPlanScreenRoute:
+            return SelectAPaymentPlan();
+          case AppRoutes.payOverTimeScreenRoute:
+            return PayOverTime();
+          case AppRoutes.favouritesScreenRoute:
+            return FavouritesServices();
+          case AppRoutes.scheduleBookingScreenRoute:
+            return ScheduleBooking();
           // case AppRoutes.corporateGrowthPackageScreenRoute:
           //   return CorporateGrowthPackage();
           // case AppRoutes.brandStrategySponsorshipScreenRoute:

@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
@@ -20,8 +21,9 @@ import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class SingleService extends StatefulWidget {
-  String? serviceName;
-  SingleService({this.serviceName, super.key});
+  String? serviceName,type;
+
+  SingleService({this.serviceName,this.type, super.key});
 
   @override
   State<SingleService> createState() => _SingleServiceState();
@@ -57,7 +59,7 @@ class _SingleServiceState extends State<SingleService> {
                     return singleWidget(
                       ontap: () {
                         AppNavigation.navigateTo(
-                            context, AppRoutes.providerProfileScreenRoute);
+                            context, AppRoutes.providerProfileScreenRoute,arguments: ServiceRoutingArgument(type: widget.type));
                       },
                       address: AppStrings.lorem5,
                       amount: (index + 12).toString(),

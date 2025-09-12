@@ -2,7 +2,6 @@ import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arg
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
-import 'package:ezhandy_user/utils/routes/routing_arguments/booking_routing_arguments.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/profile_widget/user_image_widget.dart';

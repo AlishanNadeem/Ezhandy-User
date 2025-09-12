@@ -107,9 +107,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           )
                         : imageWidget(image: isAction!),
                   )
-                : SizedBox(
-                    width: 46.w,
-                  ))
+                : 
+                SizedBox.shrink()
+                
+                // SizedBox(
+                //     width: 46.w,
+                //   )
+                  )
       ],
     );
   }

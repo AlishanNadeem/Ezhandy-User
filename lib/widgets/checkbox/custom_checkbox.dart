@@ -41,7 +41,7 @@ class CheckBoxWidgetState extends State<CheckBoxWidget> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         GestureDetector(
           onTap: widget.ontapCheck,
@@ -53,12 +53,12 @@ class CheckBoxWidgetState extends State<CheckBoxWidget> {
               // borderRadius: BorderRadius.circular(5.0),
               shape: BoxShape.circle,
 
-              color: widget.isChecked ? AppColors.blueDark : AppColors.transparent,
+              color: widget.isChecked ? AppColors.orange : AppColors.transparent,
               // gradient: widget.isChecked ? AppGradients.buttonGradient : null,
               border: widget.isChecked
                   ? null
                   : Border.all(
-                      color:  AppColors.blueDark,
+                      color:  AppColors.orange,
                       // width: 2.0, // Border width
                     ),
             ),
@@ -77,11 +77,11 @@ class CheckBoxWidgetState extends State<CheckBoxWidget> {
         Expanded(
           child: CustomText(
             text: widget.title,
-            fontSize: 12.sp,
+            fontSize: 16.sp,
 
             // color:
             //     widget.checkColor == null ? AppColors.white : AppColors.black,
-            // fontWeight: FontWeight.bold
+            fontWeight: FontWeight.w600
           ),
         ),
       ],

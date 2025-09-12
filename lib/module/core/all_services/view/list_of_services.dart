@@ -21,7 +21,9 @@ import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class ListOfServices extends StatefulWidget {
-  const ListOfServices({super.key});
+  String? type;
+
+  ListOfServices({this.type, super.key});
 
   @override
   State<ListOfServices> createState() => _ListOfServicesState();
@@ -70,7 +72,8 @@ class _ListOfServicesState extends State<ListOfServices> {
                           AppNavigation.navigateTo(
                               context, AppRoutes.servicesScreenRoute,
                               arguments: ServiceRoutingArgument(
-                                  serviceName: AppStrings.titleName));
+                                  serviceName: AppStrings.titleName,
+                                  type: widget.type));
                         }
                         // ontap: () {
                         //   // AppNavigation.navigateTo(context, AppRoutes.chatScreenRoute,
@@ -104,13 +107,11 @@ class _ListOfServicesState extends State<ListOfServices> {
             borderRadius: BorderRadius.circular(10.r),
             image: DecorationImage(
                 fit: BoxFit.cover,
-                image: 
-                
-                AssetImage(AssetPath.tempCleaningImage)
-                
+                image: AssetImage(AssetPath.tempCleaningImage)
+
                 // NetworkImage(
                 //     "https://www.pristinehome.com.au/wp-content/uploads/2018/07/How-to-Choose-the-Best-House-Cleaning-Service.jpg")
-                    )),
+                )),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [10.verticalSpace, detailsContainer()],
