@@ -1,4 +1,4 @@
-package com.example.ezhandy_user
+package com.pixelgenesys.ezhandy.user
 
 import io.flutter.embedding.android.FlutterActivity
 
