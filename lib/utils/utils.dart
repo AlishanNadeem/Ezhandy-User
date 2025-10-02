@@ -257,7 +257,7 @@ class Utils {
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: "Edit Image",
-            toolbarColor: AppColors.green,
+            toolbarColor: AppColors.orange,
             toolbarWidgetColor:
                 AppColors.white, // Replace with your AppColors.white
             initAspectRatio: CropAspectRatioPreset.original,

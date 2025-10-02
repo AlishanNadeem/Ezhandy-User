@@ -1,4 +1,6 @@
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
+import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
@@ -57,9 +59,9 @@ class _FavouritesServicesState extends State<FavouritesServices> {
                   AppNavigation.navigateTo(
                     context,
                     AppRoutes.serviceDetailsScreenRoute,
-                    // arguments: ServiceRoutingArgument(
-                    //   serviceName: AppStrings.titleName,
-                    // ),
+                    arguments: ServiceRoutingArgument(
+                      type: ServiceType.instant.name,
+                    ),
                   );
                 },
               );

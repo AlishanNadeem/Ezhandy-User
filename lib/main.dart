@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
                 primarySwatch: customColor,
                 unselectedWidgetColor: AppColors.transparent,
                 colorScheme: ColorScheme.fromSwatch()
-                    .copyWith(primary: AppColors.green)),
+                    .copyWith(primary: AppColors.orange)),
             navigatorObservers: [
               KeyboardDismissObserver(),
               BotToastNavigatorObserver()

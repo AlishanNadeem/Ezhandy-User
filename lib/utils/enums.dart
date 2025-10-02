@@ -22,7 +22,7 @@ enum WebContentType { tc, pp, ap, rp }
 
 // enum ProfileType { create, edit, bottomBar, none }
 
-// enum AddEditType { add, edit }
+enum AddEditType { add, edit }
 
 // enum StatusType { Approved, Pending, Canceled, Past }
 

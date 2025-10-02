@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ezhandy_user/module/auth/content/routing_arguments/content_routing_arguments.dart';
@@ -20,6 +21,10 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+  bool isExpanded = false;
+  final ExpansionTileController _controller = ExpansionTileController();
+  String selectedValue = "1 Minute"; // Default selected
+
   List<VoidCallback> tapList = [];
   @override
   void initState() {
@@ -30,6 +35,7 @@ class _MenuState extends State<Menu> {
       _historyOfBookingsTap,
       _favouritesTap,
       _aboutUsTap,
+      _marketPlaceTap,
       _contactUsTap,
       _privacyPolicyTap,
       _refundPolicyTap,
@@ -66,25 +72,93 @@ class _MenuState extends State<Menu> {
         itemCount: AppStrings.menuList.length,
         padding: EdgeInsets.zero,
         itemBuilder: (BuildContext ctxt, int index) {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.h),
-            child: menuListTile(
+          if (index == 6) {
+            // Show ExpansionTile instead of normal row
+            return expansionWidget(context, index);
+          } else {
+            // Normal tile
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.h),
+              child: menuListTile(
                 isArrowShow: !(index == AppStrings.menuList.length - 1),
-                // context: context,
                 assetPath: AssetPath.menuIconList[index],
                 title: AppStrings.menuList[index],
-                onTap:
-                    //  AuthController.i.role == RoleType.driver.name
-                    //     ? driverTapList[index]
-                    //     :
-                    tapList[index]),
-          );
+                onTap: tapList[index],
+              ),
+            );
+          }
         },
         separatorBuilder: (BuildContext context, int index) {
-          return Divider(
-            color: AppColors.grey,
-          );
+          return 5.verticalSpace;
+          // return Divider(color: AppColors.grey);
         },
+      ),
+    );
+  }
+
+  Theme expansionWidget(context, int index) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        controller: _controller,
+        // collapsedIconColor: AppColors.green,
+        onExpansionChanged: (expanded) {
+          setState(() {
+            isExpanded = expanded;
+          });
+        },
+        trailing: AnimatedRotation(
+          duration: const Duration(milliseconds: 200),
+          turns: isExpanded ? 0.25 : 0, // rotate when expanded
+          child: const Icon(
+            Icons.arrow_forward_ios_rounded,
+            color: AppColors.orange,
+          ),
+        ),
+        leading: Image.asset(
+          AssetPath.menuIconList[index],
+          height: 30.h,
+          width: 30.w,
+          color: AppColors.orange,
+        ),
+        title: CustomText(
+          text: AppStrings.menuList[index],
+          fontSize: 16.sp,
+        ),
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.only(left: 70, right: 0),
+            title: const Text("Products"),
+            onTap: () {
+              setState(() {
+                // selectedValue = item;
+                isExpanded = false;
+              });
+              _controller.collapse();
+              AppNavigation.navigateTo(context,AppRoutes.marketPlaceScreenRoute);
+            },
+            trailing: const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: AppColors.orange,
+            ),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.only(left: 70, right: 0),
+            title: const Text("order"),
+            onTap: () {
+              setState(() {
+                // selectedValue = item;
+                isExpanded = false;
+              });
+              _controller.collapse();
+            },
+            trailing: const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: AppColors.orange,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -184,8 +258,24 @@ class _MenuState extends State<Menu> {
             title: AppStrings.aboutUs, type: WebContentType.ap.name));
   }
 
+  void _marketPlaceTap() {
+    // AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
+    //     arguments: ContentRoutingArgument(
+    //         title: AppStrings.aboutUs, type: WebContentType.ap.name));
+  }
+  void _productTap() {
+    // AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
+    //     arguments: ContentRoutingArgument(
+    //         title: AppStrings.aboutUs, type: WebContentType.ap.name));
+  }
+  void _orderTap() {
+    // AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
+    //     arguments: ContentRoutingArgument(
+    //         title: AppStrings.aboutUs, type: WebContentType.ap.name));
+  }
+
   void _refundPolicyTap() {
-       AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
+    AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
         arguments: ContentRoutingArgument(
             title: AppStrings.refundPolicy, type: WebContentType.rp.name));
   }
@@ -197,6 +287,7 @@ class _MenuState extends State<Menu> {
   void _historyOfBookingsTap() {
     AppNavigation.navigateTo(context, AppRoutes.bookingHistoryScreenRoute);
   }
+
   void _favouritesTap() {
     AppNavigation.navigateTo(context, AppRoutes.favouritesScreenRoute);
   }

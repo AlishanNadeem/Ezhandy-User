@@ -57,6 +57,7 @@ class AppStrings {
     historyOfBookings,
     favourites,
     aboutUs,
+    marketPlace,
     contactUs,
     privacyPolicy,
     refundPolicy,
@@ -233,6 +234,8 @@ class AppStrings {
   static const String fullName = "Full Name";
   static const String enterEmailAddress = "Enter Email Address";
   static const String enterFullName = "Enter Full Name";
+  static const String enterName = "Enter Name";
+  static const String name = "Name";
   static const String phoneNumber = "Phone Number";
   static const String enterPhoneNumber = "Enter Phone Number";
   static const String enterMobileNumberToGetStart = "Enter your mobile number to get started.";
@@ -246,6 +249,7 @@ class AppStrings {
   static const String EnterStatus = "Enter Status";
   static const String uploadProfileImage = "Upload Profile Image";
   static const String upload = "Upload";
+  static const String uploadImage = "Upload Image";
   static const String enterUserName = "Enter User Name";
   static const String enterUserEmail = "Enter User Email";
   static const String enterPassword = "Enter Password";
@@ -304,6 +308,10 @@ class AppStrings {
       "Payment successful. A confirmation email has been sent to your registered address.";
   static const String profileUpdatedSuccessful =
       "Your Profile has been Updated successfully";
+  static const String productHasBeenUpdatedSuccessfully =
+      "Product has been Updated Successfully";
+  static const String productHasBeenAddedSuccessfully =
+      "Product has been Added Successfully";
   static const String yourMessageHasBeenSubmittedSuccessfully =
       "Your message has been submitted successfully";
   static const String einRegistrationSubmitted =
@@ -384,6 +392,7 @@ class AppStrings {
   static const String historyOfBookings = "History Of Bookings";
   static const String favourites = "Favourites";
   static const String aboutUs = "About Us";
+  static const String marketPlace = "Market Place";
   static const String contactUs = "Contact Us";
   static const String privacyPolicy = "Privacy Policy";
   static const String refundPolicy = "Refund Policy";
@@ -419,6 +428,7 @@ class AppStrings {
   static const String enterSubject = "Enter Subject";
   static const String message = "Message";
   static const String enterMessage = "Enter Message";
+  // static const String enterdescription = "Enter Description";
 
 //   Faqs
   static const String question = 'Question';
@@ -788,6 +798,7 @@ class AppStrings {
   static const closingTime = 'Closing Time';
   static const String continuee = "Continue";
   static const String save = "Save";
+  static const String add = "Add";
   static const String invitePartner = "Invite Partner";
   static const String addPartnersProfile = "Add Partner's Profile";
   static const String businessName = "Business Name";
@@ -834,6 +845,11 @@ class AppStrings {
       "Please look into the camera and hold still.";
   static const String recognised = "50% Recognised";
 
+//Product
+  static const String addProduct = "Add Product";
+  static const String editProduct = "Edit Product";
+
+
   /// Bottom Nav Bar
   static const String home = "Home";
   static const String search = "Search";
@@ -842,6 +858,7 @@ class AppStrings {
   static const String chat = "Chat";
   static const String events = "Events";
   static const String products = "Products";
+  static const String myProducts = "My Products";
   static const String analytics = "Analytics";
   static const String profile = "Profile";
   static const String dropShipperProfile = "Drop Shipper Profile";
@@ -942,6 +959,7 @@ class AppStrings {
   static const String eventStarts = "Event Starts";
   static const String eventEnds = "Event Ends";
   static const String price = "Price";
+  static const String enterPrice = "Enter Price";
   static const String websiteLink = "Website Link";
   static const String goToEvent = "Go To Event";
   static const String goToItem = "Go To Item";
@@ -953,7 +971,6 @@ class AppStrings {
   static const String pastBookings = "Past Bookings";
   static const String cancelBookings = "Cancel Bookings";
   static const String reservationSummary = "Reservation Summary";
-  static const String name = "Name";
   static const String bookingTime = "Booking Time";
   static const String reason = "Reason";
   static const String newOrders = "New Orders";

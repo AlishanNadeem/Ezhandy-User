@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_gradients.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -30,19 +32,25 @@ class CustomBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Platform.isAndroid
+        ? SafeArea(child: bottomsheetWidget(context))
+        : bottomsheetWidget(context);
+  }
+
+  Container bottomsheetWidget(BuildContext context) {
     return Container(
       height: height ?? 0.2.sh,
       width: 1.sw,
       decoration: BoxDecoration(
           gradient: isGradient ? AppGradients.filterGradient : null,
-          color: AppColors.black,
+          color: AppColors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(15.sp),
             topRight: Radius.circular(15.sp),
           )),
       child: Padding(
         padding: EdgeInsets.only(
-          top: isTopPadding ? AppPadding.padding12 : 0,
+          top: isTopPadding ? AppPadding.padding20 : 0,
           left: isPadding ? AppPadding.padding12 : 0,
           right: isPadding ? AppPadding.padding12 : 0,
         ),
@@ -53,7 +61,9 @@ class CustomBottomSheet extends StatelessWidget {
                     child: Container(
                       height: 4,
                       width: 0.2.sw,
-                      decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(50)),
+                      decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(50)),
                     ),
                   )
                 : SizedBox.shrink(),
@@ -68,6 +78,7 @@ class CustomBottomSheet extends StatelessWidget {
                   text: title,
                   is_alignLeft: false,
                   fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
                   color: titleColor ?? null,
                 ),
                 Spacer(),

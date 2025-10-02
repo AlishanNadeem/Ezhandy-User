@@ -47,10 +47,10 @@ class AppRoutes {
   static const String reportIssueScreenRoute = "report_issue_screenRoute";
   static const String legalIntelligenceSupportScreenRoute =
       "legal_intelligence_support_screenRoute";
-  static const String corporateGrowthPackageScreenRoute =
-      "corporate_growth_package_screenRoute";
-  static const String brandStrategySponsorshipScreenRoute =
-      "brand_strategy_sponsorship_screenRoute";
+  static const String marketPlaceScreenRoute =
+      "market_pkace_screenRoute";
+  static const String addEditProductScreenRoute =
+      "add_edit_product_screenRoute";
   static const String aiPoweredLegalAssistantScreenRoute =
       "ai_powered_legal_assistant_screenRoute";
   static const String aiDocumentFeedbackScreenRoute =

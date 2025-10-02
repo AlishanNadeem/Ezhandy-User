@@ -14,6 +14,7 @@ class BackgroundImage extends StatelessWidget {
   final Widget? actionWidget;
   final String? actionText;
   Widget? floatingActionButton;
+FloatingActionButtonLocation? floatingActionButtonLocation;
   bool extendBodyBehindAppBar;
   bool? is_bottomNav;
   void Function()? onclickLead, onclickAction;
@@ -28,6 +29,7 @@ class BackgroundImage extends StatelessWidget {
     Key? key,
     required this.child,
     this.actionWidget,
+    this.floatingActionButtonLocation,
     this.titleColor,
     this.titleWidget,
     this.leadingWidget,
@@ -101,6 +103,7 @@ class BackgroundImage extends StatelessWidget {
         body: child,
         drawer: drawer,
         key: globalkey,
+        floatingActionButtonLocation: floatingActionButtonLocation,
         floatingActionButton: floatingActionButton
         // bottomNavigationBar: ,
         );

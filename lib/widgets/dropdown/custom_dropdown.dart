@@ -162,9 +162,6 @@
 //   }
 // }
 
-
-
-
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -178,7 +175,7 @@ class CustomDropDown2 extends StatefulWidget {
   final Function(String)? onChanged;
   final Color? color, dropdownListColor;
   final String? Function(String?)? validator; // ✅ validator
-  final double? width,
+  final double? width,dropDownHeight,
       borderRadius,
       fontSize,
       dropDownWidth,
@@ -191,6 +188,7 @@ class CustomDropDown2 extends StatefulWidget {
   const CustomDropDown2({
     Key? key,
     this.dropDownData,
+    this.dropDownHeight,
     this.dropdownValue,
     this.borderRadius,
     this.width,
@@ -304,6 +302,7 @@ class _CustomDropDown2State extends State<CustomDropDown2> {
 
                 // ✅ Dropdown styling
                 dropdownStyleData: DropdownStyleData(
+                  maxHeight:widget.dropDownHeight,
                   width: widget.dropDownWidth ?? widget.width ?? 150.w,
                   decoration: BoxDecoration(
                     color: widget.dropdownListColor ?? AppColors.white,

@@ -30,6 +30,9 @@ import 'package:ezhandy_user/module/core/chat/view/chat.dart';
 import 'package:ezhandy_user/module/core/contact_us/view/contact_us.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/module/core/notification/notification.dart';
+import 'package:ezhandy_user/module/core/products/routing_arguments/add_edit_product_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/products/view/add_edit_product.dart';
+import 'package:ezhandy_user/module/core/products/view/market_place.dart';
 import 'package:ezhandy_user/module/core/profile/view/edit_user_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/provider_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/user_profile.dart';
@@ -181,10 +184,12 @@ class AppRouter {
             return FavouritesServices();
           case AppRoutes.scheduleBookingScreenRoute:
             return ScheduleBooking();
-          // case AppRoutes.corporateGrowthPackageScreenRoute:
-          //   return CorporateGrowthPackage();
-          // case AppRoutes.brandStrategySponsorshipScreenRoute:
-          //   return BrandStrategySponsorship();
+          case AppRoutes.marketPlaceScreenRoute:
+            return MarketPlace();
+          case AppRoutes.addEditProductScreenRoute:
+            AddEditProductRoutingArgument productArgument =
+                routeSettings.arguments as AddEditProductRoutingArgument;
+            return AddEditProduct(type:productArgument.type??"");
           // case AppRoutes.aiPoweredLegalAssistantScreenRoute:
           //   return AiPoweredLegalAssistantChat();
           // case AppRoutes.interactiveQAInterfaceScreenRoute:

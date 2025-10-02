@@ -26,6 +26,7 @@ class AssetPath {
   /// --------------- ICONS -----------------------------
 
   static const String forwardIcon = "$_icons/ic_forward.png";
+  static const String cartIcon = "$_icons/ic_cart.png";
   static const String searchIcon = "$_icons/ic_search.png";
   static const String earningIcon = "$_icons/ic_earning.png";
   static const String earningMenuIcon = "$_icons/ic_earning_menu.png";
@@ -89,6 +90,7 @@ class AssetPath {
   static const String smsIcon = "$_icons/ic_sms.png";
   static const String smsFillIcon = "$_icons/ic_sms_fill.png";
   static const String aboutIcon = "$_icons/ic_info_circle.png";
+  static const String marketPlaceIcon = "$_icons/ic_market_place.png";
   static const String messageIcon = "$_icons/ic_message.png";
   static const String faqsIcon = "$_icons/ic_faq.png";
   static const String infoIcon = "$_icons/ic_info.png";
@@ -116,6 +118,7 @@ class AssetPath {
   static const String xIcon = "$_icons/ic_x.png";
   static const String uploadBlackIcon = "$_icons/ic_upload_black.png";
   static const String uploadIcon = "$_icons/ic_upload.png";
+  static const String uploadImageIcon = "$_icons/ic_upload_image.png";
   static const String userIcon = "$_icons/ic_user.jpg";
   static const String videoIcon = "$_icons/ic_video.png";
   static const String wordIcon = "$_icons/ic_word.png";
@@ -164,6 +167,7 @@ class AssetPath {
     bookingMenuIcon,
     heartIcon,
     aboutIcon,
+    marketPlaceIcon,
     contactUsIcon,
     privacyIcon,
     convertIcon,

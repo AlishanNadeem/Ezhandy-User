@@ -55,6 +55,9 @@ dependencies:
   file_picker: ^10.3.2
   percent_indicator: ^4.2.5
   printing: ^5.14.2
+  dotted_border: ^2.1.0
+  csc_picker:
+    path: csc_picker-0.2.7
 
 dev_dependencies:
   flutter_test:
