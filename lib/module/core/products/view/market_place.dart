@@ -121,7 +121,7 @@ class _MarketPlaceState extends State<MarketPlace>
                       physics: NeverScrollableScrollPhysics(),
                     ),
                   ),
-                  10.verticalSpace
+                  25.verticalSpace
                 ]))));
   }
 
@@ -150,7 +150,9 @@ class _MarketPlaceState extends State<MarketPlace>
 
   GestureDetector cartWidget() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        AppNavigation.navigateTo(context, AppRoutes.addToCartScreenRoute);
+      },
       child: Container(
         padding: EdgeInsets.all(10.sp),
         margin: EdgeInsets.all(8.sp),
@@ -158,12 +160,10 @@ class _MarketPlaceState extends State<MarketPlace>
             // boxShadow: AppShadows.shadow4,
             color: AppColors.orange,
             shape: BoxShape.circle),
-        child: Image.asset(
-          AssetPath.cartIcon,
-          // color: AppColors.gradient_1,
-          alignment: Alignment.center,
-          scale: 4.sp,
-        ),
+        child: Image.asset(AssetPath.cartIcon,
+            // color: AppColors.gradient_1,
+            alignment: Alignment.center,
+            scale: 4.sp),
       ),
     );
   }
@@ -222,6 +222,10 @@ class _MarketPlaceState extends State<MarketPlace>
             ),
             itemBuilder: (BuildContext context, int index) {
               return CustomContainer(
+                onTap: () {
+                  AppNavigation.navigateTo(
+                      context, AppRoutes.productDetailScreenRoute);
+                },
                 isPadding: false,
                 child: Column(
                   children: [
@@ -405,7 +409,10 @@ class _MarketPlaceState extends State<MarketPlace>
           ),
         ),
         10.horizontalSpace,
-        CustomContainer(onTap: (){AppBottomSheet.showFilterSheet(context:context);},
+        CustomContainer(
+            onTap: () {
+              AppBottomSheet.showFilterSheet(context: context);
+            },
             isPadding: false,
             bgColor: AppColors.orange,
             child: Padding(

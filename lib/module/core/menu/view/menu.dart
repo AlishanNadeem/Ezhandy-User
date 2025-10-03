@@ -152,6 +152,7 @@ class _MenuState extends State<Menu> {
                 isExpanded = false;
               });
               _controller.collapse();
+              AppNavigation.navigateTo(context,AppRoutes.ordersScreenRoute);
             },
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,

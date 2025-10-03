@@ -30,9 +30,13 @@ import 'package:ezhandy_user/module/core/chat/view/chat.dart';
 import 'package:ezhandy_user/module/core/contact_us/view/contact_us.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/module/core/notification/notification.dart';
+import 'package:ezhandy_user/module/core/order/view/order_details.dart';
+import 'package:ezhandy_user/module/core/order/view/orders.dart';
 import 'package:ezhandy_user/module/core/products/routing_arguments/add_edit_product_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/products/view/add_edit_product.dart';
+import 'package:ezhandy_user/module/core/products/view/add_to_cart.dart';
 import 'package:ezhandy_user/module/core/products/view/market_place.dart';
+import 'package:ezhandy_user/module/core/products/view/product_details.dart';
 import 'package:ezhandy_user/module/core/profile/view/edit_user_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/provider_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/user_profile.dart';
@@ -190,10 +194,14 @@ class AppRouter {
             AddEditProductRoutingArgument productArgument =
                 routeSettings.arguments as AddEditProductRoutingArgument;
             return AddEditProduct(type:productArgument.type??"");
-          // case AppRoutes.aiPoweredLegalAssistantScreenRoute:
-          //   return AiPoweredLegalAssistantChat();
-          // case AppRoutes.interactiveQAInterfaceScreenRoute:
-          //   return InteractiveQAInterfaceChat();
+          case AppRoutes.productDetailScreenRoute:
+            return ProductDetail();
+          case AppRoutes.addToCartScreenRoute:
+            return AddToCart();
+          case AppRoutes.ordersScreenRoute:
+            return OrdersScreen();
+          case AppRoutes.orderDetailScreenRoute:
+            return OrderDetail();
           // case AppRoutes.aiDocumentFeedbackScreenRoute:
           //   return AiDocumentFeedbackChat();
           // case AppRoutes.einRegistrationFormScreenRoute:

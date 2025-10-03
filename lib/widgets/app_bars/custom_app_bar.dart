@@ -73,8 +73,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         //         scale: 3.sp,
                         //       )
                         //     :
-                        titleColor == null
-                            ? Container(
+                        // titleColor == null
+                            // ? 
+                            Container(
                                 // padding: EdgeInsets.all(8),
                                 margin: EdgeInsets.all(8.sp),
                                 decoration: BoxDecoration(
@@ -83,7 +84,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                                     shape: BoxShape.circle),
                                 child: imageWidget(image: isLeading!),
                               )
-                            : imageWidget(image: isLeading!),
+                            // : imageWidget(image: isLeading!),
                   );
                 })
               : const SizedBox()),

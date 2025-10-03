@@ -126,11 +126,8 @@ class _ListOfServicesState extends State<ListOfServices> {
       child: CustomContainer(
           child: Row(
         children: [
-          Image.asset(
-            AssetPath.cleaningIcon,
-            width: 30.w,
-            height: 30.h,
-          ),
+          CircleAvatar(radius: 30.r,
+            backgroundImage: NetworkImage("https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396")),
           10.horizontalSpace,
           Expanded(
             child: Column(

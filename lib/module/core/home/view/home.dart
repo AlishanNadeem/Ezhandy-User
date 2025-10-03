@@ -230,7 +230,7 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.cleaning,
-            image: AssetPath.cleaningIcon),
+            image: "https://plus.unsplash.com/premium_photo-1664910214915-b89e63fcb72e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG91c2UlMjBjbGVhbmluZyUyMHNlcnZpY2VzfGVufDB8fDB8fHww"),
         imageTextWidget(
             ontap: () {
               !AuthController.i.isLoginSignUp.value
@@ -242,7 +242,7 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.painting,
-            image: AssetPath.paintIcon),
+            image: "https://img.freepik.com/premium-photo/young-worker-painting-wall-room_392895-180827.jpg"),
         imageTextWidget(
             ontap: () {
               !AuthController.i.isLoginSignUp.value
@@ -254,7 +254,7 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.electric,
-            image: AssetPath.electricIcon),
+            image: "https://www.shutterstock.com/image-photo/male-electrician-worker-checking-repair-600nw-2272737695.jpg"),
         imageTextWidget(
             ontap: () {
               !AuthController.i.isLoginSignUp.value
@@ -266,7 +266,7 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.plumber,
-            image: AssetPath.plumberIcon),
+            image: "https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396"),
       ],
     );
   }
@@ -287,10 +287,14 @@ class _HomeState extends State<Home> {
       onTap: ontap,
       child: Column(
         children: [
-          Image.asset(
-            image,
-            width: 30.w,
-            height: 30.h,
+          CircleAvatar(radius: 30.r,
+            backgroundImage: NetworkImage(image,),
+            // child: Image.network(
+            //   image,
+            //   width: 30.w,
+            //   height: 30.h,
+            //   fit: BoxFit.cover,
+            // ),
           ),
           10.verticalSpace,
           CustomText(

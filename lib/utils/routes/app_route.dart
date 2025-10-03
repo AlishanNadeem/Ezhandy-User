@@ -51,12 +51,16 @@ class AppRoutes {
       "market_pkace_screenRoute";
   static const String addEditProductScreenRoute =
       "add_edit_product_screenRoute";
-  static const String aiPoweredLegalAssistantScreenRoute =
-      "ai_powered_legal_assistant_screenRoute";
+  static const String productDetailScreenRoute =
+      "product_detail_screenRoute";
+  static const String addToCartScreenRoute =
+      "add_to_cart_screenRoute";
   static const String aiDocumentFeedbackScreenRoute =
       "ai_document_feedback_screenRoute";
-  static const String interactiveQAInterfaceScreenRoute =
-      "interactive_qa_interface_screenRoute";
+  static const String ordersScreenRoute =
+      "orders_screenRoute";
+  static const String orderDetailScreenRoute =
+      "order_detail_screenRoute";
   static const String einRegistrationFormScreenRoute =
       "ein_registration_form_screenRoute";
   static const String complianceManagementScreenRoute =

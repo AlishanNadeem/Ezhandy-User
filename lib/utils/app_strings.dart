@@ -73,6 +73,12 @@ class AppStrings {
     inProcess,
     past,
   ];
+    static const List<String> bookingTabList = [
+    newOrders,
+    inProcess,
+    delivered,
+    cancelled
+  ];
   // static const List<String> dropShipperList = [
   //   home,
   //   products,
@@ -478,6 +484,7 @@ class AppStrings {
   static const String inProgress = "In-Progress";
   static const String hold = "Hold";
   static const String completed = "Completed";
+  static const String delivered = "Delivered";
   static const String past = "Past";
   static const String pastWork = "Past Work";
   static const String appointmentType = "Appointment Type";
@@ -868,6 +875,7 @@ class AppStrings {
   static const String restaurantProfile = "Restaurant Profile";
 
   /// drawer
+  static const String orders = "Orders";
   static const String myOrders = "My Orders";
   static const String myCart = "My Cart";
   static const String groupActivity = "Group Activity";
@@ -973,8 +981,8 @@ class AppStrings {
   static const String reservationSummary = "Reservation Summary";
   static const String bookingTime = "Booking Time";
   static const String reason = "Reason";
-  static const String newOrders = "New Orders";
-  static const String inProcess = "In Process";
+  static const String newOrders = "New";
+  static const String inProcess = "In-Process";
 
   //Order
   static const String viewDetails = "View Details";
@@ -1042,7 +1050,7 @@ class AppStrings {
   static const String popularProducts = "Popular Products";
   static const String shop = "Shop";
   static const String productCart = "Product Cart";
-  static const String addToCart = "add to cart";
+  static const String addToCart = "Add To Cart";
   static const String proceed = "Proceed";
   static const String confirmPaymentAndAddress = "Confirm Payment and Address";
   static const String productDetails = "Product Details";
@@ -1065,6 +1073,7 @@ class AppStrings {
   static const overallRating = 'Overall Rating';
 
   /// Plan Out
+  static const checkout = 'Checkout';
   static const appRecommended = 'App Recommended';
   static const bookAReservation = 'Book a Reservation';
   static const bookQuickServices = 'Book Quick Services';
