@@ -36,6 +36,8 @@ class _MenuState extends State<Menu> {
       _favouritesTap,
       _aboutUsTap,
       _marketPlaceTap,
+      // _orderTap,
+      // _myOrderTap,
       _contactUsTap,
       _privacyPolicyTap,
       _refundPolicyTap,
@@ -72,21 +74,21 @@ class _MenuState extends State<Menu> {
         itemCount: AppStrings.menuList.length,
         padding: EdgeInsets.zero,
         itemBuilder: (BuildContext ctxt, int index) {
-          if (index == 6) {
-            // Show ExpansionTile instead of normal row
-            return expansionWidget(context, index);
-          } else {
-            // Normal tile
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.h),
-              child: menuListTile(
-                isArrowShow: !(index == AppStrings.menuList.length - 1),
-                assetPath: AssetPath.menuIconList[index],
-                title: AppStrings.menuList[index],
-                onTap: tapList[index],
-              ),
-            );
-          }
+          // if (index == 6) {
+          //   // Show ExpansionTile instead of normal row
+          //   return expansionWidget(context, index);
+          // } else {
+          // Normal tile
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            child: menuListTile(
+              isArrowShow: !(index == AppStrings.menuList.length - 1),
+              assetPath: AssetPath.menuIconList[index],
+              title: AppStrings.menuList[index],
+              onTap: tapList[index],
+            ),
+          );
+          // }
         },
         separatorBuilder: (BuildContext context, int index) {
           return 5.verticalSpace;
@@ -136,7 +138,8 @@ class _MenuState extends State<Menu> {
                 isExpanded = false;
               });
               _controller.collapse();
-              AppNavigation.navigateTo(context,AppRoutes.marketPlaceScreenRoute);
+              AppNavigation.navigateTo(
+                  context, AppRoutes.marketPlaceScreenRoute);
             },
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,
@@ -152,7 +155,7 @@ class _MenuState extends State<Menu> {
                 isExpanded = false;
               });
               _controller.collapse();
-              AppNavigation.navigateTo(context,AppRoutes.ordersScreenRoute);
+              AppNavigation.navigateTo(context, AppRoutes.ordersScreenRoute);
             },
             trailing: const Icon(
               Icons.arrow_forward_ios_rounded,
@@ -178,7 +181,7 @@ class _MenuState extends State<Menu> {
               height: 30.h,
               width: 30.w,
               // scale: 3.sp,
-              // color: AppColors.green,
+              color: AppColors.orange,
             ),
             25.horizontalSpace,
             CustomText(
@@ -260,11 +263,14 @@ class _MenuState extends State<Menu> {
   }
 
   void _marketPlaceTap() {
+    AppNavigation.navigateTo(context, AppRoutes.marketPlaceScreenRoute);
+
     // AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
     //     arguments: ContentRoutingArgument(
     //         title: AppStrings.aboutUs, type: WebContentType.ap.name));
   }
-  void _productTap() {
+
+  void _myOrderTap() {
     // AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
     //     arguments: ContentRoutingArgument(
     //         title: AppStrings.aboutUs, type: WebContentType.ap.name));

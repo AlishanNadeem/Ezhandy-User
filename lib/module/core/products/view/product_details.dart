@@ -119,15 +119,27 @@ class _ProductDetailState extends State<ProductDetail> {
                 text: AppStrings.lorem5,
                 // color: AppColors.iconGrey,
               ),
-              10.verticalSpace,
-              // Divider(),
+              20.verticalSpace,
+
+              CustomText(text: "Seller Details:",fontWeight: FontWeight.bold,fontSize: 18.sp,),
+              Divider(),
+              // 10.verticalSpace,
+              detailsRow(
+                  image: AssetPath.profileCircleIcon,
+                  title: AppStrings.dummyName),
               10.verticalSpace,
               detailsRow(
                   image: AssetPath.callIcon,
                   title: AppStrings.dummyPhoneNUmber),
               10.verticalSpace,
               detailsRow(
-                  image: AssetPath.emailIcon, title: AppStrings.dummyAddress),
+                  image: AssetPath.emailIcon, title: AppStrings.dummyEmail),
+              10.verticalSpace,
+              detailsRow(
+                  image: AssetPath.locationIcon, title: AppStrings.dummyAddress),
+              // 10.verticalSpace,
+              // detailsRow(
+              //     image: AssetPath.emailIcon, title: AppStrings.dummyAddress),
               // 10.verticalSpace,
               // detailsRow(image: AssetPath.calendarIcon, title: "Mon To Sun"),
               // 10.verticalSpace,
@@ -138,10 +150,10 @@ class _ProductDetailState extends State<ProductDetail> {
               // CustomText(text: AppStrings.interests, fontSize: 20.sp),
               // 10.verticalSpace,
               // interestWidget(),
-              Divider(),
-
-              10.verticalSpace,
-              btnWidget(),
+              // Divider(),
+//
+              // 10.verticalSpace,
+              // btnWidget(),
             ],
           ),
         ),
@@ -158,8 +170,8 @@ class _ProductDetailState extends State<ProductDetail> {
         children: [
           Image.asset(
             image,
-            width: 25.w,
-            height: 25.h,
+            width: 20.w,
+            height: 20.h,
             color: AppColors.orange,
           ),
           10.horizontalSpace,

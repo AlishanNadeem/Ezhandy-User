@@ -48,7 +48,7 @@ class _MarketPlaceState extends State<MarketPlace>
         },
         appBarheight: 50.h,
         title: AppStrings.marketPlace,
-        actionWidget: cartWidget(),
+        // actionWidget: cartWidget(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: addButtonWidget(context),
         child: Padding(

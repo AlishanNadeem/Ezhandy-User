@@ -293,33 +293,8 @@ class _OrderDetailState extends State<OrderDetail> {
     );
   }
 
-  Wrap interestWidget() {
-    return Wrap(
-        alignment: WrapAlignment
-            .start, // Align children to the left (start of the row)
-        crossAxisAlignment: WrapCrossAlignment.start,
-        spacing: 30,
-        runSpacing: 8,
-        children: List.generate(AppStrings.bottomBarList.length, (index) {
-          return singleInterestWidget(
-              image: AssetPath.menuIconList[index],
-              title: AppStrings.bottomBarList[index]);
-        }));
-  }
 
-  Widget singleInterestWidget({required String image, required String title}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Image.asset(
-          image,
-          scale: 3.sp,
-        ),
-        10.horizontalSpace,
-        Text(AppStrings.gaming),
-      ],
-    );
-  }
+
 
   Widget slider_container() {
     return Stack(

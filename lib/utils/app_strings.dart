@@ -58,6 +58,8 @@ class AppStrings {
     favourites,
     aboutUs,
     marketPlace,
+    // orders,
+    // myOrders,
     contactUs,
     privacyPolicy,
     refundPolicy,
@@ -239,6 +241,7 @@ class AppStrings {
       "Create your account in seconds — start your journey with us now!";
   static const String fullName = "Full Name";
   static const String enterEmailAddress = "Enter Email Address";
+  static const String enterAddress = "Enter Address";
   static const String enterFullName = "Enter Full Name";
   static const String enterName = "Enter Name";
   static const String name = "Name";

@@ -34,7 +34,11 @@ class AddEditProduct extends StatefulWidget {
 class _AddEditProductState extends State<AddEditProduct> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  TextEditingController productNameController = TextEditingController();
   TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController messageController = TextEditingController();
@@ -98,9 +102,6 @@ class _AddEditProductState extends State<AddEditProduct> {
     "Workbenches"
   ];
 
-
-
-
   @override
   Widget build(BuildContext context) {
     keyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
@@ -125,14 +126,14 @@ class _AddEditProductState extends State<AddEditProduct> {
                     child: Column(children: [
                       //----------------Email Address Field----------------
                       20.verticalSpace,
+                      CustomText(text: "Product Name" + "*"),
+                      10.verticalSpace,
+                      _productNameTextField(),
+                      20.verticalSpace,
 
                       CustomText(text: AppStrings.category + "*"),
                       10.verticalSpace,
                       categoryDropDown(),
-                      20.verticalSpace,
-                      CustomText(text: AppStrings.name + "*"),
-                      10.verticalSpace,
-                      _nameTextField(),
                       20.verticalSpace,
                       CustomText(text: AppStrings.price + "*"),
                       10.verticalSpace,
@@ -146,6 +147,28 @@ class _AddEditProductState extends State<AddEditProduct> {
                       10.verticalSpace,
                       documentWidget(),
                       20.verticalSpace,
+                      CustomText(
+                          text: "Seller Info:",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.sp),
+                      10.verticalSpace,
+                      CustomText(text: "Seller Name" + "*"),
+                      10.verticalSpace,
+                      _nameTextField(),
+                      20.verticalSpace,
+                      CustomText(text: AppStrings.phoneNumber + "*"),
+                      10.verticalSpace,
+                      _phoneNumberTextField(),
+                      20.verticalSpace,
+                      CustomText(text: AppStrings.email + "*"),
+                      10.verticalSpace,
+                      _emailTextField(),
+                      20.verticalSpace,
+                      CustomText(text: AppStrings.address + "*"),
+                      10.verticalSpace,
+                      _addressField(),
+                      20.verticalSpace,
+
                       //----------------Get Code Button----------------
                     ]),
                   ),
@@ -164,7 +187,23 @@ class _AddEditProductState extends State<AddEditProduct> {
       // _profileImage = file;
       documentList.add(file);
     });
-    print(documentList.toString() + " Subhan");
+    print(documentList.toString());
+  }
+
+  Widget _emailTextField() {
+    return CustomTextField(
+      hint: AppStrings.enterEmailAddress,
+      divider: false,
+      label: false,
+
+      keyboardType: TextInputType.emailAddress,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(Constants.emailMaxLength)
+      ],
+      controller: emailController,
+      validator: (value) => value?.validateEmail,
+      // error_text: error_email,
+    );
   }
 
   Widget uploadWidget(length) {
@@ -293,7 +332,7 @@ class _AddEditProductState extends State<AddEditProduct> {
       // width: 95.w, // 👈 Controls button width
       dropDownWidth: .93.sw, // 👈 Controls dropdown menu width
       dropDownData: categoryList,
-      dropDownHeight:500.h,
+      dropDownHeight: 500.h,
       borderRadius: 10.r,
       hintText: AppStrings.selectCategory,
       dropdownValue: categoryValue,
@@ -314,9 +353,41 @@ class _AddEditProductState extends State<AddEditProduct> {
     );
   }
 
+  Widget _phoneNumberTextField() {
+    return CustomTextField(
+      hint: AppStrings.enterPhoneNumber,
+      divider: false,
+      // prefxicon: AssetPath.callIcon,
+      label: false,
+      keyboardType: TextInputType.number,
+      inputFormatters: [Constants.maskTextInputFormatterPhoneUSWithCode],
+      controller: phoneController,
+      // validator: (value) => value?.validateEmpty(AppStrings.phon),
+      // error_text: error_email,
+    );
+  }
+
+  Widget _productNameTextField() {
+    return CustomTextField(
+      hint: "Enter Product Name",
+      divider: false,
+      // prefxicon: AssetPath.profileCircleIcon,
+      label: false,
+      // readOnly: true,
+      // onTap: () {},
+      // keyboardType: TextInputType.emailAddress,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(Constants.nameMaxLength)
+      ],
+      controller: productNameController,
+      validator: (value) => value?.validateEmpty("Product Name"),
+      // error_text: error_email,
+    );
+  }
+
   Widget _nameTextField() {
     return CustomTextField(
-      hint: AppStrings.enterName,
+      hint: "Enter Seller Name",
       divider: false,
       // prefxicon: AssetPath.profileCircleIcon,
       label: false,
@@ -327,7 +398,25 @@ class _AddEditProductState extends State<AddEditProduct> {
         LengthLimitingTextInputFormatter(Constants.nameMaxLength)
       ],
       controller: nameController,
-      validator: (value) => value?.validateEmpty(AppStrings.name),
+      validator: (value) => value?.validateEmpty("Seller Name"),
+      // error_text: error_email,
+    );
+  }
+
+  Widget _addressField() {
+    return CustomTextField(
+      hint: AppStrings.enterAddress,
+      divider: false,
+      // prefxicon: AssetPath.convertIcon,
+      label: false,
+      borderRadius: 10.r,
+      lines: 5,
+      // keyboardType: TextInputType.emailAddress,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(Constants.descriptionMaxLength)
+      ],
+      controller: addressController,
+      validator: (value) => value?.validateEmpty(AppStrings.address),
       // error_text: error_email,
     );
   }
@@ -380,13 +469,14 @@ class _AddEditProductState extends State<AddEditProduct> {
           AppNavigation.navigatorPop(context);
           AppDialogs.showSuccessDialog(
             context,
-            description:AddEditType.add.name == widget.type
-            ?  AppStrings.productHasBeenAddedSuccessfully:AppStrings.productHasBeenUpdatedSuccessfully,
+            description: AddEditType.add.name == widget.type
+                ? AppStrings.productHasBeenAddedSuccessfully
+                : AppStrings.productHasBeenUpdatedSuccessfully,
             title: AppStrings.congratulation,
             btnTxt1: AppStrings.ok,
             onTap1: () {
-                       AppNavigation.navigatorPop(Constants.navigatorKey.currentContext!);
-
+              AppNavigation.navigatorPop(
+                  Constants.navigatorKey.currentContext!);
             },
           );
           // AppNavigation.navigateTo(
