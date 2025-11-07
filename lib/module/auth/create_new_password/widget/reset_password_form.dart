@@ -163,7 +163,7 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
           //         text: emailController.text));
           // AuthController.i
           //     .forgotPass(email: forgotPassRepo.email_controller.text);
-          ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
+          // ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
           FocusScope.of(context).unfocus();
         });
   }

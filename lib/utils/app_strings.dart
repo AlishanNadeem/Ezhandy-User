@@ -55,7 +55,7 @@ class AppStrings {
     transactionHistory,
     affiliateEarning,
     historyOfBookings,
-    favourites,
+    myFavorites,
     aboutUs,
     marketPlace,
     // orders,
@@ -63,7 +63,7 @@ class AppStrings {
     contactUs,
     privacyPolicy,
     refundPolicy,
-    signOut,
+    logout,
     deleteAccount,
   ];
   static const List<String> appointmentTabList = [
@@ -223,12 +223,12 @@ class AppStrings {
 
   ///Sign in
   static const String logIn = "Login";
-  static const String signIn = "Sign In";
+  static const String signIn = "Login";
   static const String emailAddress = "Email Address";
   static const String email = "Email";
   static const String password = "Password";
   static const String forgotYourPassword = "Forgot Password";
-  static const String signUp = "Sign Up";
+  static const String signUp = "Create Account";
   static const String orContinueWith = "Or Continue With";
   static const String rememberMe = "Remember Me";
   static const String dontHaveAnAccount = "Don't have an account? ";
@@ -272,7 +272,7 @@ class AppStrings {
   static const String alreadyHaveAnAccount = "Already have an account? ";
 
   /// Forgot Password
-  static const String passwordRecovery = "Forget Password";
+  static const String passwordRecovery = "Forgot Password";
   static const String
       resetYourPasswordInJustAFewClicksAndRegainAccessInstantly =
       "Reset your password in just a few clicks and regain access instantly";
@@ -310,6 +310,8 @@ class AppStrings {
   static const String passwordUpdatedSuccessfully =
       "Your password has been successfully updated. You can now log in with your new credentials";
   static const String passwordHasBeenUpdated = "Password has been updated";
+  static const String issueHasBeenReportedSuccessfully = "Issue has been reported successfully";
+  static const String reviewSubmittedSuccessfully = "Review submitted successfully";
   static const String passwordUpdated = "Password Updated";
   static const String backToLogin = "Back To Login";
   static const String thankYou = "Thank You!";
@@ -329,7 +331,7 @@ class AppStrings {
       "Your Trademark registration has been submitted. After the process is complete, you will receive an email regarding it from the admin";
 
 //   Home
-  static const String searchAnything = "Search anything....";
+  static const String searchAnything = "Search here";
   static const String ourServices = "Our Services";
   static const String seeAll = "See All";
   static const String cleaning = "Cleaning";
@@ -343,7 +345,7 @@ class AppStrings {
   static const String clickHere = "Click here";
   static const String loginSignUp = "Login/ Sign Up";
   static const String inOrderToAccessThis =
-      "In order to access this you must login or sign up first";
+      "In order to access this you must login or Create Account first";
 
 //   Transaction History
   static const String visit = "Visit";
@@ -421,11 +423,14 @@ class AppStrings {
   static const String ok = "Ok";
   static const String bookQuiceServiceDetails =
       "Are you sure you want to book the Quick Service";
-  static const String yourBookingHasBeenDone = "Your Booking Has Been Done";
+  static const String bookServiceDetails =
+      "Are you sure you want to book the Service";
+  static const String yourBookingHasBeenDone = "Your booking has been booked successfully";
   static const String accountDeleteSuccessfully = "Account Delete Successfully";
   static const String areYouSureWantToDeleteThisAccount =
       "Are You Sure Want To Delete This \n Account?";
-  static const confirmationDialogLogoutDescription = 'Do you want to Logout?';
+  static const confirmationDialogLogoutDescription = 'Are you sure you want to logout?';
+  static const areYouSureYouWantToDeleteThisProduct = 'Are you sure you want to delete this \nProduct?';
 //   Work Document
   static const String beforeImage = "Before Image";
   static const String afterImage = "After Image";
@@ -542,7 +547,7 @@ class AppStrings {
   static const String yourRescheduleRejectText =
       "Your reschedule request has been Reject successfully.";
   static const String writeAReview = "Write A Review";
-  static const String saySomeThing = "Say Something";
+  static const String saySomeThing = "Write here";
   static const String providerProfile = "Provider Profile";
   static const String experience = "Experience";
   static const String language = "Language";
@@ -743,6 +748,7 @@ class AppStrings {
   static const String appliedToCampaign =
       "You have successfully applied for Campaign ABC. We will notify you with further updates shortly.";
   static const String rejectionReason = "Rejection Reason";
+  static const String cancelationReason = "Cancelation Reason";
 
   /// Create Edit Profile
   static const String cOOLedComplianceSupportDashboard =
@@ -889,6 +895,7 @@ class AppStrings {
   static const String helpFeedback = "Help & Feedback";
   static const String logout = "Logout";
   static const String bookingHistory = "Booking History";
+  static const String myFavorites = "My Favorites";
   static const String bookingRequest = "Booking Request";
   // static const String Events = "Events";
   static const String notification = "Notification";

@@ -101,6 +101,13 @@ class _AddEditProductState extends State<AddEditProduct> {
     "Work gloves",
     "Workbenches"
   ];
+  void initState() {
+    if (AddEditType.edit.name == widget.type) {
+      setController();
+    }
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -445,6 +452,14 @@ class _AddEditProductState extends State<AddEditProduct> {
         divider: false,
         label: false,
         keyboardType: TextInputType.numberWithOptions(decimal: true),
+        sufixImage: Padding(
+          padding: const EdgeInsets.only(
+              top: AppPadding.padding12, right: AppPadding.padding12),
+          child: Text(
+            "\$",
+            textAlign: TextAlign.right,
+          ),
+        ),
         inputFormatters: [
           LengthLimitingTextInputFormatter(6),
           FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
@@ -459,12 +474,12 @@ class _AddEditProductState extends State<AddEditProduct> {
     return CustomButton(
         text: AddEditType.add.name == widget.type
             ? AppStrings.add
-            : AppStrings.save,
+            : AppStrings.update,
         onclick: () {
           final isValid = formKey.currentState!.validate();
-          // if (!isValid) {
-          //   return;
-          // }
+          if (!isValid) {
+            return;
+          }
           formKey.currentState!.save();
           AppNavigation.navigatorPop(context);
           AppDialogs.showSuccessDialog(
@@ -490,5 +505,19 @@ class _AddEditProductState extends State<AddEditProduct> {
           // ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
           FocusScope.of(context).unfocus();
         });
+  }
+
+  void setController() {
+    categoryValue=    "Angle grinders";
+    productNameController.text = "Mope Pro";
+    nameController.text = "John Doe";
+    phoneController.text =
+        Constants.maskTextInputFormatterPhoneUSWithCode.maskText('1234567890');
+
+    addressController.text = "123 Main Street, New York, USA";
+    emailController.text = "john.doe@gmail.com";
+    priceController.text = "1499";
+    descriptionController.text = "Brand new Mope Pro with Pro chip.";
+    messageController.text = "Please contact me for more details.";
   }
 }

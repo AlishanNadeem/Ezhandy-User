@@ -71,7 +71,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                               padding:
                                   const EdgeInsets.all(AppPadding.padding12),
                               child: CustomText(
-                                  text: AppStrings.serviceName,
+                                  text: AppStrings.service,
                                   // color: AppColors.blueDark,
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.bold),
@@ -110,6 +110,57 @@ class _BookingDetailsState extends State<BookingDetails> {
                             // reScheduleWidget(),
                           ],
                         )),
+                    if (widget.status == AppStrings.pending) ...[
+                      15.verticalSpace,
+                      CustomButton(
+                        text: AppStrings.cancel,
+                        onclick: () {
+                          AppDialogs.showSuccessDialog(context,
+                              description:
+                                  "Are you sure you want to cancel this \nbooking?",
+                              // title: AppStrings.logout,
+                              image: AssetPath.tumbIcon,
+                              isDoneShow: false,
+                              btnTxt1: AppStrings.yes,
+                              onTap1: () {
+                                AppNavigation.navigatorPop(context);
+                                AppDialogs.showRejectDialog(context,barrierDismissible:true,
+                                    // description:
+                                    //     "Are you sure you want to cancel this \nbooking?",
+                                    title: "Cancellation Reason",
+                                    // image: AssetPath.tumbIcon,
+                                    isDoneShow: false,
+                                    btnTxt1: AppStrings.submit,
+                                    onTap1: () {
+                                      AppNavigation.navigatorPop(context);
+                                      AppDialogs.showSuccessDialog(
+                                        context,
+                                        description:
+                                            "Booking has been cancelled successfully.",
+                                        title: AppStrings.congratulation,
+                                        // image: AssetPath.deletePopUpIcon,
+                                        isDoneShow: true,
+                                        btnTxt1: AppStrings.ok,
+                                        onTap1: () {
+                                          // AppNavigation.navigatorPop(context);
+                                          AppNavigation.navigatorPopUntil(
+                                              context,
+                                              AppRoutes.mainMenuScreenRoute);
+                                        },
+                                      );
+                                    },
+                                    btnTxt2: AppStrings.cancel,
+                                    onTap2: () {
+                                      AppNavigation.navigatorPop(context);
+                                    });
+                              },
+                              btnTxt2: AppStrings.no,
+                              onTap2: () {
+                                AppNavigation.navigatorPop(context);
+                              });
+                        },
+                      )
+                    ],
                     rejectReasonWidget(),
                     15.verticalSpace,
                     if (widget.status == AppStrings.accepted ||
@@ -216,7 +267,10 @@ class _BookingDetailsState extends State<BookingDetails> {
                             height: 200.h,
                             width: 1.sw,
                             isPadding: false,
-                            child: SizedBox())
+                            child: Image.asset(
+                              AssetPath.map,
+                              fit: BoxFit.cover,
+                            ))
                         : SizedBox.shrink(),
                     25.verticalSpace,
                   ],
@@ -235,7 +289,9 @@ class _BookingDetailsState extends State<BookingDetails> {
         children: [
           10.verticalSpace,
           CustomText(
-              text: AppStrings.reason,
+              text: widget.status == AppStrings.rejected
+                  ? AppStrings.rejectionReason
+                  : AppStrings.cancelationReason,
               // color: AppColors.blueDark,
               fontSize: 20.sp,
               fontWeight: FontWeight.bold),
@@ -256,7 +312,7 @@ class _BookingDetailsState extends State<BookingDetails> {
         children: [
           5.verticalSpace,
           TwoTextRow(
-              firstText: "${AppStrings.service}:", secondText: "Type Name"),
+              firstText: "${AppStrings.service}:", secondText: "Cleaning"),
           TwoTextRow(
               firstText: "${AppStrings.visitCharges}:", secondText: "\$10"),
           TwoTextRow(
@@ -310,8 +366,7 @@ class _BookingDetailsState extends State<BookingDetails> {
         children: [
           5.verticalSpace,
           TwoTextRow(
-              firstText: "${AppStrings.userName}:",
-              secondText: AppStrings.dummyName),
+              firstText: "Provider Name:", secondText: AppStrings.dummyName),
           TwoTextRow(
               firstText: "${AppStrings.phoneNumber}:",
               secondText: AppStrings.dummyPhoneNUmber),
@@ -404,7 +459,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                       //       widget.status == BookingType.InProcess.name)
                       //   ? AppStrings.joinSession
                       //   :
-                      AppStrings.review,
+                      "Rate and Review",
                   onclick:
                       // (widget.status == BookingType.Upcoming.name ||
                       //         widget.status == BookingType.InProcess.name)
@@ -465,8 +520,6 @@ class _BookingDetailsState extends State<BookingDetails> {
               //     onTap2: () {
               //       AppNavigation.navigatorPop(context);
               //     });
-           
-           
             }));
   }
 

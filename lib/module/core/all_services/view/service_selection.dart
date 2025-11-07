@@ -37,6 +37,14 @@ class _ServiceSelectionState extends State<ServiceSelection> {
   // String? filterStartValue;
 
   // bool isLike=false;
+  
+  @override
+  void initState() {
+   primaryServiceValue="All";
+    // TODO: implement initState
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(

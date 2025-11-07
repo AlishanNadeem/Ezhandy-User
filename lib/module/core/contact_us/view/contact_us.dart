@@ -112,7 +112,7 @@ class _ContactUsState extends State<ContactUs> {
       inputFormatters: [
         LengthLimitingTextInputFormatter(Constants.descriptionMaxLength)
       ],
-      controller: subjectController,
+      controller: messageController,
       validator: (value) => value?.validateEmpty(AppStrings.message),
       // error_text: error_email,
     );

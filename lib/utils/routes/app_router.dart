@@ -13,6 +13,7 @@ import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_
 import 'package:ezhandy_user/module/core/all_services/view/choose_payment_method.dart';
 import 'package:ezhandy_user/module/core/all_services/view/favourites_services.dart';
 import 'package:ezhandy_user/module/core/all_services/view/list_of_services.dart';
+import 'package:ezhandy_user/module/core/all_services/view/past_work.dart';
 import 'package:ezhandy_user/module/core/all_services/view/pay_over_time.dart';
 import 'package:ezhandy_user/module/core/all_services/view/schedule_booking.dart';
 import 'package:ezhandy_user/module/core/all_services/view/select_a_payment_plan.dart';
@@ -150,12 +151,16 @@ class AppRouter {
           case AppRoutes.listOfServicesScreenRoute:
             ServiceRoutingArgument serviceArgument =
                 routeSettings.arguments as ServiceRoutingArgument;
-          
-            return ListOfServices(type: serviceArgument.type,);
+
+            return ListOfServices(
+              type: serviceArgument.type,
+            );
           case AppRoutes.providerProfileScreenRoute:
             ServiceRoutingArgument serviceArgument =
                 routeSettings.arguments as ServiceRoutingArgument;
-            return ProviderProfile(type: serviceArgument.type,);
+            return ProviderProfile(
+              type: serviceArgument.type,
+            );
           case AppRoutes.servicesScreenRoute:
             ServiceRoutingArgument serviceArgument =
                 routeSettings.arguments as ServiceRoutingArgument;
@@ -172,8 +177,8 @@ class AppRouter {
           case AppRoutes.serviceDetailsScreenRoute:
             ServiceRoutingArgument serviceArgument =
                 routeSettings.arguments as ServiceRoutingArgument;
-          
-            return ServiceDetails(type:serviceArgument.type);
+
+            return ServiceDetails(type: serviceArgument.type);
           case AppRoutes.serviceSelectionScreenRoute:
             return ServiceSelection();
           case AppRoutes.chooseYourPaymentMethodScreenRoute:
@@ -193,7 +198,7 @@ class AppRouter {
           case AppRoutes.addEditProductScreenRoute:
             AddEditProductRoutingArgument productArgument =
                 routeSettings.arguments as AddEditProductRoutingArgument;
-            return AddEditProduct(type:productArgument.type??"");
+            return AddEditProduct(type: productArgument.type ?? "");
           case AppRoutes.productDetailScreenRoute:
             return ProductDetail();
           case AppRoutes.addToCartScreenRoute:
@@ -202,8 +207,8 @@ class AppRouter {
             return OrdersScreen();
           case AppRoutes.orderDetailScreenRoute:
             return OrderDetail();
-          // case AppRoutes.aiDocumentFeedbackScreenRoute:
-          //   return AiDocumentFeedbackChat();
+          case AppRoutes.pastworkScreenRoute:
+            return PastWork();
           // case AppRoutes.einRegistrationFormScreenRoute:
           //   return EINRegistrationForm();
           // case AppRoutes.complianceManagementScreenRoute:

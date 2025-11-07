@@ -20,7 +20,7 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   String? filterStartValue;
-  var filterList = ["All", "Weekly", "Monthly"];
+  var filterList = ["All", "Read", "Unread"];
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -50,7 +50,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   itemBuilder: (context, index) {
                     // final item = notifications[index];
                     return SlidableWidget(
-                      child: notificationWidget(
+                      child: notificationWidget(isUnRead:index==0,
                         image: AssetPath.infoIcon,
                         title: "Lorem Ipsum Dolor",
                         description:
@@ -70,7 +70,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ));
   }
 
-  Widget notificationWidget({image, title, description, date}) {
+  Widget notificationWidget({isUnRead,image, title, description, date}) {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.white, // 👈 Make the card white
@@ -116,6 +116,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   style: const TextStyle(fontSize: 12, color: AppColors.grey),
                 ),
               ],
+            ),
+          ),
+          Visibility(visible: isUnRead,
+            child: CircleAvatar(
+              radius: 5.sp,
+              backgroundColor: AppColors.orange
             ),
           )
         ],

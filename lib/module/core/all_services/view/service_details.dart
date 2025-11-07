@@ -99,10 +99,14 @@ class _ServiceDetailsState extends State<ServiceDetails> {
               ),
             ),
             CustomButton(
-              text: AppStrings.bookQuickServices,
+              text: widget.type == ServiceType.instant.name
+                  ? AppStrings.bookQuickServices
+                  : "Book Service",
               onclick: () {
                 AppDialogs.showSuccessDialog(context,
-                    description: AppStrings.bookQuiceServiceDetails,
+                    description: widget.type == ServiceType.instant.name
+                        ? AppStrings.bookQuiceServiceDetails
+                        : AppStrings.bookServiceDetails,
                     // title: AppStrings.deleteAccount,
                     image: AssetPath.tumbIcon,
                     isDoneShow: false,
@@ -219,6 +223,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         ),
         const Spacer(),
         CustomContainer(
+            onTap: () {
+              AppNavigation.navigateTo(context, AppRoutes.pastworkScreenRoute);
+            },
             // margin: EdgeInsets.only(left: AppPadding.padding12),
             // padding: EdgeInsets.all(7.sp),
             // decoration: BoxDecoration(

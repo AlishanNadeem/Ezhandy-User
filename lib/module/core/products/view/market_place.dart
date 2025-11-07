@@ -1,4 +1,5 @@
 import 'package:ezhandy_user/module/core/products/routing_arguments/add_edit_product_routing_arguments.dart';
+import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_shadows.dart';
 import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
@@ -253,7 +254,7 @@ class _MarketPlaceState extends State<MarketPlace>
                               children: [
                                 3.verticalSpace,
                                 CustomText(
-                                  text: "Hamfhgjdfkgdhjghdjkfsgkhkdjsakmers",
+                                  text: "Hamkmers",
                                   maxLines: 1,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -298,6 +299,10 @@ class _MarketPlaceState extends State<MarketPlace>
             padding: EdgeInsets.only(bottom: AppPadding.padding50),
             itemBuilder: (BuildContext ctxt, int index) {
               return CustomContainer(
+                onTap: () {
+                  AppNavigation.navigateTo(
+                      context, AppRoutes.productDetailScreenRoute);
+                },
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,14 +340,46 @@ class _MarketPlaceState extends State<MarketPlace>
                       ),
                     ),
                     // Spacer(),
-                    CircleAvatar(
-                        backgroundColor: AppColors.orange,
-                        radius: 10.r,
-                        child: Image.asset(
-                          AssetPath.deleteIcon,
-                          width: 10.w,
-                          height: 10.h,
-                        )),
+                    GestureDetector(
+                      onTap: () {
+                        AppDialogs.showSuccessDialog(context,
+                            description:
+                                AppStrings.areYouSureYouWantToDeleteThisProduct,
+                            // title: AppStrings.logout,
+                            image: AssetPath.deletePopUpIcon,
+                            isDoneShow: false,
+                            btnTxt1: AppStrings.yes,
+                            onTap1: () { AppDialogs.showSuccessDialog(
+                                context,
+                                description: "Product has been Deleted Successfully",
+                                title: AppStrings.congratulation,
+                                // image: AssetPath.deletePopUpIcon,
+                                isDoneShow: true,
+                                btnTxt1: AppStrings.ok,
+                                onTap1: () {
+                                  // AppNavigation.navigatorPop(context);
+                                   AppNavigation.navigatorPopUntil(
+                                  context, AppRoutes.marketPlaceScreenRoute);
+                                },
+                              );
+
+                            },
+                            btnTxt2: AppStrings.no,
+                            onTap2: () {
+                              AppNavigation.navigatorPop(context);
+                             
+                             
+                            });
+                      },
+                      child: CircleAvatar(
+                          backgroundColor: AppColors.orange,
+                          radius: 10.r,
+                          child: Image.asset(
+                            AssetPath.deleteIcon,
+                            width: 10.w,
+                            height: 10.h,
+                          )),
+                    ),
                     10.horizontalSpace,
                     GestureDetector(
                       onTap: () {

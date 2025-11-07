@@ -72,10 +72,22 @@ class _HomeState extends State<Home> {
           10.horizontalSpace,
           GestureDetector(
             onTap: () {
-              signinSignUpPopup();
+              AppNavigation.navigateToRemovingAll(
+                  context, AppRoutes.loginScreenRoute);
             },
             child: CustomText(
-              text: AppStrings.loginSignUp,
+              text: AppStrings.logIn + "/ ",
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              AppNavigation.navigateToRemovingAll(
+                  context, AppRoutes.loginScreenRoute);
+              AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
+            },
+            child: CustomText(
+              text: AppStrings.signUp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -230,7 +242,8 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.cleaning,
-            image: "https://plus.unsplash.com/premium_photo-1664910214915-b89e63fcb72e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG91c2UlMjBjbGVhbmluZyUyMHNlcnZpY2VzfGVufDB8fDB8fHww"),
+            image:
+                "https://plus.unsplash.com/premium_photo-1664910214915-b89e63fcb72e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG91c2UlMjBjbGVhbmluZyUyMHNlcnZpY2VzfGVufDB8fDB8fHww"),
         imageTextWidget(
             ontap: () {
               !AuthController.i.isLoginSignUp.value
@@ -242,7 +255,8 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.painting,
-            image: "https://img.freepik.com/premium-photo/young-worker-painting-wall-room_392895-180827.jpg"),
+            image:
+                "https://img.freepik.com/premium-photo/young-worker-painting-wall-room_392895-180827.jpg"),
         imageTextWidget(
             ontap: () {
               !AuthController.i.isLoginSignUp.value
@@ -254,7 +268,8 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.electric,
-            image: "https://www.shutterstock.com/image-photo/male-electrician-worker-checking-repair-600nw-2272737695.jpg"),
+            image:
+                "https://www.shutterstock.com/image-photo/male-electrician-worker-checking-repair-600nw-2272737695.jpg"),
         imageTextWidget(
             ontap: () {
               !AuthController.i.isLoginSignUp.value
@@ -266,7 +281,8 @@ class _HomeState extends State<Home> {
                           type: ServiceType.instant.name));
             },
             text: AppStrings.plumber,
-            image: "https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396"),
+            image:
+                "https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396"),
       ],
     );
   }
@@ -287,8 +303,11 @@ class _HomeState extends State<Home> {
       onTap: ontap,
       child: Column(
         children: [
-          CircleAvatar(radius: 30.r,
-            backgroundImage: NetworkImage(image,),
+          CircleAvatar(
+            radius: 30.r,
+            backgroundImage: NetworkImage(
+              image,
+            ),
             // child: Image.network(
             //   image,
             //   width: 30.w,

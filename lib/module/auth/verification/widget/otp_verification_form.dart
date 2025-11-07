@@ -93,11 +93,13 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
                 child: Column(
                   children: [
                     CustomText(is_alignLeft: false,
-                        text: widget.type == OtpType.forget.name
-                            ? AppStrings.otpCodeForgetMessage
-                            : widget.emailAndPhone == OtpCodeType.email.name
-                                ? AppStrings.otpCodeEmailMessage
-                                : AppStrings.otpCodePhoneMessage),
+                        text:
+                        //  widget.type == OtpType.forget.name
+                        //     ? AppStrings.otpCodeForgetMessage
+                        //     : widget.emailAndPhone == OtpCodeType.email.name
+                        //         ? AppStrings.otpCodeEmailMessage
+                        //         :
+                                 AppStrings.otpCodePhoneMessage),
                     20.verticalSpace,
                     // CustomText(text: AppStrings.verificationCode + "*"),
                     // 10.verticalSpace,
@@ -237,7 +239,7 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
                       pinController.clear();
                       ToastMessage(
                           toastmsg:
-                              "We have resend OTP verification code at your email address.");
+                              "We have resend OTP verification code.");
                       setState(() {
                         _remainingTime = widget.duration;
                         _isTimeComplete = false;

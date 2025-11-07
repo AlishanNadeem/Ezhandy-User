@@ -23,14 +23,14 @@ class AppRoutes {
   static const String editProfileScreenRoute = "edit_profile_screenRoute";
   static const String contentScreenRoute = "/content_screenRoute";
   static const String contactUsScreenRoute = "contact_us_screenRoute";
-  static const String transactionHistoryScreenRoute = "transaction_history_screenRoute";
+  static const String transactionHistoryScreenRoute =
+      "transaction_history_screenRoute";
   static const String subscriptionSettingScreenRoute =
       "/subscription_setting_screenRoute";
   static const String subscriptionLogScreenRoute =
       "/subscription_log_screenRoute";
   static const String faqsScreenRoute = "/faqs_screenRoute";
-  static const String chatScreenRoute =
-      "/chat_screenRoute";
+  static const String chatScreenRoute = "/chat_screenRoute";
 
   static const String educationsScreenScreenRoute =
       "/educations_screen_screenRoute";
@@ -47,20 +47,14 @@ class AppRoutes {
   static const String reportIssueScreenRoute = "report_issue_screenRoute";
   static const String legalIntelligenceSupportScreenRoute =
       "legal_intelligence_support_screenRoute";
-  static const String marketPlaceScreenRoute =
-      "market_pkace_screenRoute";
+  static const String marketPlaceScreenRoute = "market_pkace_screenRoute";
   static const String addEditProductScreenRoute =
       "add_edit_product_screenRoute";
-  static const String productDetailScreenRoute =
-      "product_detail_screenRoute";
-  static const String addToCartScreenRoute =
-      "add_to_cart_screenRoute";
-  static const String aiDocumentFeedbackScreenRoute =
-      "ai_document_feedback_screenRoute";
-  static const String ordersScreenRoute =
-      "orders_screenRoute";
-  static const String orderDetailScreenRoute =
-      "order_detail_screenRoute";
+  static const String productDetailScreenRoute = "product_detail_screenRoute";
+  static const String addToCartScreenRoute = "add_to_cart_screenRoute";
+  static const String pastworkScreenRoute = "past_work_screenRoute";
+  static const String ordersScreenRoute = "orders_screenRoute";
+  static const String orderDetailScreenRoute = "order_detail_screenRoute";
   static const String einRegistrationFormScreenRoute =
       "ein_registration_form_screenRoute";
   static const String complianceManagementScreenRoute =
@@ -81,23 +75,32 @@ class AppRoutes {
   static const String applyCampaignScreenRoute = "/apply_campaign_screenRoute";
   static const String pdfViewScreenRoute = "/pdf_view_screenRoute";
   static const String viewDocumentScreenRoute = "/view_document_screenRoute";
-  static const String cooLedComplianceDashboardScreenRoute = "/coo_led_compliance_dashboard_screenRoute";
+  static const String cooLedComplianceDashboardScreenRoute =
+      "/coo_led_compliance_dashboard_screenRoute";
   static const String chatWithAdminScreenRoute = "/chat_with_admin_screenRoute";
   static const String allDocumentsScreenRoute = "/all_documents_screenRoute";
   static const String notificationScreenRoute = "notification_screenRoute";
-  static const String affiliateEarningScreenRoute = "affiliate_earning_screenRoute";
+  static const String affiliateEarningScreenRoute =
+      "affiliate_earning_screenRoute";
   static const String bookingHistoryScreenRoute = "booking_history_screenRoute";
   static const String favouritesScreenRoute = "favourites_screenRoute";
-  static const String listOfServicesScreenRoute = "list_of_services_screenRoute";
+  static const String listOfServicesScreenRoute =
+      "list_of_services_screenRoute";
   static const String servicesScreenRoute = "services_screenRoute";
-  static const String providerProfileScreenRoute = "provider_profile_screenRoute";
+  static const String providerProfileScreenRoute =
+      "provider_profile_screenRoute";
   static const String serviceDetailsScreenRoute = "service_details_screenRoute";
-  static const String serviceSelectionScreenRoute = "service_selection_screenRoute";
-  static const String chooseYourPaymentMethodScreenRoute = "choose_your_payment_method_screenRoute";
-  static const String signInWithAffirmScreenRoute = "signin_with_affirm_screenRoute";
-  static const String selectAPaymentPlanScreenRoute = "select_a_payment_plan_screenRoute";
+  static const String serviceSelectionScreenRoute =
+      "service_selection_screenRoute";
+  static const String chooseYourPaymentMethodScreenRoute =
+      "choose_your_payment_method_screenRoute";
+  static const String signInWithAffirmScreenRoute =
+      "signin_with_affirm_screenRoute";
+  static const String selectAPaymentPlanScreenRoute =
+      "select_a_payment_plan_screenRoute";
   static const String payOverTimeScreenRoute = "pay_over_time_screenRoute";
-  static const String scheduleBookingScreenRoute = "schedule_booking_screenRoute";
+  static const String scheduleBookingScreenRoute =
+      "schedule_booking_screenRoute";
 
   // static const String changePasswordScreenRoute = "/change_password_screen";
 

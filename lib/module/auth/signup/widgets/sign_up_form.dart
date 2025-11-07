@@ -92,7 +92,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     10.verticalSpace,
                     _confirmPasswordTextField(),
                     SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.referralCode + "*"),
+                    CustomText(text: AppStrings.referralCode),
                     10.verticalSpace,
                     _sportTextField(),
                     // SizedBox(height: 0.02.sh),
@@ -262,7 +262,7 @@ class _SignUpFormState extends State<SignUpForm> {
         LengthLimitingTextInputFormatter(Constants.nameMaxLength)
       ],
       controller: sportController,
-      validator: (value) => value?.validateEmpty(AppStrings.referralCode),
+      // validator: (value) => value?.validateEmpty(AppStrings.referralCode),
       // error_text: error_email,
     );
   }
@@ -300,7 +300,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   Widget _emailTextField() {
     return CustomTextField(
-      hint: AppStrings.enterUserEmail,
+      hint: AppStrings.enterEmailAddress,
       divider: false,
       prefxicon: AssetPath.emailIcon,
       label: false,

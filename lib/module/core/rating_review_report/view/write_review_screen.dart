@@ -1,3 +1,5 @@
+import 'package:ezhandy_user/utils/app_dialogs.dart';
+import 'package:ezhandy_user/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -74,8 +76,18 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
     return CustomButton(
       text: AppStrings.submit,
       onclick: () {
+AppDialogs.showSuccessDialog(
+            context,
+            description: AppStrings.reviewSubmittedSuccessfully,
+            title: AppStrings.congratulation,
+            btnTxt1: AppStrings.ok,
+            onTap1: () {
         AppNavigation.navigatorPop(context);
-      },
+        AppNavigation.navigatorPop(Constants.navigatorKey.currentContext!);
+              // AppNavigation.navigateToRemovingAll(
+              //     context, AppRoutes.userProfileScreenRoute);
+            },
+          );      },
     );
   }
 

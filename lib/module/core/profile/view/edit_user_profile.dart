@@ -42,6 +42,13 @@ class _EditUserProfileState extends State<EditUserProfile> {
   // bool switchOff = false;
 
   bool keyboardVisible = false;
+    @override
+  void initState() {
+    setController();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     keyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
@@ -75,7 +82,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
                         10.verticalSpace,
                         _fullNameTextField(),
                         SizedBox(height: 0.02.sh),
-                        CustomText(text: AppStrings.emailAddress + "*"),
+                        CustomText(text: AppStrings.emailAddress ),
                         10.verticalSpace,
                         _emailTextField(),
                         SizedBox(height: 0.02.sh),
@@ -189,7 +196,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
 
   Widget _emailTextField() {
     return CustomTextField(
-      hint: AppStrings.enterUserEmail,
+      hint: AppStrings.enterEmailAddress,
       divider: false,
       prefxicon: AssetPath.emailIcon,
       label: false,
@@ -238,5 +245,9 @@ class _EditUserProfileState extends State<EditUserProfile> {
         FocusScope.of(context).unfocus();
       },
     );
+  }  void setController() {
+    fullNameController.text = "John";
+    emailController.text = "john@gmail.com";
   }
+
 }

@@ -7,6 +7,7 @@ class AssetPath {
   ///----------------- TEMP IMAGES ----------------------------
 
   static const String tempImage1 = "$_temp_images/dummy_image.png";
+  static const String map = "$_temp_images/map.png";
   static const String tempImage = "$_temp_images/temp.png";
   static const String tempCleaningImage = "$_temp_images/temp_cleaning.png";
 
@@ -73,6 +74,7 @@ class AssetPath {
   static const String cooledIcon = "$_icons/ic_cooled.png";
   static const String crossIcon = "$_icons/ic_cross.png";
   static const String deleteIcon = "$_icons/ic_delete.png";
+  static const String deletePopUpIcon = "$_icons/ic_delete_with_circle.png";
   static const String designBgIcon = "$_icons/ic_design_bg.png";
   static const String documentTotalIcon = "$_icons/ic_document_total.png";
   static const String bookingMenuIcon = "$_icons/ic_document_code.png";

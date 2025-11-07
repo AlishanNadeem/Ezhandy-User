@@ -232,7 +232,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               // }
             },
             text: "Reset",
-            color: AppColors.red,
+            color: AppColors.black,
           ),
         ),
      10.horizontalSpace,

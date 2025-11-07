@@ -26,7 +26,7 @@ Future<void> main() async {
       // systemNavigationBarColor:
       //     AppColors.gradient_3, // Change this color to whatever you want
       ));
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown])
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(MyApp());
   });

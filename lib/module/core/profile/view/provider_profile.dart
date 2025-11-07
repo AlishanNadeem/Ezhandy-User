@@ -27,6 +27,8 @@ class ProviderProfile extends StatefulWidget {
 
 class _ProviderProfileState extends State<ProviderProfile> {
   bool isFav = false;
+  List<bool> isFavList = List.filled(10, false); // 10 items, all false
+
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -149,15 +151,15 @@ class _ProviderProfileState extends State<ProviderProfile> {
                 child: ListView.separated(
                   padding: EdgeInsets.only(bottom: AppPadding.padding25),
                   scrollDirection: Axis.horizontal,
-                  itemCount: 10,
+                  itemCount: isFavList.length,
                   itemBuilder: (context, index) {
                     return singleContainer(
                       amount: index + 13,
                       index: index,
-                      isFav: isFav,
+                      isFav: isFavList[index],
                       ontapLike: () {
                         setState(() {
-                          isFav = !isFav;
+                          isFavList[index] = !isFavList[index];
                         });
                       },
                       onTap: () {
@@ -215,6 +217,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
                           ? Icons.favorite_rounded
                           : Icons.favorite_border_rounded,
                       size: 30.sp,
+                      
                     )),
                 // Icon(Icons.favorite_border_rounded),
 

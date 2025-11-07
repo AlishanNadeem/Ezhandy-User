@@ -212,12 +212,33 @@ class AppDialogs {
         });
   }
 
-  static Future showRejectDialog(context) {
+  static Future showRejectDialog(   context, {
+    String? title,
+    String? btnTxt1,
+    String? btnTxt2,
+    String? image,
+    bool isDoneShow = true,
+    bool barrierDismissible = false,
+    // required String description,
+    final Function()? onTap1,
+    final Function()? onTap2,}) {
     return showDialog(
-        barrierDismissible: false,
+      
+        barrierDismissible: barrierDismissible, // Prevent dismiss on tap outside
+        barrierColor: AppColors.orange.withOpacity(0.8),
         context: context,
         builder: (context) {
-          return CustomRejectDialog();
+          return Material(color: AppColors.transparent,
+            child: CustomRejectDialog( 
+              btnTxt1: btnTxt1,
+              barrierDismissible: barrierDismissible,
+              image: image,
+              btnTxt2: btnTxt2,
+              isDoneShow: isDoneShow,
+              title: title,
+              onTap1: onTap1,
+              onTap2: onTap2,),
+          );
         });
   }
 

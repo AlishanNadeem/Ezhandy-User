@@ -36,7 +36,7 @@ class _FavouritesServicesState extends State<FavouritesServices> {
           Get.back();
         },
         // appBarheight: 50.h,
-        title: AppStrings.bookingHistory,
+        title: AppStrings.myFavorites,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
           child: ListView.separated(

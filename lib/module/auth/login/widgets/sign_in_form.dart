@@ -68,11 +68,11 @@ class _SignInFormState extends State<SignInForm> {
                 key: signInKey,
                 child: Column(
                   children: [
-                    CustomText(text: AppStrings.email),
+                    CustomText(text: AppStrings.email+"*"),
                     10.verticalSpace,
                     _emailTextField(),
                     SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.password),
+                    CustomText(text: AppStrings.password+"*"),
                     10.verticalSpace,
                     _passwordTextField(),
                     SizedBox(height: 0.02.sh),
@@ -138,7 +138,7 @@ class _SignInFormState extends State<SignInForm> {
     return CustomTextField(
         divider: false,
         label: false,
-        hint: AppStrings.password,
+        hint: AppStrings.enterPassword,
         prefxicon: AssetPath.lockIcon,
         inputFormatters: [LengthLimitingTextInputFormatter(35)],
         obscureText: FieldValidator.isHidepassword,
@@ -214,7 +214,7 @@ class _SignInFormState extends State<SignInForm> {
 
   Widget _emailTextField() {
     return CustomTextField(
-      hint: AppStrings.emailAddress,
+      hint: AppStrings.enterEmailAddress,
       divider: false,
       prefxicon: AssetPath.emailIcon,
       label: false,
@@ -234,7 +234,7 @@ class _SignInFormState extends State<SignInForm> {
       text: AppStrings.signIn,
       onclick: () {
         if (!signInKey.currentState!.validate()) {
-          ToastMessage(toastmsg: AppStrings.signIn);
+          ToastMessage(toastmsg: "Login Successfully");
           // if (AuthController.i.role.value == RoleType.single.name || AuthController.i.role.value == RoleType.committed.name) {
           // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
           // } else {

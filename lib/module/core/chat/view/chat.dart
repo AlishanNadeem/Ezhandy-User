@@ -80,6 +80,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     if (showDateDivider) _buildDateDivider(current.time),
                     ChatBubble(
+                      
+                      time: AppStrings.dummytime,
                       name: AppStrings.dummyName,
                       text: current.text,
                       isSender: current.isSender,
@@ -140,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget bookingWidget() {
     return Visibility(visible:widget. isBooking,
       child: Padding(
-        padding:  EdgeInsets.only(right: AppPadding.padding12),
+        padding:  EdgeInsets.only(right: AppPadding.padding12,top: 5.h,bottom: 5.h),
         child: CustomContainer(onTap: (){},
           child: CustomText(
             text: AppStrings.booking,

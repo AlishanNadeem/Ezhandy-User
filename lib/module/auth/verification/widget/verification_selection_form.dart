@@ -81,7 +81,7 @@ class _VerificationSelectionFormState extends State<VerificationSelectionForm> {
 
   CustomText signInTextWidget() {
     return CustomText(
-      text: AppStrings.passwordRecovery,
+      text: "Verification Method",
       is_alignLeft: false,
       fontSize: 18.sp,
       fontWeight: FontWeight.bold,
@@ -100,7 +100,7 @@ class _VerificationSelectionFormState extends State<VerificationSelectionForm> {
       },
       label: false,
       divider: false,
-      hint: AppStrings.infoEnail,
+      hint: AppStrings.enterEmailAddress,
       prefxicon: AssetPath.emailIcon,
       sufixImage: isEmail ? Icon(Icons.check) : null,
       inputFormatters: [LengthLimitingTextInputFormatter(35)],
@@ -118,7 +118,7 @@ class _VerificationSelectionFormState extends State<VerificationSelectionForm> {
         });
         emailController.clear();
       },
-      hint: AppStrings.dummyPhoneNUmber,
+      hint: AppStrings.enterPhoneNumber,
       divider: false,
       prefxicon: AssetPath.callIcon,
       label: false,
@@ -155,6 +155,8 @@ class _VerificationSelectionFormState extends State<VerificationSelectionForm> {
           AppNavigation.navigateTo(
               context, AppRoutes.otpVerificationScreenRoute,
               arguments: OtpVerificationRoutingArgument(
+               
+               
                   type: widget.type,
                   text: isEmail ? emailController.text : phoneController.text,
                   emailAndPhone: isEmail

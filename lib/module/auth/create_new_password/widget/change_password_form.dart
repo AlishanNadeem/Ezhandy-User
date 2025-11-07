@@ -157,7 +157,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
             title: AppStrings.congratulation,
             btnTxt1: AppStrings.ok,
             onTap1: () {
-              AppNavigation.navigateToRemovingAll(
+              AppNavigation.navigatorPopUntil(
                   context, AppRoutes.userProfileScreenRoute);
             },
           );
@@ -169,7 +169,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
           //         text: emailController.text));
           // AuthController.i
           //     .forgotPass(email: forgotPassRepo.email_controller.text);
-          ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
+          // ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
           FocusScope.of(context).unfocus();
         });
   }
