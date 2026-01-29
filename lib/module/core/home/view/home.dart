@@ -1,5 +1,6 @@
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
@@ -63,6 +64,18 @@ class _HomeState extends State<Home> {
     return Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+         GestureDetector(
+            onTap: () {
+              globalkey.currentState!.openDrawer();
+            },
+            child: Image.asset(
+              AssetPath.menuIcon,
+              alignment: Alignment.centerLeft,
+              scale: 4.sp,
+              color: AppColors.black,
+            ),
+          ),
+          10.horizontalSpace,
         if (!AuthController.i.isLoginSignUp.value) ...[
           Image.asset(
             AssetPath.homeUserIcon,

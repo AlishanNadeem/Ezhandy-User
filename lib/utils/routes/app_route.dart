@@ -13,6 +13,8 @@ class AppRoutes {
   static const String otpVerificationScreenRoute = "/otp_verification_screen";
   static const String verificationSelectionScreenRoute =
       "/verification_selection_screen";
+        static const String proChatScreenRoute = "/pro_chat_screenRoute";
+
   static const String resetPasswordScreenRoute = "/reset_password_screen";
   static const String changePasswordScreenRoute = "/change_password_screen";
   static const String mainMenuScreenRoute = "main_menuRoute";
@@ -67,6 +69,12 @@ class AppRoutes {
   static const String pitchTemplateScreenRoute = "pitch_template_screenRoute";
   static const String successStoriesCaseStudyScreenRoute =
       "success_stories_case_study_screenRoute";
+
+  static const String createANewPostScreenRoute =
+      "/create_a_new_post_screenRoute";
+  static const String createAProPostScreenRoute =
+      "/create_a_pro_post_screenRoute";
+  static const String myPostsScreenRoute = "/my_post_screenRoute";
 
   static const String brandCollaborationScreenRoute =
       "/brand_collaboration_screenRoute";

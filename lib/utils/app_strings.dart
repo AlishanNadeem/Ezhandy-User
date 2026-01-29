@@ -26,7 +26,8 @@ class AppStrings {
     home,
     message,
     booking,
-    menu,
+    // menu,
+    community,
   ];
   static const List<String> brandStrategySponsorshipTabsList = [
     aiSocialMediaManager,
@@ -75,7 +76,7 @@ class AppStrings {
     inProcess,
     past,
   ];
-    static const List<String> bookingTabList = [
+  static const List<String> bookingTabList = [
     newOrders,
     inProcess,
     delivered,
@@ -245,10 +246,13 @@ class AppStrings {
   static const String enterFullName = "Enter Full Name";
   static const String enterName = "Enter Name";
   static const String name = "Name";
+  static const String proChat = "Pro Chat";
   static const String phoneNumber = "Phone Number";
   static const String enterPhoneNumber = "Enter Phone Number";
-  static const String enterMobileNumberToGetStart = "Enter your mobile number to get started.";
-  static const String receiveSms = "You'll receive an SMS to confirm your number. Standard message and data rates apply.";
+  static const String enterMobileNumberToGetStart =
+      "Enter your mobile number to get started.";
+  static const String receiveSms =
+      "You'll receive an SMS to confirm your number. Standard message and data rates apply.";
   static const String optional = "(Optional)";
   static const String referralCode = "Referral Code";
   static const String enterReferralCode = "Enter Referral Code";
@@ -310,8 +314,10 @@ class AppStrings {
   static const String passwordUpdatedSuccessfully =
       "Your password has been successfully updated. You can now log in with your new credentials";
   static const String passwordHasBeenUpdated = "Password has been updated";
-  static const String issueHasBeenReportedSuccessfully = "Issue has been reported successfully";
-  static const String reviewSubmittedSuccessfully = "Review submitted successfully";
+  static const String issueHasBeenReportedSuccessfully =
+      "Issue has been reported successfully";
+  static const String reviewSubmittedSuccessfully =
+      "Review submitted successfully";
   static const String passwordUpdated = "Password Updated";
   static const String backToLogin = "Back To Login";
   static const String thankYou = "Thank You!";
@@ -334,6 +340,9 @@ class AppStrings {
   static const String searchAnything = "Search here";
   static const String ourServices = "Our Services";
   static const String seeAll = "See All";
+  static const String writeComment = "Write comment";
+  static const String writeHere = "Write here...";
+
   static const String cleaning = "Cleaning";
   static const String painting = "Painting";
   static const String electric = "Electric";
@@ -419,18 +428,22 @@ class AppStrings {
   static const String discussAndConfirmDetails =
       "You can discuss and confirm this with the service provider later. Charges will be added only if agreed.";
   static const String congratulation = "Congratulation";
+  static const String paymentHasBeenDoneSuccessfully = "Payment has been done successfully.";
   static const String done = "Done";
   static const String ok = "Ok";
   static const String bookQuiceServiceDetails =
       "Are you sure you want to book the Quick Service";
   static const String bookServiceDetails =
       "Are you sure you want to book the Service";
-  static const String yourBookingHasBeenDone = "Your booking has been booked successfully";
+  static const String yourBookingHasBeenDone =
+      "Your booking has been booked successfully";
   static const String accountDeleteSuccessfully = "Account Delete Successfully";
   static const String areYouSureWantToDeleteThisAccount =
       "Are You Sure Want To Delete This \n Account?";
-  static const confirmationDialogLogoutDescription = 'Are you sure you want to logout?';
-  static const areYouSureYouWantToDeleteThisProduct = 'Are you sure you want to delete this \nProduct?';
+  static const confirmationDialogLogoutDescription =
+      'Are you sure you want to logout?';
+  static const areYouSureYouWantToDeleteThisProduct =
+      'Are you sure you want to delete this \nProduct?';
 //   Work Document
   static const String beforeImage = "Before Image";
   static const String afterImage = "After Image";
@@ -500,6 +513,7 @@ class AppStrings {
   static const String charges = "Charges";
 
 //   Booking
+  static const String community = "Community";
   static const String booking = "Booking";
   static const String refund = "Refund";
   static const String endWork = "End Work";
@@ -538,6 +552,8 @@ class AppStrings {
   static const String acceptSuccessfully = "Accept Successfully";
   static const String areYouSureWantToAcceptRescheduleRequest =
       "Are you sure you want to Accept \nreschedule request ?";
+  static const String areYouSureWantToDeletePost =
+      "Are you sure you want to delete this post?";
   static const String rejectSchedule = "Reject Schedule";
   static const String rejectSuccessfully = "Reject Successfully";
   static const String areYouSureWantToRejectRescheduleRequest =
@@ -819,6 +835,11 @@ class AppStrings {
   static const String addPartnersProfile = "Add Partner's Profile";
   static const String businessName = "Business Name";
   static const String aboutBusiness = "About Business";
+  static const String AskAPro = "Ask A Pro";
+  static const String createANewPost = "Create a New Post";
+  static const String editPost = "Edit Post";
+  static const String myPosts = "My Posts";
+  static const String post = "Post";
   static const String businessWebsite = "Business Website";
   static const String standardDeliveryTime = "Standard Delivery Time";
   static const String uploadPhoto = "Upload Photo";
@@ -864,7 +885,6 @@ class AppStrings {
 //Product
   static const String addProduct = "Add Product";
   static const String editProduct = "Edit Product";
-
 
   /// Bottom Nav Bar
   static const String home = "Home";

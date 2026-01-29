@@ -58,6 +58,8 @@ class AssetPath {
   static const String briefcaseIcon = "$_icons/ic_briefcase.png";
   static const String calendarTickIcon = "$_icons/ic_calendar_tick.png";
   static const String calendarFillIcon = "$_icons/ic_calendar_fill.png";
+  static const String communityIcon = "$_icons/ic_community.png";
+  static const String communityFillIcon = "$_icons/ic_community_fill.png";
   static const String calendarIcon = "$_icons/ic_calendar.png";
   static const String callIcon = "$_icons/ic_call.png";
   static const String cameraUploadIcon = "$_icons/ic_camera_upload.png";
@@ -91,8 +93,11 @@ class AssetPath {
   static const String homeIcon = "$_icons/ic_home.png";
   static const String homeFillIcon = "$_icons/ic_home_fill.png";
   static const String smsIcon = "$_icons/ic_sms.png";
+  static const String proUserIcon = "$_icons/ic_pro_user.png";
   static const String smsFillIcon = "$_icons/ic_sms_fill.png";
   static const String aboutIcon = "$_icons/ic_info_circle.png";
+  static const String audioCallIcon = "$_icons/ic_audio_call.png";
+  static const String videoCallIcon = "$_icons/ic_video_call.png";
   static const String marketPlaceIcon = "$_icons/ic_market_place.png";
   static const String orderIcon = "$_icons/ic_order.png";
   static const String messageIcon = "$_icons/ic_message.png";
@@ -147,13 +152,15 @@ class AssetPath {
     homeIcon,
     smsIcon,
     calendarIcon,
-    menuIcon,
+    // menuIcon,
+    communityIcon,
   ];
   static const List<String> bottomBarFillIconList = [
     homeFillIcon,
     smsFillIcon,
     calendarFillIcon,
-    menuFillIcon
+    // menuFillIcon
+    communityFillIcon,
   ];
 
   static const List<String> homeTabsIconList = [

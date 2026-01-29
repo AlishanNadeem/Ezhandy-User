@@ -1,8 +1,10 @@
 import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
+import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/profile_widget/user_image_widget.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
@@ -38,6 +40,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
           20.verticalSpace,
           searchTextField(),
           10.verticalSpace,
+                    CustomButton(text: "Pro Chats",color: AppColors.black,onclick: (){AppNavigation.navigateTo(context, AppRoutes.proChatScreenRoute);},),
+
           Expanded(
             child: ListView.separated(
               padding: EdgeInsets.only(
@@ -82,6 +86,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
     return Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        GestureDetector(
+            onTap: () {
+              globalkey.currentState!.openDrawer();
+            },
+            child: Image.asset(
+              AssetPath.menuIcon,
+              alignment: Alignment.centerLeft,
+              scale: 4.sp,
+              color: AppColors.black,
+            ),
+          ),
+          10.horizontalSpace,
+      
         CustomText(
           text: AppStrings.messages,
           // fontFamily: AppStrings.montserrat,

@@ -508,7 +508,7 @@ class _AddEditProductState extends State<AddEditProduct> {
   }
 
   void setController() {
-    categoryValue=    "Angle grinders";
+    categoryValue = "Angle grinders";
     productNameController.text = "Mope Pro";
     nameController.text = "John Doe";
     phoneController.text =

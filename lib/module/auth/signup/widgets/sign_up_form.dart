@@ -319,7 +319,7 @@ class _SignUpFormState extends State<SignUpForm> {
     return CustomButton(
       text: AppStrings.createAccount,
       onclick: () {
-        if (!signUpKey.currentState!.validate()) {
+        if (signUpKey.currentState!.validate()) {
           // ToastMessage(toastmsg: AppStrings.logIn);
           // if (AuthController.i.role.value == RoleType.single.name || AuthController.i.role.value == RoleType.committed.name) {
           // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);

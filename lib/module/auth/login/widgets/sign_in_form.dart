@@ -233,7 +233,7 @@ class _SignInFormState extends State<SignInForm> {
     return CustomButton(
       text: AppStrings.signIn,
       onclick: () {
-        if (!signInKey.currentState!.validate()) {
+        if (signInKey.currentState!.validate()) {
           ToastMessage(toastmsg: "Login Successfully");
           // if (AuthController.i.role.value == RoleType.single.name || AuthController.i.role.value == RoleType.committed.name) {
           // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);

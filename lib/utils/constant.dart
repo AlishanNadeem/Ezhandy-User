@@ -121,7 +121,17 @@ class Constants {
     type: MaskAutoCompletionType.lazy,
   );
 
-
+ static String formatFacebookCount(int count) {
+    if (count >= 1000000000) {
+      return '${(count / 1000000000).toStringAsFixed(1)}B';
+    } else if (count >= 1000000) {
+      return '${(count / 1000000).toStringAsFixed(1)}M';
+    } else if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(0)}K';
+    } else {
+      return count.toString();
+    }
+  }
 
   // Future<Map<String, String>?> pickPlace(BuildContext context) async {
   //   LocationResult? result = await Navigator.of(context).push(MaterialPageRoute(

@@ -42,7 +42,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
   // bool switchOff = false;
 
   bool keyboardVisible = false;
-    @override
+  @override
   void initState() {
     setController();
     // TODO: implement initState
@@ -82,7 +82,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
                         10.verticalSpace,
                         _fullNameTextField(),
                         SizedBox(height: 0.02.sh),
-                        CustomText(text: AppStrings.emailAddress ),
+                        CustomText(text: AppStrings.emailAddress),
                         10.verticalSpace,
                         _emailTextField(),
                         SizedBox(height: 0.02.sh),
@@ -215,7 +215,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
     return CustomButton(
       text: AppStrings.update,
       onclick: () {
-        if (!editProfileKey.currentState!.validate()) {
+        if (editProfileKey.currentState!.validate()) {
           AppDialogs.showSuccessDialog(
             context,
             description: AppStrings.profileUpdatedSuccessful,
@@ -245,9 +245,10 @@ class _EditUserProfileState extends State<EditUserProfile> {
         FocusScope.of(context).unfocus();
       },
     );
-  }  void setController() {
+  }
+
+  void setController() {
     fullNameController.text = "John";
     emailController.text = "john@gmail.com";
   }
-
 }

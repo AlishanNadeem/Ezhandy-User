@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:ezhandy_user/module/core/chat/model/chat_model.dart';
+import 'package:ezhandy_user/utils/app_dialogs.dart';
+import 'package:ezhandy_user/utils/routes/app_navigation.dart';
+import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +21,8 @@ import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 
 class ChatScreen extends StatefulWidget {
   bool isBooking;
-   ChatScreen({this.isBooking=false ,super.key});
+  bool isCalls;
+  ChatScreen({this.isBooking = false, this.isCalls = false, super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -26,7 +30,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
-
+  int count = 0;
   List<ChatModel> messages = [
     ChatModel(
       text: "Welcome to support!",
@@ -62,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
       onclickLead: () => Get.back(),
       // appBarheight: 50.h,
       title: AppStrings.dummyName,
-      actionWidget: bookingWidget(),
+      actionWidget: actionWidget(),
       child: Column(
         children: [
           Expanded(
@@ -80,7 +84,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     if (showDateDivider) _buildDateDivider(current.time),
                     ChatBubble(
-                      
                       time: AppStrings.dummytime,
                       name: AppStrings.dummyName,
                       text: current.text,
@@ -139,20 +142,96 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget bookingWidget() {
-    return Visibility(visible:widget. isBooking,
-      child: Padding(
-        padding:  EdgeInsets.only(right: AppPadding.padding12,top: 5.h,bottom: 5.h),
-        child: CustomContainer(onTap: (){},
+  Widget actionWidget() {
+    if (widget.isBooking) {
+      return Padding(
+        padding:
+            EdgeInsets.only(right: AppPadding.padding12, top: 5.h, bottom: 5.h),
+        child: CustomContainer(
+          onTap: () {},
           child: CustomText(
             text: AppStrings.booking,
             color: AppColors.white,
           ),
           bgColor: AppColors.orange,
-          
         ),
-      ),
-    );
+      );
+    } else if (widget.isCalls) {
+      return Padding(
+        padding:
+            EdgeInsets.only(right: AppPadding.padding12, top: 5.h, bottom: 5.h),
+        child: Row(
+          children: [
+            GestureDetector(
+                onTap: () {
+                  AppDialogs.showSuccessDialog(context,
+                      description: "Make a payment for audio call.",
+                      title: "\$9.99/ for 10 minutes",
+                      image: AssetPath.proUserIcon,
+                      isDoneShow: false,
+                      btnTxt1: AppStrings.continuee,
+                      onTap1: () {
+                        AppDialogs.showSuccessDialog(context,
+                            description:
+                                AppStrings.paymentHasBeenDoneSuccessfully,
+                            title: AppStrings.congratulation,
+                            // image: AssetPath.proUserIcon,
+                            isDoneShow: true,
+                            btnTxt1: AppStrings.ok, onTap1: () {
+                          AppNavigation.navigatorPopUntil(
+                              context, AppRoutes.chatScreenRoute);
+                        });
+                      },
+                      btnTxt2: AppStrings.cancel,
+                      onTap2: () {
+                        AppNavigation.navigatorPop(context);
+                      });
+                },
+                child: Image.asset(
+                  AssetPath.audioCallIcon,
+                  width: 20.w,
+                  height: 20.h,
+                )),
+            10.horizontalSpace,
+            GestureDetector(
+                onTap: () {
+                  AppDialogs.showSuccessDialog(context,
+                      description: "Make a payment for video session.",
+                      title: "\$9.99/ for 15 minutes",
+                      image: AssetPath.proUserIcon,
+                      isDoneShow: false,
+                      btnTxt1: AppStrings.continuee,
+                      onTap1: () {
+                        // AppNavigation.navigateReplacementNamed(
+                        //     context, AppRoutes.createAProPostScreenRoute);
+
+                        AppDialogs.showSuccessDialog(context,
+                            description:
+                                AppStrings.paymentHasBeenDoneSuccessfully,
+                            title: AppStrings.congratulation,
+                            // image: AssetPath.proUserIcon,
+                            isDoneShow: true,
+                            btnTxt1: AppStrings.ok, onTap1: () {
+                          AppNavigation.navigatorPopUntil(
+                              context, AppRoutes.chatScreenRoute);
+                        });
+                      },
+                      btnTxt2: AppStrings.cancel,
+                      onTap2: () {
+                        AppNavigation.navigatorPop(context);
+                      });
+                },
+                child: Image.asset(
+                  AssetPath.videoCallIcon,
+                  width: 25.w,
+                  height: 25.h,
+                )),
+          ],
+        ),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
   }
 
   Widget _messageTextField() {
@@ -168,14 +247,52 @@ class _ChatScreenState extends State<ChatScreen> {
       sufixImage: Image.asset(AssetPath.sendIcon, width: 30.w, height: 30.h),
       onclickSufix: () {
         if (messageController.text.trim().isNotEmpty) {
-          setState(() {
-            messages.add(ChatModel(
-              text: messageController.text,
-              isSender: true,
-              time: DateTime.now().toUtc(), // adds live message
-            ));
-            messageController.clear();
-          });
+          if (widget.isCalls) {
+            if (count >= 5) {
+              AppDialogs.showSuccessDialog(context,
+                  description:
+                      "You’ve sent 5 messages in this pro chat. Make a payment to send more 5 messages.",
+                  title: "\$9.99/ 5 more text messages",
+                  image: AssetPath.proUserIcon,
+                  isDoneShow: false,
+                  btnTxt1: AppStrings.continuee,
+                  onTap1: () {
+                    AppDialogs.showSuccessDialog(context,
+                        description: AppStrings.paymentHasBeenDoneSuccessfully,
+                        title: AppStrings.congratulation,
+                        // image: AssetPath.proUserIcon,
+                        isDoneShow: true,
+                        btnTxt1: AppStrings.ok, onTap1: () {
+                      count = 0;
+                      AppNavigation.navigatorPopUntil(
+                          context, AppRoutes.chatScreenRoute);
+                    });
+                  },
+                  btnTxt2: AppStrings.cancel,
+                  onTap2: () {
+                    AppNavigation.navigatorPop(context);
+                  });
+            } else {
+              count++;
+              setState(() {
+                messages.add(ChatModel(
+                  text: messageController.text,
+                  isSender: true,
+                  time: DateTime.now().toUtc(), // adds live message
+                ));
+                messageController.clear();
+              });
+            }
+          } else {
+            setState(() {
+              messages.add(ChatModel(
+                text: messageController.text,
+                isSender: true,
+                time: DateTime.now().toUtc(), // adds live message
+              ));
+              messageController.clear();
+            });
+          }
         }
       },
       inputFormatters: [

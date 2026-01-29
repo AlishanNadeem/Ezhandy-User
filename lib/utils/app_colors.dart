@@ -16,6 +16,7 @@ class AppColors {
   static const Color yellow = Color(0xffFADA50);
   static const Color pinkLight = Color(0xffFFDFE0);
   static const Color blueLight = Color(0xffD6F2F5);
+  static const Color greybg = Color.fromARGB(255, 219, 219, 226);
   static const Color orange = Color(0xffF16622);
 
   static const Color sourceWhiteBg = Color(0xffF8F8F9);

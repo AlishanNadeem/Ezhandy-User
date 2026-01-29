@@ -28,6 +28,11 @@ import 'package:ezhandy_user/module/core/booking/view/invoice_screen.dart';
 import 'package:ezhandy_user/module/core/booking/view/work_document.dart';
 import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/chat/view/chat.dart';
+import 'package:ezhandy_user/module/core/chat/view/pro_chat.dart';
+import 'package:ezhandy_user/module/core/community/routing_arguments/add_edit_post_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/community/view/create_a_new_post.dart';
+import 'package:ezhandy_user/module/core/community/view/create_a_pro_post.dart';
+import 'package:ezhandy_user/module/core/community/view/my_posts.dart';
 import 'package:ezhandy_user/module/core/contact_us/view/contact_us.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/module/core/notification/notification.dart';
@@ -173,6 +178,7 @@ class AppRouter {
                 routeSettings.arguments as ChatRoutingArgument;
             return ChatScreen(
               isBooking: chatArgument.isBooking ?? false,
+              isCalls: chatArgument.isCalls ?? false,
             );
           case AppRoutes.serviceDetailsScreenRoute:
             ServiceRoutingArgument serviceArgument =
@@ -195,6 +201,16 @@ class AppRouter {
             return ScheduleBooking();
           case AppRoutes.marketPlaceScreenRoute:
             return MarketPlace();
+             case AppRoutes.proChatScreenRoute:
+            return ProChat();
+          case AppRoutes.createAProPostScreenRoute:
+            return CreateAProPost();
+          case AppRoutes.createANewPostScreenRoute:
+            AddEditPostRoutingArgument postArgument =
+                routeSettings.arguments as AddEditPostRoutingArgument;
+            return CreateANewPost(type: postArgument.type);
+          case AppRoutes.myPostsScreenRoute:
+            return MyPosts();
           case AppRoutes.addEditProductScreenRoute:
             AddEditProductRoutingArgument productArgument =
                 routeSettings.arguments as AddEditProductRoutingArgument;

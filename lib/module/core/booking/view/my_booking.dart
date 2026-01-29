@@ -1,4 +1,5 @@
 import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
@@ -94,7 +95,19 @@ class _MyBookingState extends State<MyBooking> {
     return Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomText(
+        GestureDetector(
+            onTap: () {
+              globalkey.currentState!.openDrawer();
+            },
+            child: Image.asset(
+              AssetPath.menuIcon,
+              alignment: Alignment.centerLeft,
+              scale: 4.sp,
+              color: AppColors.black,
+            ),
+          ),
+          10.horizontalSpace,
+       CustomText(
           text: AppStrings.myBookings,
           // fontFamily: AppStrings.montserrat,
           // color: AppColors.blueDark,

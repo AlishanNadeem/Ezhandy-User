@@ -18,6 +18,8 @@ import 'package:intl/intl.dart';
 import 'package:ezhandy_user/widgets/toast_dialogs_sheet/image_picker_bottom_sheet.dart';
 // import 'package:ezhandy_user/widgets/toast_dialogs_sheet/image_picker_bottom_sheet.dart';
 import 'package:ezhandy_user/widgets/view_image/arguments/view_full_image_arguments.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 // import 'package:table_calendar/table_calendar.dart';
 
 class Utils {
@@ -176,34 +178,46 @@ class Utils {
     }
   }
 
-  static Future openVideoPicker({
-    ImageSource? source,
-    BuildContext? context,
-    Function(File)? setFile,
-    bool action = true,
-  }) async {
-    FocusScope.of(context!).unfocus();
-    action == true ? Get.back() : null;
-    try {
-      final image = await ImagePicker().pickVideo(
-        source: source!,
-      );
-      if (image != null) {
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        print(image.path);
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        // cropImage(image: image.path, setFile: setFile, context: context);
+ static Future openVideoPicker({
+  ImageSource? source,
+  BuildContext? context,
+  Function(File)? setFile,
+  Function(File)? setThumbnail,
+  bool action = true,
+}) async {
+  FocusScope.of(context!).unfocus();
+  if (action) Get.back();
 
-        File _image = File(image.path);
-        print(_image);
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        // print(_image);
-        setFile!(_image);
-      }
-    } catch (e) {
-      print(e.toString() + "5455555555555555555555555555555555555555555");
-    }
-  }
+  final picked = await ImagePicker().pickVideo(source: source!);
+  if (picked == null) return;
+
+  final videoFile = File(picked.path);
+
+  // Give camera time to finalize video
+  await Future.delayed(const Duration(milliseconds: 300));
+
+  final thumbBytes = await VideoThumbnail.thumbnailData(
+    video: picked.path,
+    imageFormat: ImageFormat.JPEG, // ✅ IMPORTANT
+    maxHeight: 512,
+    quality: 80,
+  );
+
+  if (thumbBytes == null || thumbBytes.isEmpty) return;
+
+  final dir = await getTemporaryDirectory();
+  final thumbFile = File(
+    '${dir.path}/thumb_${DateTime.now().millisecondsSinceEpoch}.jpg',
+  );
+
+  await thumbFile.writeAsBytes(thumbBytes);
+
+  setFile?.call(videoFile);
+  setThumbnail?.call(thumbFile);
+}
+
+
+
 
   showAppDialog({
     required BuildContext context,

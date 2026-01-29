@@ -217,7 +217,6 @@ class _ProviderProfileState extends State<ProviderProfile> {
                           ? Icons.favorite_rounded
                           : Icons.favorite_border_rounded,
                       size: 30.sp,
-                      
                     )),
                 // Icon(Icons.favorite_border_rounded),
 

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:ezhandy_user/widgets/toast_dialogs_sheet/community_comment_dialog.dart';
+import 'package:ezhandy_user/widgets/toast_dialogs_sheet/community_like_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
@@ -242,6 +244,31 @@ class AppDialogs {
         });
   }
 
+
+static Future showCommunityCommentsDialog(
+    context,
+  ) {
+    return showDialog(
+        barrierDismissible: false, // Prevent dismiss on tap outside
+        barrierColor: AppColors.orange.withOpacity(0.8),
+        context: context,
+        builder: (context) {
+          return CommunityCommentsDialog();
+        });
+  }
+  static Future showCommunityLikeDialog(
+    context,
+  ) {
+    return showDialog(
+        barrierDismissible: false, // Prevent dismiss on tap outside
+        barrierColor: AppColors.orange.withOpacity(0.8),
+        context: context,
+        builder: (context) {
+          return CommunityLikeDialog();
+        });
+  }
+
+
   static Future showSuccessDialog(
     context, {
     String? title,
@@ -351,9 +378,10 @@ class AppDialogs {
         });
   }
 
-  static Future showImageSourceDialog(
+ static Future showImageSourceDialog(
     context, {
     final Function(File)? setFile,
+    final Function(File)? setThumbnail,
     bool isVideo = false,
   }) {
     return showDialog(
@@ -363,6 +391,7 @@ class AppDialogs {
           return ShowImageSourceDialog(
             isVideo: isVideo,
             setFile: setFile,
+            setThumbnail: setThumbnail,
           );
         });
   }

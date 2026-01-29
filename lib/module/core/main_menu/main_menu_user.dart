@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/booking/view/my_booking.dart';
 import 'package:ezhandy_user/module/core/chat/view/messages.dart';
+import 'package:ezhandy_user/module/core/community/view/community.dart';
 import 'package:ezhandy_user/module/core/home/view/home.dart';
+import 'package:ezhandy_user/module/core/main_menu/drawer_screen.dart';
 import 'package:ezhandy_user/module/core/menu/view/menu.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+  GlobalKey<ScaffoldState> globalkey = new GlobalKey<ScaffoldState>();
 
 class MainMenu extends StatefulWidget {
   // int selectedTab;
@@ -42,7 +45,8 @@ class _MainMenuState extends State<MainMenu> {
     // Container(),
     MessagesScreen(),
     MyBooking(),
-    Menu(),
+    // Menu(),
+    CommunityScreen(),
   ];
 
   @override
@@ -52,7 +56,6 @@ class _MainMenuState extends State<MainMenu> {
     super.initState();
   }
 
-  GlobalKey<ScaffoldState> globalkey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +101,7 @@ class _MainMenuState extends State<MainMenu> {
     return Scaffold(
       extendBodyBehindAppBar: false,
       key: globalkey,
+      drawer: DrawerScreen(),
       backgroundColor: AppColors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
@@ -213,7 +217,7 @@ class _MainMenuState extends State<MainMenu> {
   Widget bottom_items(inIndex, iconSelected, text) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 15.h),
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
       decoration: BoxDecoration(
           color: HomeController.i.selectedTab.value == inIndex
               ? AppColors.white

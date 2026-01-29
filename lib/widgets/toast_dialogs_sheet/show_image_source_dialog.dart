@@ -1,18 +1,22 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/utils.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 
 // ignore: must_be_immutable
 class ShowImageSourceDialog extends StatefulWidget {
   final Function(File)? setFile;
+  final Function(File)? setThumbnail; // <<< add this
   final bool isVideo;
 
-  ShowImageSourceDialog({this.setFile, this.isVideo = false});
-
+  ShowImageSourceDialog({
+    this.setFile,
+    this.setThumbnail, // <<< add this
+    this.isVideo = false,
+  });
   @override
   State<ShowImageSourceDialog> createState() => _ShowImageSourceDialogState();
 }
@@ -75,13 +79,14 @@ class _ShowImageSourceDialogState extends State<ShowImageSourceDialog>
                             source: ImageSource.gallery,
                             context: context,
                             setFile: widget.setFile,
-                          )
+                            setThumbnail: widget.setThumbnail)
                         : Utils.openImagePicker(
                             source: ImageSource.gallery,
                             context: context,
                             setFile: widget.setFile,
                           ),
-                  ),Spacer(),
+                  ),
+                  Spacer(),
                   _buildOptionButton(
                     icon: Icons.photo_camera,
                     label: "Camera",
@@ -90,7 +95,7 @@ class _ShowImageSourceDialogState extends State<ShowImageSourceDialog>
                             source: ImageSource.camera,
                             context: context,
                             setFile: widget.setFile,
-                          )
+                            setThumbnail: widget.setThumbnail)
                         : Utils.openImagePicker(
                             source: ImageSource.camera,
                             context: context,
@@ -133,7 +138,8 @@ class _ShowImageSourceDialogState extends State<ShowImageSourceDialog>
             Icon(icon, size: 36.sp, color: AppColors.black),
             SizedBox(height: 10.h),
             CustomText(
-              text: label,is_alignLeft: false,
+              text: label,
+              is_alignLeft: false,
               fontWeight: FontWeight.w500,
               fontSize: 14.sp,
               color: AppColors.black,
