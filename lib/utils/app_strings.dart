@@ -234,7 +234,7 @@ class AppStrings {
   static const String rememberMe = "Remember Me";
   static const String dontHaveAnAccount = "Don't have an account? ";
   static const String welcomeBack = "Welcome back!";
-  static const String accountDetails = "Enter your account details to login";
+  static const String accountDetails = "Enter your account details to Login";
 
   /// Sign Up
   static const String createAccount = "Create Account";
@@ -354,7 +354,7 @@ class AppStrings {
   static const String clickHere = "Click here";
   static const String loginSignUp = "Login/ Sign Up";
   static const String inOrderToAccessThis =
-      "In order to access this you must login or Create Account first";
+      "In order to access this you must Login or Create Account first";
 
 //   Transaction History
   static const String visit = "Visit";

@@ -68,11 +68,11 @@ class _SignInFormState extends State<SignInForm> {
                 key: signInKey,
                 child: Column(
                   children: [
-                    CustomText(text: AppStrings.email+"*"),
+                    CustomText(text: AppStrings.email + "*"),
                     10.verticalSpace,
                     _emailTextField(),
                     SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.password+"*"),
+                    CustomText(text: AppStrings.password + "*"),
                     10.verticalSpace,
                     _passwordTextField(),
                     SizedBox(height: 0.02.sh),
@@ -84,6 +84,16 @@ class _SignInFormState extends State<SignInForm> {
                     // SizedBox(height: 0.04.sh),
                     // otherMethodsWidget(),
                     SizedBox(height: 0.02.sh),
+                    CustomButton(
+                      onclick: () {
+                        AuthController.i.isLoginSignUp.value = false;
+                        AppNavigation.navigateToRemovingAll(
+                            context, AppRoutes.mainMenuScreenRoute);
+                      },
+                      width: 100.w,
+                      text: AppStrings.skip,
+                      color: AppColors.black,
+                    ),
                   ],
                 ),
               ),
@@ -238,7 +248,7 @@ class _SignInFormState extends State<SignInForm> {
           // if (AuthController.i.role.value == RoleType.single.name || AuthController.i.role.value == RoleType.committed.name) {
           // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
           // } else {
-                              AuthController.i.isLoginSignUp.value = true;
+          AuthController.i.isLoginSignUp.value = true;
 
           AppNavigation.navigateToRemovingAll(
               context, AppRoutes.mainMenuScreenRoute);

@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -69,11 +70,13 @@ class _ListOfServicesState extends State<ListOfServices> {
                     return singleContainer(
                         index: index,
                         onTap: () {
-                          AppNavigation.navigateTo(
-                              context, AppRoutes.servicesScreenRoute,
-                              arguments: ServiceRoutingArgument(
-                                  serviceName: AppStrings.titleName,
-                                  type: widget.type));
+                          !AuthController.i.isLoginSignUp.value
+                              ? signinSignUpPopup()
+                              : AppNavigation.navigateTo(
+                                  context, AppRoutes.servicesScreenRoute,
+                                  arguments: ServiceRoutingArgument(
+                                      serviceName: AppStrings.titleName,
+                                      type: widget.type));
                         }
                         // ontap: () {
                         //   // AppNavigation.navigateTo(context, AppRoutes.chatScreenRoute,
@@ -94,6 +97,29 @@ class _ListOfServicesState extends State<ListOfServices> {
             ],
           ),
         ));
+  }
+
+  void signinSignUpPopup() {
+    AppDialogs.showSuccessDialog(
+      context,
+      barrierDismissible: true,
+      description: AppStrings.inOrderToAccessThis,
+      // title: AppStrings.deleteDocument,
+      image: AssetPath.tumbIcon,
+      isDoneShow: false,
+      btnTxt1: AppStrings.logIn.toUpperCase(),
+      onTap1: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+      },
+      btnTxt2: AppStrings.signUp.toUpperCase(),
+      onTap2: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+        AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
+        // AppNavigation.navigatorPop(context);
+      },
+    );
   }
 
   Widget singleContainer({onTap, index}) {
@@ -126,8 +152,10 @@ class _ListOfServicesState extends State<ListOfServices> {
       child: CustomContainer(
           child: Row(
         children: [
-          CircleAvatar(radius: 30.r,
-            backgroundImage: NetworkImage("https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396")),
+          CircleAvatar(
+              radius: 30.r,
+              backgroundImage: NetworkImage(
+                  "https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396")),
           10.horizontalSpace,
           Expanded(
             child: Column(

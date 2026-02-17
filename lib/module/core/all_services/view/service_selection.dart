@@ -32,7 +32,7 @@ class _ServiceSelectionState extends State<ServiceSelection> {
   String? primaryServiceValue;
   String? secondaryServiceValue;
   String? filterStartValue;
-  var serviceList = ["All", "Weekly", "Monthly"];
+  var serviceList = ["Service 1", "Service 2", "Service 3"];
 
   // String? filterStartValue;
 
@@ -40,7 +40,7 @@ class _ServiceSelectionState extends State<ServiceSelection> {
   
   @override
   void initState() {
-   primaryServiceValue="All";
+   primaryServiceValue="Service 1";
     // TODO: implement initState
     super.initState();
   }

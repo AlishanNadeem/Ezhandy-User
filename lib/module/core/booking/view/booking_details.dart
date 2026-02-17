@@ -124,7 +124,8 @@ class _BookingDetailsState extends State<BookingDetails> {
                               btnTxt1: AppStrings.yes,
                               onTap1: () {
                                 AppNavigation.navigatorPop(context);
-                                AppDialogs.showRejectDialog(context,barrierDismissible:true,
+                                AppDialogs.showRejectDialog(context,
+                                    barrierDismissible: true,
                                     // description:
                                     //     "Are you sure you want to cancel this \nbooking?",
                                     title: "Cancellation Reason",
@@ -497,6 +498,23 @@ class _BookingDetailsState extends State<BookingDetails> {
                 //       }
                 //     :
                 () {
+              AppDialogs.showSuccessDialog(
+                context,
+                description: "Payment has been done successfully.",
+                title: AppStrings.congratulation,
+                // image: AssetPath.deletePopUpIcon,
+                isDoneShow: true,
+                btnTxt1: AppStrings.ok,
+                onTap1: () {
+                  AppNavigation.navigatorPop(context);
+                  // AppNavigation.navigatorPopUntil(
+                  //     context, AppRoutes.mainMenuScreenRoute);
+                },
+              );
+
+              setState(() {
+                widget.status = AppStrings.completedPaid;
+              });
               // AppDialogs.showSuccessDialog(context,
               //     description: AppStrings.refundPolicyWork,
               //     // title: AppStrings.deleteAccount,

@@ -1,5 +1,7 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
+import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
@@ -87,9 +89,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         GestureDetector(
-            onTap: () {
-              globalkey.currentState!.openDrawer();
-            },
+            onTap: (!AuthController.i.isLoginSignUp.value)
+              ? () {
+                  signinSignUpPopup();
+                }
+              : () {
+                  globalkey.currentState!.openDrawer();
+                },
             child: Image.asset(
               AssetPath.menuIcon,
               alignment: Alignment.centerLeft,
@@ -169,6 +175,27 @@ class _MessagesScreenState extends State<MessagesScreen> {
           ),
         ],
       ),
+    );
+  }void signinSignUpPopup() {
+    AppDialogs.showSuccessDialog(
+      context,
+      barrierDismissible: true,
+      description: AppStrings.inOrderToAccessThis,
+      // title: AppStrings.deleteDocument,
+      image: AssetPath.tumbIcon,
+      isDoneShow: false,
+      btnTxt1: AppStrings.logIn.toUpperCase(),
+      onTap1: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+      },
+      btnTxt2: AppStrings.signUp.toUpperCase(),
+      onTap2: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+        AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
+        // AppNavigation.navigatorPop(context);
+      },
     );
   }
 }

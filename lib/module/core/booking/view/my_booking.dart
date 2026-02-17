@@ -1,5 +1,7 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
+import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
@@ -96,9 +98,13 @@ class _MyBookingState extends State<MyBooking> {
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         GestureDetector(
-            onTap: () {
-              globalkey.currentState!.openDrawer();
-            },
+            onTap: (!AuthController.i.isLoginSignUp.value)
+              ? () {
+                  signinSignUpPopup();
+                }
+              : () {
+                  globalkey.currentState!.openDrawer();
+                },
             child: Image.asset(
               AssetPath.menuIcon,
               alignment: Alignment.centerLeft,
@@ -192,4 +198,26 @@ class _MyBookingState extends State<MyBooking> {
   //       return 'N/A';
   //   }
   // }
+  void signinSignUpPopup() {
+    AppDialogs.showSuccessDialog(
+      context,
+      barrierDismissible: true,
+      description: AppStrings.inOrderToAccessThis,
+      // title: AppStrings.deleteDocument,
+      image: AssetPath.tumbIcon,
+      isDoneShow: false,
+      btnTxt1: AppStrings.logIn.toUpperCase(),
+      onTap1: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+      },
+      btnTxt2: AppStrings.signUp.toUpperCase(),
+      onTap2: () {
+        AppNavigation.navigateToRemovingAll(
+            context, AppRoutes.loginScreenRoute);
+        AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
+        // AppNavigation.navigatorPop(context);
+      },
+    );
+  }
 }

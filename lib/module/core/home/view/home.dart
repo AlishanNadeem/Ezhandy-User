@@ -64,18 +64,22 @@ class _HomeState extends State<Home> {
     return Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-         GestureDetector(
-            onTap: () {
-              globalkey.currentState!.openDrawer();
-            },
-            child: Image.asset(
-              AssetPath.menuIcon,
-              alignment: Alignment.centerLeft,
-              scale: 4.sp,
-              color: AppColors.black,
-            ),
+        GestureDetector(
+          onTap: (!AuthController.i.isLoginSignUp.value)
+              ? () {
+                  signinSignUpPopup();
+                }
+              : () {
+                  globalkey.currentState!.openDrawer();
+                },
+          child: Image.asset(
+            AssetPath.menuIcon,
+            alignment: Alignment.centerLeft,
+            scale: 4.sp,
+            color: AppColors.black,
           ),
-          10.horizontalSpace,
+        ),
+        10.horizontalSpace,
         if (!AuthController.i.isLoginSignUp.value) ...[
           Image.asset(
             AssetPath.homeUserIcon,
@@ -379,9 +383,7 @@ class _HomeState extends State<Home> {
             fontSize: 16.sp),
         GestureDetector(
             onTap: () {
-              !AuthController.i.isLoginSignUp.value
-                  ? signinSignUpPopup()
-                  : AppNavigation.navigateTo(
+             AppNavigation.navigateTo(
                       context, AppRoutes.listOfServicesScreenRoute,
                       arguments: ServiceRoutingArgument(
                           type: ServiceType.instant.name));
