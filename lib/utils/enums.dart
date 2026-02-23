@@ -6,7 +6,7 @@ enum CampaignType { Pending, Rejected, Accepted,New}
 
 enum MediaPathType { file, network, asset }
 
-enum MediaType { image, pdf, png, jpg }
+enum MediaTypee { image, pdf, png, jpg }
 
 enum OtpType { signup, forget }
 

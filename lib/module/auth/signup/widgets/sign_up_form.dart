@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 import 'dart:io';
 
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/auth/verification/routing_arguments/otp_verification_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
@@ -39,7 +40,7 @@ class _SignUpFormState extends State<SignUpForm> {
   /// Text Editing Controllers
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController sportController = TextEditingController();
+  final TextEditingController referredByController = TextEditingController();
   final TextEditingController statusController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController uploadController = TextEditingController();
@@ -261,7 +262,7 @@ class _SignUpFormState extends State<SignUpForm> {
       inputFormatters: [
         LengthLimitingTextInputFormatter(Constants.nameMaxLength)
       ],
-      controller: sportController,
+      controller: referredByController,
       // validator: (value) => value?.validateEmpty(AppStrings.referralCode),
       // error_text: error_email,
     );
@@ -326,13 +327,21 @@ class _SignUpFormState extends State<SignUpForm> {
           // } else {
           //   AppNavigation.navigateToRemovingAll(context, AppRoutes.sellerMainMenuScreenRoute);
           // }
-          AppNavigation.navigateTo(
-              context, AppRoutes.verificationSelectionScreenRoute,
-              arguments:
-                  OtpVerificationRoutingArgument(type: OtpType.signup.name));
 
-          emailController.clear();
-          passwordController.clear();
+ AuthController.i.signUp(context,
+              email: emailController.text,
+              password: passwordController.text,
+              phone: Constants.maskTextInputFormatterPhoneUSWithCode
+                  .unmaskText(phoneController.text),
+              userName: fullNameController.text,
+              referredBy: referredByController.text,
+              media: _profileImage);
+
+
+       
+
+          // emailController.clear();
+          // passwordController.clear();
           // AppDialogs.showToast(message: AppStrings.loginSuccessfully);
           // }
           // validate_email(emailController.text);

@@ -4,8 +4,12 @@ import 'package:ezhandy_user/module/auth/verification/widget/verification_select
 import 'package:ezhandy_user/utils/asset_path.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 
-class VerificationSelection extends StatelessWidget {String? type;
-   VerificationSelection({this.type,Key? key}) : super(key: key);
+class VerificationSelection extends StatelessWidget {
+  String? type;
+  String? email;
+  String? phone;
+  VerificationSelection({this.type, this.email, this.phone, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,9 @@ class VerificationSelection extends StatelessWidget {String? type;
       // title: AppStrings.forgotPassword,
       // is_registration: true,
       //----------------Form----------------
-      child: VerificationSelectionForm(type: type,),
+      child: VerificationSelectionForm(
+        type: type,
+      ),
     );
   }
 }

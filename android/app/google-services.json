@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "967775161780",
+    "project_id": "ezhandy-d64cd",
+    "storage_bucket": "ezhandy-d64cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967775161780:android:2f86ef7b9d1f4922ec36e1",
+        "android_client_info": {
+          "package_name": "com.pixelgenesys.ezhandy.provider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJB1UVc3cRbBLvkW7KW9wfKcct2pxMs_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967775161780:android:9ee9f20f93b7f94cec36e1",
+        "android_client_info": {
+          "package_name": "com.pixelgenesys.ezhandy.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJB1UVc3cRbBLvkW7KW9wfKcct2pxMs_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

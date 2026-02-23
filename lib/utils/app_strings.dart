@@ -13,6 +13,7 @@ class AppStrings {
 
   // static const String webViewUrl = "https://loremipsum.io/";
 
+  static const String NO_INTERNET_CONNECTION = "No Internet Connection!";
   static const editImage = 'Edit Image';
   static const invalidVerificationCode = "Invalid Authentication code.";
   static const otpFieldCantBeEmpty = "OTP field can't be empty.";
@@ -428,7 +429,8 @@ class AppStrings {
   static const String discussAndConfirmDetails =
       "You can discuss and confirm this with the service provider later. Charges will be added only if agreed.";
   static const String congratulation = "Congratulation";
-  static const String paymentHasBeenDoneSuccessfully = "Payment has been done successfully.";
+  static const String paymentHasBeenDoneSuccessfully =
+      "Payment has been done successfully.";
   static const String done = "Done";
   static const String ok = "Ok";
   static const String bookQuiceServiceDetails =

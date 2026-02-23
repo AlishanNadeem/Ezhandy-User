@@ -86,6 +86,8 @@ class AppRouter {
                 routeSettings.arguments as OtpVerificationRoutingArgument?;
             return VerificationSelection(
               type: otpArguments?.type,
+              email: otpArguments?.email,
+              phone: otpArguments?.phone,
             );
           // case AppRoutes.changePasswordScreenRoute:
           //   return ChangePassword();

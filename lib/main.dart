@@ -1,6 +1,10 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/services/firebase_messaging_service.dart';
 import 'package:ezhandy_user/utils/routes/app_router.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_size.dart';
@@ -9,17 +13,33 @@ import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/keyboard_dismiss_overser.dart';
 import 'package:ezhandy_user/utils/routes/app_router.dart';
 import 'package:ezhandy_user/utils/scroll_view.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
+@pragma("vm:entry-point")
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  log("Background Title: ${message.notification?.title}");
+  log("Background Body: ${message.notification?.body}");
+  log("Background Data: ${message.data}");
+  log("Background: ${message.toString()}");
+  log("Background: ${message.notification.toString()}");
+}
+
 Future<void> main() async {
-  // HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   //  Stripe.publishableKey = AppConstant.STRIPE_KEY;
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp(); // 🔥 Register background handler
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // 🔥 Initialize notification service
+  await FirebaseMessagingService().init();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       // Set the color of the enter key
 
@@ -101,11 +121,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// class MyHttpOverrides extends HttpOverrides {
-//   @override
-//   HttpClient createHttpClient(SecurityContext? context) {
-//     return super.createHttpClient(context)
-//       ..badCertificateCallback =
-//           (X509Certificate cert, String host, int port) => true;
-//   }
-// }
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}

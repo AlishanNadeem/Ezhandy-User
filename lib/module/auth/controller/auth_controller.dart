@@ -1,6 +1,8 @@
 import 'dart:io';
 
 // import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
+import 'package:ezhandy_user/module/auth/signup/data/repository/sign_up_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
@@ -24,7 +26,7 @@ import 'package:get/get.dart';
 class AuthController extends GetxController {
   static AuthController get i => Get.find();
 
-  // var appUser = AppUser().obs;
+  var appUser = AppUser().obs;
   // Rx<CountDownController> countDownController = CountDownController().obs;
   // RxList<HorseModelData?> horseList = RxList<HorseModelData?>();
   // Rx<HorseModelData> horseDetail = HorseModelData().obs;
@@ -58,9 +60,23 @@ class AuthController extends GetxController {
   //   SignInRepository().signInRepo(context, email: email, password: password);
   // }
 
-  // void signUp(BuildContext context, {String? email, String? password, String? confirmPassword}) {
-  //   SignUpRepository().signUpRepo(context, email: email, password: password, confirmPassword: confirmPassword);
-  // }
+  void signUp(
+    BuildContext context, {
+    String? email,
+    String? password,
+    String? userName,
+    String? phone,
+    String? referredBy,
+    File? media,
+  }) {
+    SignUpRepository().signUpRepo(context,
+        email: email,
+        password: password,
+        userName: userName,
+        phone: phone,
+        referredBy: referredBy,
+        media: media);
+  }
 
   // void forgotPassword(BuildContext context, {String? email}) {
   //   ForgotPasswordRepository().forgotPasswordRepo(context, email: email);

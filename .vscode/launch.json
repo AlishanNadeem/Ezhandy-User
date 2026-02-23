@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ezhandy_user",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "ezhandy_user (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "ezhandy_user (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "csc_picker-0.2.7",
+            "cwd": "csc_picker-0.2.7",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "csc_picker-0.2.7 (profile mode)",
+            "cwd": "csc_picker-0.2.7",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "csc_picker-0.2.7 (release mode)",
+            "cwd": "csc_picker-0.2.7",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

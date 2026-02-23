@@ -25,6 +25,7 @@ class AssetPath {
   static const String temp3Image = "$_images/temp3_image.png";
 
   /// --------------- ICONS -----------------------------
+  static const String noDataFoundIcon = "$_icons/ic_no_data_found.png";
 
   static const String forwardIcon = "$_icons/ic_forward.png";
   static const String cartIcon = "$_icons/ic_cart.png";
