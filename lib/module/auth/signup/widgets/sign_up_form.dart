@@ -63,7 +63,8 @@ class _SignUpFormState extends State<SignUpForm> {
           15.verticalSpace,
           createAccountTextWidget(),
           5.verticalSpace,
-          CustomText(is_alignLeft: false ,text: AppStrings.createYouAccountText),
+          CustomText(
+              is_alignLeft: false, text: AppStrings.createYouAccountText),
           25.verticalSpace,
           // Scrollable content starts here
           Expanded(
@@ -101,7 +102,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     // 10.verticalSpace,
                     // _statusTextField(),
                     SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.uploadProfileImage + "*"),
+                    CustomText(text: AppStrings.uploadProfileImage ),
                     10.verticalSpace,
                     _uploadTextField(),
                     SizedBox(height: 0.02.sh),
@@ -228,7 +229,7 @@ class _SignUpFormState extends State<SignUpForm> {
       //   LengthLimitingTextInputFormatter(Constants.nameMaxLength)
       // ],
       controller: uploadController,
-      validator: (value) => value?.validateEmpty(AppStrings.upload),
+      // validator: (value) => value?.validateEmpty(AppStrings.upload),
       // error_text: error_email,
     );
   }
@@ -328,7 +329,7 @@ class _SignUpFormState extends State<SignUpForm> {
           //   AppNavigation.navigateToRemovingAll(context, AppRoutes.sellerMainMenuScreenRoute);
           // }
 
- AuthController.i.signUp(context,
+          AuthController.i.signUp(context,
               email: emailController.text,
               password: passwordController.text,
               phone: Constants.maskTextInputFormatterPhoneUSWithCode
@@ -336,9 +337,6 @@ class _SignUpFormState extends State<SignUpForm> {
               userName: fullNameController.text,
               referredBy: referredByController.text,
               media: _profileImage);
-
-
-       
 
           // emailController.clear();
           // passwordController.clear();

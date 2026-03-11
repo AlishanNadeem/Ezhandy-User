@@ -58,7 +58,7 @@ extension FieldValidator on String {
     if (value.trim().isEmpty) {
       return "$label field can\'t be empty.";
     } else if (!RegExp(passwordRegix).hasMatch(value)) {
-      return "Password must be of 8 characters long.";
+      return "Password must contain 8+ characters, including uppercase, lowercase, number, and special character.";
     }
     return null;
   }
