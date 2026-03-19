@@ -1,289 +1,145 @@
-import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:convert';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:ezhandy_user/utils/constant.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'app_notification_data.dart';
+import 'package:ezhandy_user/services/app_notification_data.dart';
+import 'package:ezhandy_user/utils/constant.dart';
 
 class FirebaseMessagingService {
-  static final FirebaseMessagingService _instance =
-      FirebaseMessagingService._internal();
+  FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  AppNotificationData? appNotificationData;
+  AndroidNotificationChannel? androidNotificationchannel;
+  static FirebaseMessagingService? _messagingService;
 
-  factory FirebaseMessagingService() => _instance;
-  FirebaseMessagingService._internal();
+  static FirebaseMessaging? _firebaseMessaging;
 
-  final FlutterLocalNotificationsPlugin _localNotifications =
-      FlutterLocalNotificationsPlugin();
-  static final FirebaseMessaging _firebaseMessaging =
-      FirebaseMessaging.instance;
+  FirebaseMessagingService._createInstance();
 
-  /// Notification channel IDs
-  static const String channelSoundVibrate = 'chat_sound_vibrate';
-  static const String channelSoundNoVibrate = 'chat_sound_no_vibrate';
-  static const String channelGentleSoundVibrate = 'chat_gentle_sound_vibrate';
-  static const String channelGentleSoundNoVibrate =
-      'chat_gentle_sound_no_vibrate';
-  static const String channelVibrateNoSound = 'chat_vibrate_no_sound';
-  static const String channelNoSoundNoVibrate = 'chat_no_sound_no_vibrate';
+  factory FirebaseMessagingService() {
+    // factory with constructor, return some value
+    if (_messagingService == null) {
+      _messagingService = FirebaseMessagingService._createInstance(); // This is executed only once, singleton object
 
-  /// Initialize service
-  Future<void> init() async {
-    await _requestPermission();
-    await _initializeLocalNotifications();
-    await _createNotificationChannels();
-    _listenForeground();
-    _listenBackgroundTap();
-    _listenTerminated();
+      _firebaseMessaging = _getMessagingService();
+    }
+    return _messagingService!;
   }
 
-  /// Request notification permissions
-  Future<void> _requestPermission() async {
+  static FirebaseMessaging _getMessagingService() {
+    return _firebaseMessaging ??= FirebaseMessaging.instance;
+  }
+
+  Future<String?> getToken() async {
+    try {
+      return await _firebaseMessaging!.getToken();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  Future initializeNotificationSettings() async {
     if (Platform.isAndroid) {
       if (await Permission.notification.isDenied) {
         await Permission.notification.request();
       }
     }
-    await _firebaseMessaging.requestPermission(
+
+    NotificationSettings settings = await _firebaseMessaging!.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+
+    AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'chat', // id
+      'High Importance Notifications', // title
+      // 'This channel is used for important notifications.', // description
+      importance: Importance.max,
+    );
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+    //
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 
-  /// Initialize FlutterLocalNotificationsPlugin
- Future<void> _initializeLocalNotifications() async {
-  const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+  //This will execute when the app is open and in foreground
+  void foregroundNotification() {
+    print('Got a message whilst in the foreground!');
+    //
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+      // print('Message request id: ${message.data["request_id"]}');
+      //AppDialogs.showToast(message: "Data on foreground");
+      appNotificationData = AppNotificationData();
+      appNotificationData!.foregroundNotificationData(context: Constants.navigatorKey.currentContext, notificationData: message);
+    });
+    // StaticData.notificationForegroundListenerEnable = true;
+  }
 
-  const darwinInit = DarwinInitializationSettings(
-    requestAlertPermission: true,
-    requestBadgePermission: true,
-    requestSoundPermission: true,
-  );
+  //This will excute when the app is in background but not killed and tap on that notification
+  void backgroundTapNotification() {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      RemoteMessage? terminatedMessage = await _firebaseMessaging!.getInitialMessage();
+      print('Got a message whilst in the background!');
+      print('Messaged:${terminatedMessage?.data}');
+      // print('Message data: ${message.data}');
+      // print("Current Data Time:${DateTime.now()}");
+      // AppDialogs.showToast(
+      //     message: "Data on background but not killed:${message.sentTime}");
+      appNotificationData = AppNotificationData();
+      appNotificationData!.backgroundNotificationData(context: Constants.navigatorKey.currentContext, notificationData: message.data);
+    });
+  }
 
-  const initSettings = InitializationSettings(
-    android: androidInit,
-    iOS: darwinInit, // 🔥 REQUIRED for iOS
-  );
+  //This will work when the app is killed and notification comes and tap on that notification
+  void terminateTapNotification() async {
+    RemoteMessage? terminatedMessage = await _firebaseMessaging!.getInitialMessage();
+    print('Got a message whilst in the terminate!');
+    print('Message:${terminatedMessage?.data}');
+    //print("Terminated message notification:"+terminatedMessage.notification.title.toString());
+    // AppDialogs.showToast(
+    //     message: "Data on term
+    //     ?inated background");
 
-  await _localNotifications.initialize(
-    initSettings,
-    onDidReceiveNotificationResponse: (response) {
-      if (response.payload != null) {
-        AppNotificationData().backgroundNotificationData(
+    if (terminatedMessage != null) {
+      //When there is no notification error is beacuse of firebase messaging plugin
+      if (terminatedMessage.notification != null) {
+        //print("Terminated message:${terminatedMessage.data.toString()}");
+        // AppDialogs.showToast(
+        //     message: "Data on terminated background when notification tap${terminatedMessage
+        //         .data} Notification Time${terminatedMessage.notification}");
+
+        appNotificationData = AppNotificationData();
+        appNotificationData?.terminateNotificationData(
           context: Constants.navigatorKey.currentContext,
-          notificationData: jsonDecode(response.payload!),
+          notificationData: terminatedMessage.data,
         );
       }
-    },
-  );
+    }
+  }
+
+// Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//     print("data available ha");
+// }
 }
 
+class StaticData {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-  /// Create all notification channels
-  Future<void> _createNotificationChannels() async {
-    final android = _localNotifications.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-
-    var vibrationPattern = Int64List.fromList([0, 500, 300, 700]);
-    const defaultSound = 'my_sound';
-
-    // Sound + Vibration
-    await android?.createNotificationChannel(
-      AndroidNotificationChannel(
-        channelSoundVibrate,
-        'Sound & Vibration',
-        description: 'Notifications with sound and vibration',
-        importance: Importance.max,
-        playSound: true,
-        // sound: RawResourceAndroidNotificationSound(defaultSound),
-        enableVibration: true,
-        vibrationPattern: vibrationPattern,
-      ),
-    );
-
-    // Sound only
-    await android?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        channelSoundNoVibrate,
-        'Sound Only',
-        description: 'Notifications with sound but no vibration',
-        importance: Importance.high,
-        playSound: true,
-        // sound: RawResourceAndroidNotificationSound(defaultSound),
-        enableVibration: false,
-      ),
-    );
-    // Gentle Sound + Vibration
-    await android?.createNotificationChannel(
-      AndroidNotificationChannel(
-        channelGentleSoundVibrate,
-        'Gentle Sound & Vibration',
-        description: 'Notifications with Gentle sound and vibration',
-        importance: Importance.max,
-        playSound: true,
-        sound: RawResourceAndroidNotificationSound(defaultSound),
-        enableVibration: true,
-        vibrationPattern: vibrationPattern,
-      ),
-    );
-
-    // Gentle Sound only
-    await android?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        channelGentleSoundNoVibrate,
-        'Gentle Sound Only',
-        description: 'Notifications with Gentle sound but no vibration',
-        importance: Importance.high,
-        playSound: true,
-        sound: RawResourceAndroidNotificationSound(defaultSound),
-        enableVibration: false,
-      ),
-    );
-
-    // Vibration only
-    await android?.createNotificationChannel(
-      AndroidNotificationChannel(
-        channelVibrateNoSound,
-        'Vibration Only',
-        description: 'Notifications with vibration but no sound',
-        importance: Importance.high,
-        playSound: false,
-        enableVibration: true,
-        vibrationPattern: vibrationPattern,
-      ),
-    );
-
-    // No sound, no vibration
-    await android?.createNotificationChannel(
-      const AndroidNotificationChannel(
-        channelNoSoundNoVibrate,
-        'Silent',
-        description: 'Notifications with no sound and no vibration',
-        importance: Importance.low,
-        playSound: false,
-        enableVibration: false,
-      ),
-    );
-  }
-
-  /// Foreground notification listener
-  void _listenForeground() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      await showNotification(message.data, message: message);
-      AppNotificationData().foregroundNotificationData(
-        context: Constants.navigatorKey.currentContext,
-        notificationData: message,
-      );
-    });
-  }
-
-  /// Background tap handler
-  void _listenBackgroundTap() {
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      AppNotificationData().backgroundNotificationData(
-        context: Constants.navigatorKey.currentContext,
-        notificationData: message.data,
-      );
-    });
-  }
-
-  /// Handle app launch from terminated state
-  void _listenTerminated() async {
-    RemoteMessage? message = await _firebaseMessaging.getInitialMessage();
-    if (message != null) {
-      AppNotificationData().terminateNotificationData(
-        context: Constants.navigatorKey.currentContext,
-        notificationData: message.data,
-      );
-    }
-  }
-
-  /// Get FCM token
-  Future<String?> getToken() async {
-    return await _firebaseMessaging.getToken();
-  }
-
-  /// Show notification with dynamic channel selection & optional gentle chime
-  Future<void> showNotification(Map<String, dynamic> data,
-      {RemoteMessage? message}) async {
-    final isVibrationEnabled = data["isVibrationEnabled"]?.toString() == "true";
-    final isSoundEnabled = data["isSoundEnabled"]?.toString() == "true";
-    final isGentleChime = data["isGentleChime"]?.toString() == "true";
-
-    // Determine sound to play
-    final soundName = (isSoundEnabled && isGentleChime) ? 'my_sound' : null;
-
-    // Select correct channel
-    String channelId;
-    if (isSoundEnabled && isGentleChime && isVibrationEnabled) {
-      channelId = channelGentleSoundVibrate;
-    } else if (isSoundEnabled && isGentleChime && !isVibrationEnabled) {
-      channelId = channelGentleSoundNoVibrate;
-    }
-
-    /// 🔊 Normal Sound cases
-    else if (isSoundEnabled && !isGentleChime && isVibrationEnabled) {
-      channelId = channelSoundVibrate;
-    } else if (isSoundEnabled && !isGentleChime && !isVibrationEnabled) {
-      channelId = channelSoundNoVibrate;
-    }
-
-    /// 📳 Vibration only
-    else if (!isSoundEnabled && isVibrationEnabled) {
-      channelId = channelVibrateNoSound;
-    }
-
-    /// 🔕 Default fallback (no sound, no vibration)
-    else {
-      channelId = channelNoSoundNoVibrate;
-    }
-
-    final androidDetails = AndroidNotificationDetails(
-      channelId,
-      'High Importance Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-      enableVibration: isVibrationEnabled,
-      vibrationPattern:
-          isVibrationEnabled ? Int64List.fromList([0, 500, 300, 700]) : null,
-      playSound: isSoundEnabled,
-      sound: soundName != null
-          ? RawResourceAndroidNotificationSound(soundName)
-          : null,
-    );
-
-    final iosDetails = DarwinNotificationDetails(
-  presentAlert: true,
-  presentBadge: true,
-  presentSound: isSoundEnabled,
-);
-
-final details = NotificationDetails(
-  android: androidDetails,
-  iOS: iosDetails,
-);
-
-    await _localNotifications.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      data['title'] ?? message?.notification?.title ?? 'Notification',
-      data['body'] ?? message?.notification?.body ?? '',
-      details,
-      payload: jsonEncode(data),
-    );
-  }
-}
-
-/// Background handler
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  final service = FirebaseMessagingService();
-  await service.showNotification(message.data, message: message);
+  static bool notificationForegroundListenerEnable = false;
+  static bool notificationBackgroundListenerEnable = false;
 }

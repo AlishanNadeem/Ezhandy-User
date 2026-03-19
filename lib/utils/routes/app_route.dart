@@ -9,10 +9,10 @@ class AppRoutes {
   // static const String contentAuthScreenRoute = "/content_auth_screen";
   static const String loginScreenRoute = "/login__screen";
   static const String signupScreenRoute = "/signup_screen";
-  // static const String forgotPasswordScreenRoute = "/forgot_password_screen";
+  static const String forgotPasswordScreenRoute = "/forgot_password_screen";
   static const String otpVerificationScreenRoute = "/otp_verification_screen";
-  static const String verificationSelectionScreenRoute =
-      "/verification_selection_screen";
+  // static const String verificationSelectionScreenRoute =
+  //     "/verification_selection_screen";
         static const String proChatScreenRoute = "/pro_chat_screenRoute";
 
   static const String resetPasswordScreenRoute = "/reset_password_screen";

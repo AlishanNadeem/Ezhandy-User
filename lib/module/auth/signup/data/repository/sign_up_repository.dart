@@ -43,7 +43,7 @@ class SignUpRepository extends ResponseListener {
             // "roleId": 1,
             // "address": address,
             "password": password,
-            "mobileNumber": phone,
+            "mobileNumber": phone==""?null:phone,
             "referredBy": referredBy,
             // "fcmToken": await FirebaseMessagingService().getToken(),
           })
@@ -53,7 +53,7 @@ class SignUpRepository extends ResponseListener {
             // "roleId": 1,
             // "address": address,
             "password": password,
-            "mobileNumber": phone,
+            "mobileNumber": phone==""?null:phone,
             "referredBy": referredBy,
             // "fcmToken": await FirebaseMessagingService().getToken(),
             "profileImage": mediaList,
@@ -89,10 +89,14 @@ class SignUpRepository extends ResponseListener {
     //         type: OtpType.signup.name, emailAndPhone: Email));
 
     AppNavigation.navigateTo(
-        Context!, AppRoutes.verificationSelectionScreenRoute,
+        Context!, AppRoutes.otpVerificationScreenRoute,
         arguments: OtpVerificationRoutingArgument(
-            type: OtpType.signup.name, email: Email,phone: Phone));
+            type: OtpType.signup.name, emailAndPhone: Email,phone: Phone));
 
+//  AppNavigation.navigateTo(Context!, AppRoutes.otpVerificationScreenRoute,
+//           arguments: OtpVerificationRoutingArgument(
+//               type: OtpType.forget.name, emailAndPhone: Email, text: Email));
+   
     // var obj = AppUser.fromJson(response);
     // AuthController.i.appUser.value = obj;
 

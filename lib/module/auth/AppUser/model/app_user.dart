@@ -4,89 +4,106 @@
 class AppUserDataUserModel {
 /*
 {
-  "sub": "d2776f6b-5d84-4b4c-9da7-89a5d3481f60",
-  "email": "jinsa@mailinator.com",
-  "name": "jinsa",
-  "mobileNumber": "1234567890",
-  "profileImage": "http://168.231.74.154:4004/files/users/d2776f6b-5d84-4b4c-9da7-89a5d3481f60/profile_1767077399024.jpg",
-  "isSubscription": false,
-  "issuedAt": "2026-01-07T13:19:03.000Z",
-  "expiresAt": "2026-01-08T13:19:03.000Z",
+  "sub": "de242628-9039-4561-b86b-5f2674fe14be",
+  "email": "oppo@mailinator.com",
+  "roleId": 1,
+  "fullName": "linsa",
+  "mobileNumber": "",
+  "profileImage": "",
+  "gender": "",
   "isEmailVerified": true,
-  "isVibrationEnabled": false,
-  "isSoundEnabled": true,
-  "notificationSound": "Gentle Chime",
-  "isGentleChime": true
+  "latitude": "null",
+  "longitude": "null",
+  "isLiveTrackingActive": false,
+  "lastLocationUpdate": "null",
+  "referralCode": "P4AZ42DM",
+  "hourlyRate": "null",
+  "address": "",
+  "isSubscription": false,
+  "issuedAt": "2026-03-19T10:16:08.000Z",
+  "expiresAt": "2026-03-26T10:16:08.000Z"
 } 
 */
 
   String? sub;
   String? email;
-  String? name;
+  int? roleId;
+  String? fullName;
   String? mobileNumber;
   String? profileImage;
+  String? gender;
+  bool? isEmailVerified;
+  String? latitude;
+  String? longitude;
+  bool? isLiveTrackingActive;
+  String? lastLocationUpdate;
+  String? referralCode;
+  String? hourlyRate;
+  String? address;
   bool? isSubscription;
   String? issuedAt;
   String? expiresAt;
-  bool? isEmailVerified;
-  bool? isVibrationEnabled;
-  bool? isSoundEnabled;
-  String? notificationSound;
-  bool? isGentleChime;
-  bool? isEmergencyCard;
-  bool? isSnooze;
 
   AppUserDataUserModel({
     this.sub,
     this.email,
-    this.name,
+    this.roleId,
+    this.fullName,
     this.mobileNumber,
     this.profileImage,
+    this.gender,
+    this.isEmailVerified,
+    this.latitude,
+    this.longitude,
+    this.isLiveTrackingActive,
+    this.lastLocationUpdate,
+    this.referralCode,
+    this.hourlyRate,
+    this.address,
     this.isSubscription,
     this.issuedAt,
     this.expiresAt,
-    this.isEmailVerified,
-    this.isVibrationEnabled,
-    this.isSoundEnabled,
-    this.notificationSound,
-    this.isGentleChime,
-    this.isEmergencyCard,
-    this.isSnooze,
   });
   AppUserDataUserModel.fromJson(Map<String, dynamic> json) {
     sub = json['sub']?.toString();
     email = json['email']?.toString();
-    name = json['name']?.toString();
+    roleId = json['roleId']?.toInt();
+    fullName = json['fullName']?.toString();
     mobileNumber = json['mobileNumber']?.toString();
     profileImage = json['profileImage']?.toString();
+    gender = json['gender']?.toString();
+    isEmailVerified = json['isEmailVerified'];
+    latitude = json['latitude']?.toString();
+    longitude = json['longitude']?.toString();
+    isLiveTrackingActive = json['isLiveTrackingActive'];
+    lastLocationUpdate = json['lastLocationUpdate']?.toString();
+    referralCode = json['referralCode']?.toString();
+    hourlyRate = json['hourlyRate']?.toString();
+    address = json['address']?.toString();
     isSubscription = json['isSubscription'];
     issuedAt = json['issuedAt']?.toString();
     expiresAt = json['expiresAt']?.toString();
-    isEmailVerified = json['isEmailVerified'];
-    isVibrationEnabled = json['isVibrationEnabled'];
-    isSoundEnabled = json['isSoundEnabled'];
-    notificationSound = json['notificationSound']?.toString();
-    isGentleChime = json['isGentleChime'];
-    isSnooze = json['isSnooze'];
-    isEmergencyCard = json['isEmergencyCard'];
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['sub'] = sub;
     data['email'] = email;
-    data['name'] = name;
+    data['roleId'] = roleId;
+    data['fullName'] = fullName;
     data['mobileNumber'] = mobileNumber;
     data['profileImage'] = profileImage;
+    data['gender'] = gender;
+    data['isEmailVerified'] = isEmailVerified;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
+    data['isLiveTrackingActive'] = isLiveTrackingActive;
+    data['lastLocationUpdate'] = lastLocationUpdate;
+    data['referralCode'] = referralCode;
+    data['hourlyRate'] = hourlyRate;
+    data['address'] = address;
     data['isSubscription'] = isSubscription;
     data['issuedAt'] = issuedAt;
     data['expiresAt'] = expiresAt;
-    data['isEmailVerified'] = isEmailVerified;
-    data['isVibrationEnabled'] = isVibrationEnabled;
-    data['isSoundEnabled'] = isSoundEnabled;
-    data['notificationSound'] = notificationSound;
-    data['isGentleChime'] = isGentleChime;
-    data['isEmergencyCard'] = isEmergencyCard;
-    data['isSnooze'] = isSnooze;
     return data;
   }
 }
@@ -94,21 +111,26 @@ class AppUserDataUserModel {
 class AppUserData {
 /*
 {
-  "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMjc3NmY2Yi01ZDg0LTRiNGMtOWRhNy04OWE1ZDM0ODFmNjAiLCJlbWFpbCI6ImppbnNhQG1haWxpbmF0b3IuY29tIiwiaXNTdWJzY3JpcHRpb24iOmZhbHNlLCJpc0VtYWlsVmVyaWZpZWQiOnRydWUsImlhdCI6MTc2Nzc5MTk0MywiZXhwIjoxNzY3ODc4MzQzfQ.j3Y7dGdys10lsmfw8ZcG7wPrGncgzyF9pOf56ujd8IlFX6I7LW-D1uPEpLMr3p3K9JG8gPAGUCGk-ZOkKMRttw",
+  "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZTI0MjYyOC05MDM5LTQ1NjEtYjg2Yi01ZjI2NzRmZTE0YmUiLCJlbWFpbCI6Im9wcG9AbWFpbGluYXRvci5jb20iLCJyb2xlSWQiOjEsImZ1bGxOYW1lIjoibGluc2EiLCJtb2JpbGVOdW1iZXIiOiIiLCJwcm9maWxlSW1hZ2UiOiIiLCJnZW5kZXIiOiIiLCJpc0VtYWlsVmVyaWZpZWQiOnRydWUsImxhdGl0dWRlIjpudWxsLCJsb25naXR1ZGUiOm51bGwsImlzTGl2ZVRyYWNraW5nQWN0aXZlIjpmYWxzZSwibGFzdExvY2F0aW9uVXBkYXRlIjpudWxsLCJyZWZlcnJhbENvZGUiOiJQNEFaNDJETSIsImhvdXJseVJhdGUiOm51bGwsImFkZHJlc3MiOiIiLCJpc1N1YnNjcmlwdGlvbiI6ZmFsc2UsImlhdCI6MTc3MzkxNTM2OCwiZXhwIjoxNzc0NTIwMTY4fQ.SNqU_jWZEU67U3VGsra81lk0H9BEfaBrWw6TVbEOJPPohAOFDrPp5U5XdmJUkIUsCmc5CSS7UnSTCqqkQlcyag",
   "user_model": {
-    "sub": "d2776f6b-5d84-4b4c-9da7-89a5d3481f60",
-    "email": "jinsa@mailinator.com",
-    "name": "jinsa",
-    "mobileNumber": "1234567890",
-    "profileImage": "http://168.231.74.154:4004/files/users/d2776f6b-5d84-4b4c-9da7-89a5d3481f60/profile_1767077399024.jpg",
-    "isSubscription": false,
-    "issuedAt": "2026-01-07T13:19:03.000Z",
-    "expiresAt": "2026-01-08T13:19:03.000Z",
+    "sub": "de242628-9039-4561-b86b-5f2674fe14be",
+    "email": "oppo@mailinator.com",
+    "roleId": 1,
+    "fullName": "linsa",
+    "mobileNumber": "",
+    "profileImage": "",
+    "gender": "",
     "isEmailVerified": true,
-    "isVibrationEnabled": false,
-    "isSoundEnabled": true,
-    "notificationSound": "Gentle Chime",
-    "isGentleChime": true
+    "latitude": "null",
+    "longitude": "null",
+    "isLiveTrackingActive": false,
+    "lastLocationUpdate": "null",
+    "referralCode": "P4AZ42DM",
+    "hourlyRate": "null",
+    "address": "",
+    "isSubscription": false,
+    "issuedAt": "2026-03-19T10:16:08.000Z",
+    "expiresAt": "2026-03-26T10:16:08.000Z"
   }
 } 
 */
@@ -122,9 +144,7 @@ class AppUserData {
   });
   AppUserData.fromJson(Map<String, dynamic> json) {
     accessToken = json['access_token']?.toString();
-    userModel = (json['user_model'] != null)
-        ? AppUserDataUserModel.fromJson(json['user_model'])
-        : null;
+    userModel = (json['user_model'] != null) ? AppUserDataUserModel.fromJson(json['user_model']) : null;
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -143,21 +163,26 @@ class AppUser {
   "statusCode": 200,
   "message": "Login successful",
   "data": {
-    "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMjc3NmY2Yi01ZDg0LTRiNGMtOWRhNy04OWE1ZDM0ODFmNjAiLCJlbWFpbCI6ImppbnNhQG1haWxpbmF0b3IuY29tIiwiaXNTdWJzY3JpcHRpb24iOmZhbHNlLCJpc0VtYWlsVmVyaWZpZWQiOnRydWUsImlhdCI6MTc2Nzc5MTk0MywiZXhwIjoxNzY3ODc4MzQzfQ.j3Y7dGdys10lsmfw8ZcG7wPrGncgzyF9pOf56ujd8IlFX6I7LW-D1uPEpLMr3p3K9JG8gPAGUCGk-ZOkKMRttw",
+    "access_token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZTI0MjYyOC05MDM5LTQ1NjEtYjg2Yi01ZjI2NzRmZTE0YmUiLCJlbWFpbCI6Im9wcG9AbWFpbGluYXRvci5jb20iLCJyb2xlSWQiOjEsImZ1bGxOYW1lIjoibGluc2EiLCJtb2JpbGVOdW1iZXIiOiIiLCJwcm9maWxlSW1hZ2UiOiIiLCJnZW5kZXIiOiIiLCJpc0VtYWlsVmVyaWZpZWQiOnRydWUsImxhdGl0dWRlIjpudWxsLCJsb25naXR1ZGUiOm51bGwsImlzTGl2ZVRyYWNraW5nQWN0aXZlIjpmYWxzZSwibGFzdExvY2F0aW9uVXBkYXRlIjpudWxsLCJyZWZlcnJhbENvZGUiOiJQNEFaNDJETSIsImhvdXJseVJhdGUiOm51bGwsImFkZHJlc3MiOiIiLCJpc1N1YnNjcmlwdGlvbiI6ZmFsc2UsImlhdCI6MTc3MzkxNTM2OCwiZXhwIjoxNzc0NTIwMTY4fQ.SNqU_jWZEU67U3VGsra81lk0H9BEfaBrWw6TVbEOJPPohAOFDrPp5U5XdmJUkIUsCmc5CSS7UnSTCqqkQlcyag",
     "user_model": {
-      "sub": "d2776f6b-5d84-4b4c-9da7-89a5d3481f60",
-      "email": "jinsa@mailinator.com",
-      "name": "jinsa",
-      "mobileNumber": "1234567890",
-      "profileImage": "http://168.231.74.154:4004/files/users/d2776f6b-5d84-4b4c-9da7-89a5d3481f60/profile_1767077399024.jpg",
-      "isSubscription": false,
-      "issuedAt": "2026-01-07T13:19:03.000Z",
-      "expiresAt": "2026-01-08T13:19:03.000Z",
+      "sub": "de242628-9039-4561-b86b-5f2674fe14be",
+      "email": "oppo@mailinator.com",
+      "roleId": 1,
+      "fullName": "linsa",
+      "mobileNumber": "",
+      "profileImage": "",
+      "gender": "",
       "isEmailVerified": true,
-      "isVibrationEnabled": false,
-      "isSoundEnabled": true,
-      "notificationSound": "Gentle Chime",
-      "isGentleChime": true
+      "latitude": "null",
+      "longitude": "null",
+      "isLiveTrackingActive": false,
+      "lastLocationUpdate": "null",
+      "referralCode": "P4AZ42DM",
+      "hourlyRate": "null",
+      "address": "",
+      "isSubscription": false,
+      "issuedAt": "2026-03-19T10:16:08.000Z",
+      "expiresAt": "2026-03-26T10:16:08.000Z"
     }
   }
 } 

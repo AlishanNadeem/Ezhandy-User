@@ -34,7 +34,7 @@ class NetworkStrings {
   static const String signinEndpoint = "login";
   static const String changePasswordEndpoint = "change-password";
   static const String editProfileEndpoint = "user/profile";
-  static const String logoutEndpoint = "user/fcm-token";
+  static const String logoutEndpoint = "logout";
   static const String deleteAccountEndpoint = "user";
   static const String contactUsEndpoint = "contact-us";
   static const String contentEndpoint = "cms/public";

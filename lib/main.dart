@@ -21,14 +21,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-@pragma("vm:entry-point")
-Future<void> handleBackgroundMessage(RemoteMessage message) async {
+/// 🔹 Background Notification Handler (REQUIRED FOR iOS)
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(
+    RemoteMessage message) async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  log("Background Title: ${message.notification?.title}");
-  log("Background Body: ${message.notification?.body}");
-  log("Background Data: ${message.data}");
-  log("Background: ${message.toString()}");
-  log("Background: ${message.notification.toString()}");
+
+  log('🔔 BG Title: ${message.notification?.title}');
+  log('🔔 BG Body: ${message.notification?.body}');
+  log('🔔 BG Data: ${message.data}');
 }
 
 Future<void> main() async {
@@ -39,22 +41,27 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   // 🔥 Initialize notification service
-  await FirebaseMessagingService().init();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      // Set the color of the enter key
+/// 🔹 iOS Notification Permission
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  //     // Set the color of the enter key
 
-      // systemNavigationBarColor:
-      //     AppColors.gradient_3, // Change this color to whatever you want
-      ));
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+  //     // systemNavigationBarColor:
+  //     //     AppColors.gradient_3, // Change this color to whatever you want
+  //     ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      
     runApp(MyApp());
-  });
+  
 }
 
 class MyApp extends StatelessWidget {
-  final AuthController auth_controller = Get.put(AuthController());
-  final HomeController core_controller = Get.put(HomeController());
+  // final AuthController auth_controller = Get.put(AuthController());
+  // final HomeController core_controller = Get.put(HomeController());
 
   MyApp({super.key});
   static const MaterialColor customColor = MaterialColor(
@@ -75,6 +82,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+     /// 🔹 Initialize Controllers AFTER Firebase
+    Get.put(AuthController(), permanent: true);
+    Get.put(HomeController(), permanent: true);
+
+    final botToastBuilder = BotToastInit();
     return ScreenUtilInit(
         designSize:
             const Size(AppSize.fullScreenWidth, AppSize.fullScreenHeight),

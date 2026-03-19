@@ -2,6 +2,7 @@ import 'package:ezhandy_user/module/auth/content/routing_arguments/content_routi
 import 'package:ezhandy_user/module/auth/content/view/content_screen.dart';
 import 'package:ezhandy_user/module/auth/create_new_password/view/change_password.dart';
 import 'package:ezhandy_user/module/auth/create_new_password/view/reset_password.dart';
+import 'package:ezhandy_user/module/auth/forgot_password/view/forgot_password_screen.dart';
 import 'package:ezhandy_user/module/auth/login/views/login.dart';
 import 'package:ezhandy_user/module/auth/signup/views/signup.dart';
 import 'package:ezhandy_user/module/auth/splash/screen/splash_screen.dart';
@@ -71,8 +72,8 @@ class AppRouter {
             return LogIn();
           case AppRoutes.signupScreenRoute:
             return SignUp();
-          // case AppRoutes.forgotPasswordScreenRoute:
-          //   return ForgotPassword();
+          case AppRoutes.forgotPasswordScreenRoute:
+            return ForgotPassword();
           case AppRoutes.otpVerificationScreenRoute:
             OtpVerificationRoutingArgument? otpArguments =
                 routeSettings.arguments as OtpVerificationRoutingArgument?;
@@ -81,14 +82,14 @@ class AppRouter {
               type: otpArguments?.type,
               text: otpArguments?.text,
             );
-          case AppRoutes.verificationSelectionScreenRoute:
-            OtpVerificationRoutingArgument? otpArguments =
-                routeSettings.arguments as OtpVerificationRoutingArgument?;
-            return VerificationSelection(
-              type: otpArguments?.type,
-              email: otpArguments?.email,
-              phone: otpArguments?.phone,
-            );
+          // case AppRoutes.verificationSelectionScreenRoute:
+          //   OtpVerificationRoutingArgument? otpArguments =
+          //       routeSettings.arguments as OtpVerificationRoutingArgument?;
+          //   return VerificationSelection(
+          //     type: otpArguments?.type,
+          //     email: otpArguments?.email,
+          //     phone: otpArguments?.phone,
+          //   );
           // case AppRoutes.changePasswordScreenRoute:
           //   return ChangePassword();
           case AppRoutes.resetPasswordScreenRoute:

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/app_logo.dart';
 import 'package:flutter/gestures.dart';
@@ -52,24 +53,24 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
   final GlobalKey<FormState> otpKey = GlobalKey<FormState>();
   FocusNode _focusNode = FocusNode();
 
-  int _remainingTime = 0;
-  Timer? _otpTextTimer;
-  bool _isTimeComplete = false;
+  // int _remainingTime = 0;
+  // Timer? _otpTextTimer;
+  // bool _isTimeComplete = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _remainingTime = widget.duration;
-    _startOtpTimer(() {
-      setState(() {
-        _isTimeComplete = true;
-      });
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _remainingTime = widget.duration;
+  //   _startOtpTimer(() {
+  //     setState(() {
+  //       _isTimeComplete = true;
+  //     });
+  //   });
+  // }
 
   @override
   void dispose() {
-    _otpTextTimer?.cancel();
+    // _otpTextTimer?.cancel();
     // pinController.dispose();
     // _focusNode.dispose();
     super.dispose();
@@ -81,25 +82,26 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
       padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding16),
       child: Column(
         children: [
-             AppLogo(scale: 3.5.sp),
+          AppLogo(scale: 3.5.sp),
           15.verticalSpace,
           passwordRecoveryTextWidget(),
           5.verticalSpace,
-         
+
           Expanded(
             child: SingleChildScrollView(
               child: Form(
                 key: otpKey,
                 child: Column(
                   children: [
-                    CustomText(is_alignLeft: false,
+                    CustomText(
+                        is_alignLeft: false,
                         text:
-                        //  widget.type == OtpType.forget.name
-                        //     ? AppStrings.otpCodeForgetMessage
-                        //     : widget.emailAndPhone == OtpCodeType.email.name
-                        //         ? AppStrings.otpCodeEmailMessage
-                        //         :
-                                 AppStrings.otpCodePhoneMessage),
+                            //  widget.type == OtpType.forget.name
+                            //     ? AppStrings.otpCodeForgetMessage
+                            //     : widget.emailAndPhone == OtpCodeType.email.name
+                            //         ? AppStrings.otpCodeEmailMessage
+                            //         :
+                            AppStrings.otpCodePhoneMessage),
                     20.verticalSpace,
                     // CustomText(text: AppStrings.verificationCode + "*"),
                     // 10.verticalSpace,
@@ -107,36 +109,45 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
                     20.verticalSpace,
                     _verifyButton(context),
                     10.verticalSpace,
-                    _otpResendTextTimerWidget(),
+                    // _otpResendTextTimerWidget(),
+                                              _circularCountDownTimerWidget(),
+
                   ],
                 ),
               ),
             ),
           ),
-          // Visibility(
-          //     visible: !widget.keyboardVisible,
-          //     child: didntReceiveCodeWidget()),
-          // 25.verticalSpace
+          Visibility(
+              visible: !widget.keyboardVisible,
+              child: didntReceiveCodeWidget()),
+          25.verticalSpace
         ],
       ),
     );
   }
 
-  Widget _verifyButton(context) {
+   Widget _verifyButton(context) {
     return CustomButton(
       text: AppStrings.submitCode,
       onclick: () {
         if (otpKey.currentState!.validate()) {
           // ToastMessage(toastmsg: AppStrings.logIn);
-          if (widget.type == OtpType.forget.name) {
-            AppNavigation.navigateReplacementNamed(
-                context, AppRoutes.resetPasswordScreenRoute);
-            // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
-          } else {
-                                AuthController.i.isLoginSignUp.value = true;
 
-            AppNavigation.navigateToRemovingAll(context, AppRoutes.mainMenuScreenRoute);
-          }
+          AuthController.i.verifyUser(
+              context: context,
+              code: pinController.text,
+              email: widget.emailAndPhone,
+              type: widget.type);
+
+          // if (widget.type == OtpType.forget.name) {
+          //   AppNavigation.navigateReplacementNamed(
+          //       context, AppRoutes.resetPasswordScreenRoute);
+          //   // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
+          // } else {
+          //   AppNavigation.navigateReplacementNamed(
+          //       context, AppRoutes.createProfileScreenRoute);
+          // }
+
           // AppNavigation.navigateTo(
           //     context, AppRoutes.otpVerificationScreenRoute,
           //     arguments: OtpVerificationRoutingArgument(
@@ -168,7 +179,7 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
     );
   }
 
-  Widget pinCodeWidget(BuildContext context) {
+   Widget pinCodeWidget(BuildContext context) {
     return CustomKeyboardActionWidget(
       focusNode: _focusNode,
       child: PinCodeTextField(
@@ -177,34 +188,44 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
         autovalidateMode: AutovalidateMode.disabled,
         appContext: context,
         length: 4,
+
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
         ],
+
         textStyle: TextStyle(
           fontSize: 14.sp,
           fontWeight: FontWeight.bold,
           color: AppColors.black,
         ),
+
         pinTheme: PinTheme(
-          fieldHeight: .06.sh,
-          fieldWidth: .19.sw,
-          activeFillColor: AppColors.transparent,
-          inactiveFillColor: AppColors.transparent,
-          selectedFillColor: AppColors.transparent,
+          fieldWidth: 48.w, // ✅ FIXED WIDTH
+          fieldHeight: 48.w,
+          activeFillColor: Colors.transparent,
+          inactiveFillColor: Colors.transparent,
+          selectedFillColor: Colors.transparent,
           activeColor: AppColors.orange,
           inactiveColor: AppColors.orange,
           selectedColor: AppColors.orange,
-          shape: PinCodeFieldShape.underline,
+          shape: PinCodeFieldShape.box,
         ),
+
+        separatorBuilder: (context, index) =>
+            SizedBox(width: 8.w), // ✅ CONTROL GAP
+
         showCursor: true,
         animationDuration: const Duration(milliseconds: 300),
         enableActiveFill: true,
         keyboardType: TextInputType.number,
+
         onChanged: (value) {
           debugPrint(value);
         },
+
         validator: (value) => value?.validateVerificationCode,
         controller: pinController,
+
         onCompleted: (value) {
           // handle complete logic
         },
@@ -212,100 +233,105 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
     );
   }
 
-  Widget _otpResendTextTimerWidget() {
+
+  Widget _circularCountDownTimerWidget() {
     return Align(
       alignment: Alignment.center,
-      child: RichText(
-        text: TextSpan(
-          text: !_isTimeComplete
-              ? 'Wait for ${_formatMMSS(_remainingTime)} '
-              : '00:00 ',
-          style: const TextStyle(
-            fontSize: 14,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          // gradient: AppGradients.buttonGradient,
+          // boxShadow: AppShadows.shadow1,
+          shape: BoxShape.circle,
+        ),
+        child: CircularCountDownTimer(
+          duration: widget.duration,
+          initialDuration: 0,
+          controller: AuthController.i.countDownController.value,
+          // AuthController.i.countDownController.value,
+          width: 0.28.sw,
+          height: 0.2.sh,
+          strokeWidth: 6,
+          ringColor: AppColors.orange,
+          fillColor: AppColors.white,
+          backgroundColor: AppColors.transparent,
+          strokeCap: StrokeCap.round,
+          textStyle: const TextStyle(
+            fontSize: 18.0,
             color: AppColors.black,
           ),
-          children: [
-            TextSpan(
-              text: 'Send Again',
-              style: TextStyle(
-                fontSize: 14,
-                color: _isTimeComplete ? AppColors.orange : AppColors.grey,
-                decoration: TextDecoration.underline,
-              ),
-              recognizer: _isTimeComplete
-                  ? (TapGestureRecognizer()
-                    ..onTap = () {
-                      FocusScope.of(context).unfocus();
-                      pinController.clear();
-                      ToastMessage(
-                          toastmsg:
-                              "We have resend OTP verification code.");
-                      setState(() {
-                        _remainingTime = widget.duration;
-                        _isTimeComplete = false;
-                      });
-                      _startOtpTimer(() {
-                        setState(() {
-                          _isTimeComplete = true;
-                        });
-                      });
-                    })
-                  : null,
-            ),
-          ],
+          textFormat: CountdownTextFormat.MM_SS,
+          isReverse: true,
+          isReverseAnimation: true,
+          isTimerTextShown: true,
+          autoStart: true,
+          onStart: () {
+            debugPrint('Countdown Started');
+          },
+          onComplete: () {
+            setState(() {
+              AuthController.i.isTimeComplete.value = true;
+            });
+            debugPrint('Countdown Ended');
+          },
         ),
       ),
     );
   }
 
-  void _startOtpTimer(VoidCallback onComplete) {
-    _otpTextTimer?.cancel();
-    _otpTextTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingTime > 1) {
-        setState(() {
-          _remainingTime--;
-        });
-      } else {
-        timer.cancel();
-        onComplete();
-      }
-    });
-  }
 
-  String _formatMMSS(int seconds) {
-    final m = (seconds ~/ 60).toString().padLeft(2, '0');
-    final s = (seconds % 60).toString().padLeft(2, '0');
-    return "$m:$s";
-  }
+
+
 
   Widget didntReceiveCodeWidget() {
     return Container(
+      // padding: EdgeInsets.only(bottom: 50, top: 15),
       alignment: Alignment.center,
       width: 1.sw,
       child: RichTextWidget(
-        text: AppStrings.didnotReceiveCode,
-        subText: AppStrings.resend,
-        subTextColor:
-            _isTimeComplete ? AppColors.blueDark : AppColors.greyBorder,
-        onSubTextPress: () {
-          if (_isTimeComplete) {
+          text: AppStrings.didnotReceiveCode,
+          subText: AppStrings.resend,
+          subTextColor: AuthController.i.isTimeComplete.value
+              ? AppColors.orange
+              : AppColors.greyBorder,
+          onSubTextPress: () {
             FocusScope.of(context).unfocus();
-            pinController.clear();
-            ToastMessage(
-                toastmsg:
-                    "We have resend OTP verification code at your email address.");
-            setState(() {
-              _remainingTime = widget.duration;
-              _isTimeComplete = false;
-            });
-            _startOtpTimer(() {
+            FocusScope.of(context).unfocus();
+            if (AuthController.i.isTimeComplete.value) {
               setState(() {
-                _isTimeComplete = true;
+                AuthController.i.isTimeComplete.value = false;
               });
-            });
-          }
-        },
-      ),
+              pinController.clear();
+              // widget.phone_verication == 'phone'
+              //     ? SocialAuthGetX().resendPhoneCode(
+              //         context: context,
+              //         iso_code: widget.iso_code,
+              //         country_code: widget.country_code,
+              //         phoneNumber: widget.phone_number.toString(),
+              //         getVerificationId: (String? value) {
+              //           setState(() {
+              //             widget.user_id = value;
+              //           });
+              //         },
+              //         setProgressBar: () => showLoader(),
+              //         cancelProgressBar: () => stopLoader())
+              //     : AuthController.i.resendCode(id:  widget.user_id.toString());
+
+              if (widget.type == OtpType.forget.name) {
+                AuthController.i.forgotPassword(context,
+                    email: widget.emailAndPhone, isResendCode: true);
+              } else {
+                AuthController.i.resendCode(
+                  email: widget.emailAndPhone,
+                );
+              }
+
+              // _countDownController.start();
+              // setState(() {
+              //   widget.isTimeComplete = false;
+              // });
+            }
+          }),
     );
   }
 }

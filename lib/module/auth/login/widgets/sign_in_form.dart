@@ -11,6 +11,7 @@ import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
+import 'package:ezhandy_user/utils/shared_preference.dart';
 import 'package:ezhandy_user/utils/validator_extensions.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
@@ -42,6 +43,26 @@ class _SignInFormState extends State<SignInForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool switchOff = false;
+    @override
+  void initState() {
+    super.initState();
+    _loadRememberedUser();
+  }
+
+  Future<void> _loadRememberedUser() async {
+    final prefs = SharedPreference();
+    await prefs.sharedPreference;
+
+    bool remember = prefs.getRememberMe();
+    if (remember) {
+      setState(() {
+        switchOff = true;
+        emailController.text = prefs.getSavedEmail();
+        passwordController.text = prefs.getSavedPassword();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -184,7 +205,32 @@ class _SignInFormState extends State<SignInForm> {
   Widget _rememberMeForgetPasswordRow({BuildContext? context}) {
     return Row(
       children: [
-        AnimatedSwitch(isSwitched: switchOff, onCallBack: (r) {}),
+        AnimatedSwitch(
+          isSwitched: switchOff,
+          onCallBack: (value) async {
+            final prefs = SharedPreference();
+            await prefs.sharedPreference;
+
+            setState(() {
+              switchOff = value;
+            });
+
+            if (value) {
+              // SAVE DATA
+              prefs.setRememberMe(true);
+              prefs.saveCredentials(
+                email: emailController.text,
+                password: passwordController.text,
+              );
+            } else {
+              // CLEAR DATA
+              prefs.setRememberMe(false);
+              prefs.clearCredentials();
+              emailController.clear();
+              passwordController.clear();
+            }
+          },
+        ),
         10.w.horizontalSpace,
         CustomText(
           text: AppStrings.rememberMe,
@@ -199,6 +245,7 @@ class _SignInFormState extends State<SignInForm> {
     );
   }
 
+
   GestureDetector _forgetPassword(BuildContext? context) {
     return GestureDetector(
       onTap: (() {
@@ -207,9 +254,10 @@ class _SignInFormState extends State<SignInForm> {
         signInKey.currentState?.reset();
         FocusScope.of(context!).unfocus();
         AppNavigation.navigateTo(
-            context, AppRoutes.verificationSelectionScreenRoute,
-            arguments:
-                OtpVerificationRoutingArgument(type: OtpType.forget.name));
+          context, AppRoutes.forgotPasswordScreenRoute,
+          // arguments:
+          //     OtpVerificationRoutingArgument(type: OtpType.forget.name)
+        );
       }),
       child: CustomText(
         text: '${AppStrings.forgotYourPassword}?',
@@ -217,6 +265,7 @@ class _SignInFormState extends State<SignInForm> {
         is_alignLeft: false,
         color: AppColors.orange,
         textDecoration: TextDecoration.underline,
+        fontWeight: FontWeight.bold,
         // align: Alignment.centerRight,
       ),
     );
@@ -242,19 +291,29 @@ class _SignInFormState extends State<SignInForm> {
   Widget _signInButton({required BuildContext context}) {
     return CustomButton(
       text: AppStrings.signIn,
-      onclick: () {
+        onclick: () async {
         if (signInKey.currentState!.validate()) {
-          ToastMessage(toastmsg: "Login Successfully");
+          final prefs = SharedPreference();
+          await prefs.sharedPreference;
+
+          if (switchOff) {
+            prefs.saveCredentials(
+              email: emailController.text,
+              password: passwordController.text,
+            );
+          }
+          // ToastMessage(toastmsg: AppStrings.logIn);
           // if (AuthController.i.role.value == RoleType.single.name || AuthController.i.role.value == RoleType.committed.name) {
           // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
           // } else {
-          AuthController.i.isLoginSignUp.value = true;
+          AuthController.i.signIn(context,
+              email: emailController.text, password: passwordController.text);
 
-          AppNavigation.navigateToRemovingAll(
-              context, AppRoutes.mainMenuScreenRoute);
+          // AppNavigation.navigateToRemovingAll(
+          //     context, AppRoutes.mainMenuScreenRoute);
           // }
-          emailController.clear();
-          passwordController.clear();
+          // emailController.clear();
+          // passwordController.clear();
           // AppDialogs.showToast(message: AppStrings.loginSuccessfully);
           // }
           // validate_email(emailController.text);

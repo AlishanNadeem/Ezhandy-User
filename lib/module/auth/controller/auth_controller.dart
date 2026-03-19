@@ -2,9 +2,18 @@ import 'dart:io';
 
 // import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
+import 'package:ezhandy_user/module/auth/create_new_password/data/repository/reset_password_repository.dart';
+import 'package:ezhandy_user/module/auth/forgot_password/data/repository/forgot_password_repository.dart';
+import 'package:ezhandy_user/module/auth/login/data/repository/sign_in_repository.dart';
 import 'package:ezhandy_user/module/auth/signup/data/repository/sign_up_repository.dart';
+import 'package:ezhandy_user/module/auth/verification/data/repository/resend_code_repository.dart';
+import 'package:ezhandy_user/module/auth/verification/data/repository/verification_repository.dart';
+import 'package:ezhandy_user/module/core/main_menu/data/repository/delete_account_repository.dart';
+import 'package:ezhandy_user/module/core/main_menu/data/repository/logout_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+
 // import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
 // import 'package:ezhandy_user/module/auth/create_new_password/data/repository/create_new_password_repository.dart';
 // import 'package:ezhandy_user/module/auth/forgot_password/data/repository/forgot_password_repository.dart';
@@ -31,6 +40,8 @@ class AuthController extends GetxController {
   // RxList<HorseModelData?> horseList = RxList<HorseModelData?>();
   // Rx<HorseModelData> horseDetail = HorseModelData().obs;
   // Rx<ContentModelData> contentDetail = ContentModelData().obs;
+  Rx<CountDownController> countDownController = CountDownController().obs;
+  RxBool isTimeComplete = false.obs;
 
   // RxString role = ''.obs;
   // RxString social = "".obs;
@@ -56,9 +67,10 @@ class AuthController extends GetxController {
   //   );
   // }
 
-  // void signIn(BuildContext context, {String? email, String? password}) {
-  //   SignInRepository().signInRepo(context, email: email, password: password);
-  // }
+    void signIn(BuildContext context, {String? email, String? password}) {
+    SignInRepository().signInRepo(context, email: email, password: password);
+  }
+
 
   void signUp(
     BuildContext context, {
@@ -78,27 +90,30 @@ class AuthController extends GetxController {
         media: media);
   }
 
-  // void forgotPassword(BuildContext context, {String? email}) {
-  //   ForgotPasswordRepository().forgotPasswordRepo(context, email: email);
-  // }
+  void verifyUser({
+    String? email,
+    String? code,
+    String? type,
+    BuildContext? context,
+  }) {
+    VerificationRepository()
+        .verifyUserRepo(context, email: email, code: code, type: type);
+  }
 
-  // void verifyUser({
-  //   String? email,
-  //   String? password,
-  //   String? type,
-  //   String? code,
-  //   BuildContext? context,
-  // }) {
-  //   VerificationRepository().verifyUserRepo(context, email: email, password: password, code: code, type: type);
-  // }
+  void resendCode({String? email}) {
+    ResendCodeRepository().resendCodeRepo(email: email);
+  }
 
-  // void resendCode({String? email, String? type}) {
-  //   ResendCodeRepository().resendCodeRepo(email: email, type: type);
-  // }
+  void forgotPassword(BuildContext context,
+      {String? email, bool? isResendCode}) {
+    ForgotPasswordRepository()
+        .forgotPasswordRepo(context, email: email, isResendCode: isResendCode);
+  }
 
-  // void createNewPassword(context, {String? email, String? pass, String? confirmpass}) {
-  //   CreateNewPasswordRepository().createNewPasswordRepo(context, email: email, pass: pass, confirmpass: confirmpass);
-  // }
+  void createNewPassword(context, {String? password, String? email}) {
+    CreateNewPasswordRepository()
+        .createNewPasswordRepo(context, email: email, password: password);
+  }
 
   // void createProfile({
   //   String? firstName,
@@ -181,11 +196,11 @@ class AuthController extends GetxController {
   //   NotificationRepository().notificationRepo();
   // }
 
-  // void deleteAccount(context) {
-  //   DeleteAccountRepository().deleteAccountRepo(context);
-  // }
+  void deleteAccount(context) {
+    DeleteAccountRepository().deleteAccountRepo(context);
+  }
 
-  // void logout(context) {
-  //   LogoutRepository().logoutRepo(context);
-  // }
+  void logout(context) {
+    LogoutRepository().logoutRepo(context);
+  }
 }
