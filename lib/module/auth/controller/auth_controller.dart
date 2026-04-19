@@ -2,6 +2,7 @@ import 'dart:io';
 
 // import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
+import 'package:ezhandy_user/module/auth/create_new_password/data/repository/change_pass_repository.dart';
 import 'package:ezhandy_user/module/auth/create_new_password/data/repository/reset_password_repository.dart';
 import 'package:ezhandy_user/module/auth/forgot_password/data/repository/forgot_password_repository.dart';
 import 'package:ezhandy_user/module/auth/login/data/repository/sign_in_repository.dart';
@@ -113,6 +114,14 @@ class AuthController extends GetxController {
   void createNewPassword(context, {String? password, String? email}) {
     CreateNewPasswordRepository()
         .createNewPasswordRepo(context, email: email, password: password);
+  }
+  void changePassword(
+    context, {
+    String? newPassword,
+    String? currentPassword,
+  }) {
+    ChangePasswordRepository().changePasswordRepo(context,
+        newPassword: newPassword, currentPassword: currentPassword);
   }
 
   // void createProfile({

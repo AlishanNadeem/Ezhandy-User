@@ -1,5 +1,6 @@
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
+import 'package:ezhandy_user/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ezhandy_user/module/auth/content/routing_arguments/content_routing_arguments.dart';
@@ -164,14 +165,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
       // is_pickImage:
       //     args == AppStrings.CREATE_PROFILE ? true : false,
       // setFile: _setFile,
-      // profileImageUrl:
-      //     AuthController.i.app dropShipper.value.data!.profileImage,
-      // profileImage: _profileImage,
-      assetPath:
-          // args == AppStrings.CREATE_PROFILE
-          //     ? null
-          // :
-          AssetPath.tempImage1,
+       profileImageUrl:
+            AuthController.i.appUser.value.data?.userModel?.profileImage,
+        // profileImage: _profileImage,
+        assetPath:
+            // args == AppStrings.CREATE_PROFILE
+            //     ?
+            null
       // borderWidth:
       // args == AppStrings.CREATE_PROFILE ? null :
       // 5,
@@ -192,12 +192,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 // align: Alignment.center,
                 fontWeight: FontWeight.w600,
                 fontSize: 18.sp,
-                text: "${AppStrings.dummyName}"),
+                text:
+                    "${Utils.capitalizeWords(AuthController.i.appUser.value.data?.userModel?.fullName ?? "dummy")}"),
             CustomText(
               // align: Alignment.center,
               // fontWeight: FontWeight.w600,
               fontSize: 12.sp,
-              text: "@${AppStrings.dummyName}",
+              text: AuthController.i.appUser.value.data?.userModel?.email,
             ),
           ],
         ),

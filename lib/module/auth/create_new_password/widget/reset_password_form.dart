@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -16,7 +17,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ResetPasswordForm extends StatefulWidget {
-  const ResetPasswordForm({super.key});
+  String email;
+
+  ResetPasswordForm({required this.email, super.key});
 
   @override
   State<ResetPasswordForm> createState() => _ResetPasswordFormState();
@@ -39,10 +42,10 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
         children: [
           // Non-scrollable content (e.g., logo)
           // AppLogo(scale: 5.sp),
-         AppLogo(scale: 3.5.sp),
+          AppLogo(scale: 3.5.sp),
           15.verticalSpace,
           passwordRecoveryTextWidget(),
-         
+
           5.verticalSpace,
           // Scrollable content starts here
           Expanded(
@@ -51,13 +54,15 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
                 key: rsesetpassKey,
                 child: Column(children: [
                   //----------------Email Address Field----------------
-                  CustomText(is_alignLeft: false ,text: AppStrings.forgotYourPasswordNoWorries),
+                  CustomText(
+                      is_alignLeft: false,
+                      text: AppStrings.forgotYourPasswordNoWorries),
                   20.verticalSpace,
-                  CustomText(text: AppStrings.password ),
+                  CustomText(text: AppStrings.password),
                   10.verticalSpace,
                   _passwordTextField(),
                   20.verticalSpace,
-                  CustomText(text: AppStrings.confirmPassword ),
+                  CustomText(text: AppStrings.confirmPassword),
                   10.verticalSpace,
                   _confirmPasswordTextField(),
                   SizedBox(height: 30.h),
@@ -145,25 +150,21 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
             return;
           }
           rsesetpassKey.currentState!.save();
-          AppDialogs.showSuccessDialog(
-            context,
-            description: AppStrings.passwordUpdatedSuccessfully,
-            title: AppStrings.passwordUpdated,
-            btnTxt1: AppStrings.backToLogin,
-            onTap1: () {
-              AppNavigation.navigateToRemovingAll(
-                  context, AppRoutes.loginScreenRoute);
-            },
-          );
-          // AppNavigation.navigateTo(
-          //     context, AppRoutes.otpVerificationScreenRoute,
-          //     arguments: OtpVerificationRoutingArgument(
-          //         type: OtpType.forget.name,
-          //         emailAndPhone: emailController.text,
-          //         text: emailController.text));
-          // AuthController.i
-          //     .forgotPass(email: forgotPassRepo.email_controller.text);
-          // ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
+
+          AuthController.i.createNewPassword(context,
+              email: widget.email, password: passwordController.text);
+
+          // AppDialogs.showSuccessDialog(
+          //   context,
+          //   description: AppStrings.passwordUpdatedSuccessfully,
+          //   title: AppStrings.passwordUpdated,
+          //   btnTxt1: AppStrings.backToLogin,
+          //   onTap1: () {
+          //     AppNavigation.navigateToRemovingAll(
+          //         context, AppRoutes.loginScreenRoute);
+          //   },
+          // );
+
           FocusScope.of(context).unfocus();
         });
   }

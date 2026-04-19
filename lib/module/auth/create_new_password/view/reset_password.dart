@@ -5,7 +5,9 @@ import 'package:ezhandy_user/utils/asset_path.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 
 class ResetPassword extends StatefulWidget {
-  const ResetPassword({Key? key}) : super(key: key);
+  String email;
+
+  ResetPassword({required this.email, Key? key}) : super(key: key);
 
   @override
   State<ResetPassword> createState() => _ResetPasswordState();
@@ -23,7 +25,9 @@ class _ResetPasswordState extends State<ResetPassword> {
       // appBarheight: 50.h,
       // title: AppStrings.resetPassword,
       // is_registration: true,
-      child: const ResetPasswordForm(),
+      child: ResetPasswordForm(
+        email: widget.email,
+      ),
     );
   }
 }

@@ -74,7 +74,7 @@ class SignInRepository extends ResponseListener {
       AuthController.i.appUser.value = a;
       SharedPreference().setUser(user: convert.jsonEncode(a));
       SharedPreference().setBearerToken(token: a.data?.accessToken);
-
+      log((a.data?.accessToken).toString());
       AppNavigation.navigateToRemovingAll(
           Context, AppRoutes.mainMenuScreenRoute);
     }

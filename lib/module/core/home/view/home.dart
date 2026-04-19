@@ -3,6 +3,7 @@ import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/enums.dart';
+import 'package:ezhandy_user/utils/utils.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -114,7 +115,8 @@ class _HomeState extends State<Home> {
             children: [
               CustomText(text: "$greeting 🔥", fontSize: 14.sp),
               CustomText(
-                  text: AppStrings.dummyName,
+                  text:
+                      "${Utils.capitalizeWords(AuthController.i.appUser.value.data?.userModel?.fullName ?? "dummy")}",
                   fontFamily: AppStrings.montserrat,
                   // color: AppColors.blueDark,
                   fontSize: 20.sp,
@@ -383,10 +385,10 @@ class _HomeState extends State<Home> {
             fontSize: 16.sp),
         GestureDetector(
             onTap: () {
-             AppNavigation.navigateTo(
-                      context, AppRoutes.listOfServicesScreenRoute,
-                      arguments: ServiceRoutingArgument(
-                          type: ServiceType.instant.name));
+              AppNavigation.navigateTo(
+                  context, AppRoutes.listOfServicesScreenRoute,
+                  arguments:
+                      ServiceRoutingArgument(type: ServiceType.instant.name));
             },
             child: CustomText(
               text: AppStrings.seeAll,

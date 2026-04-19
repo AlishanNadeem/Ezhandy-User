@@ -1,3 +1,6 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/utils/constant.dart';
+import 'package:ezhandy_user/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,34 +40,47 @@ class _UserProfileState extends State<UserProfile> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      20.verticalSpace,
-                      profileWidget(),
-                      20.verticalSpace,
-                      TwoTextRow(secondColor: AppColors.black,
-                          firstText: AppStrings.username,
-                          secondText: AppStrings.dummyName),
-                      Divider(color: AppColors.blueDark),
-                      10.verticalSpace,
-                      TwoTextRow(secondColor: AppColors.black,
+                  child: Obx(() {
+                    return Column(
+                      children: [
+                        20.verticalSpace,
+                        profileWidget(),
+                        20.verticalSpace,
+                        TwoTextRow(
+                            secondColor: AppColors.black,
+                            firstText: AppStrings.name,
+                            secondText: Utils.capitalizeWords(AuthController.i
+                                    .appUser.value.data?.userModel?.fullName ??
+                                "")),
+                        Divider(color: AppColors.blueDark),
+                        10.verticalSpace,
+                        TwoTextRow(
+                          secondColor: AppColors.black,
                           firstText: AppStrings.phoneNumber,
-                          secondText: AppStrings.dummyPhoneNUmber),
-                      Divider(color: AppColors.blueDark),
-                      10.verticalSpace,
-                      TwoTextRow(secondColor: AppColors.black,
-                          firstText: AppStrings.emailAddress,
-                          secondText: AppStrings.dummyEmail),
-                      // Divider(color: AppColors.blueDark),
-                      // 10.verticalSpace,
-                      // TwoTextRow(secondColor: AppColors.black,
-                      //     firstText: AppStrings.referralCode, secondText: "Football"),
-                      // Divider(color: AppColors.blueDark),
-                      // 10.verticalSpace,
-                      // TwoTextRow(secondColor: AppColors.black,
-                      //     firstText: AppStrings.status, secondText: "High"),
-                    ],
-                  ),
+                          secondText: Constants
+                              .maskTextInputFormatterPhoneUSWithCode
+                              .maskText(AuthController.i.appUser.value.data
+                                      ?.userModel?.mobileNumber ??
+                                  "1234567890"),
+                        ),
+                        Divider(color: AppColors.blueDark),
+                        10.verticalSpace,
+                        TwoTextRow(
+                            secondColor: AppColors.black,
+                            firstText: AppStrings.emailAddress,
+                            secondText:AuthController.i.appUser.value.data
+                                      ?.userModel?.email ??""),
+                        // Divider(color: AppColors.blueDark),
+                        // 10.verticalSpace,
+                        // TwoTextRow(secondColor: AppColors.black,
+                        //     firstText: AppStrings.referralCode, secondText: "Football"),
+                        // Divider(color: AppColors.blueDark),
+                        // 10.verticalSpace,
+                        // TwoTextRow(secondColor: AppColors.black,
+                        //     firstText: AppStrings.status, secondText: "High"),
+                      ],
+                    );
+                  }),
                 ),
               ),
               40.verticalSpace,
@@ -138,14 +154,18 @@ class _UserProfileState extends State<UserProfile> {
       // is_pickImage:
       //     args == AppStrings.CREATE_PROFILE ? true : false,
       // setFile: _setFile,
-      // profileImageUrl:
-      //     AuthController.i.appUser.value.data!.profileImage,
+      profileImageUrl:
+
+
+
+          AuthController.i.appUser.value.data!.userModel?.profileImage,
       // profileImage: _profileImage,
       assetPath:
-          // args == AppStrings.CREATE_PROFILE
-          //     ? null
-          // :
-          AssetPath.tempImage1,
+      //     // args == AppStrings.CREATE_PROFILE
+            //  ?
+              null,
+      //     // :
+      //     AssetPath.tempImage1,
       // borderWidth:
       // args == AppStrings.CREATE_PROFILE ? null :
       // 5,

@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/utils/utils.dart';
 import 'package:get/get.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -119,7 +121,11 @@ class _EditUserProfileState extends State<EditUserProfile> {
         showUpload: true,
         setFile: _setFile,
         profileImage: _profileImage,
-        assetPath: null);
+        assetPath: null,
+         profileImageUrl:
+          AuthController.i.appUser.value.data?.userModel?.profileImage,
+  
+        );
   }
 
   _setFile(File? file) {
@@ -226,20 +232,6 @@ class _EditUserProfileState extends State<EditUserProfile> {
                   context, AppRoutes.userProfileScreenRoute);
             },
           );
-          // ToastMessage(toastmsg: AppStrings.logIn);
-          // if (AuthController.i.role.value == RoleType.single.name || AuthController.i.role.value == RoleType.committed.name) {
-          // AppNavigation.navigateToRemovingAll(context, AppRoutes.userMainMenuScreenRoute);
-          // } else {
-          //   AppNavigation.navigateToRemovingAll(context, AppRoutes.sellerMainMenuScreenRoute);
-          // }
-          // passwordController.clear();
-          // AppDialogs.showToast(message: AppStrings.loginSuccessfully);
-          // }
-          // validate_email(emailController.text);
-          // if (error_email == "") {
-          //   AuthController.i.signIn(email: emailController.text);
-          //   // Get.offNamed(Paths.OTP_VERIFICATION_SCREEN_ROUTE);
-          //   AppConstant.is_phone = false;
         }
 
         FocusScope.of(context).unfocus();
@@ -248,7 +240,12 @@ class _EditUserProfileState extends State<EditUserProfile> {
   }
 
   void setController() {
-    fullNameController.text = "John";
-    emailController.text = "john@gmail.com";
+    fullNameController.text = Utils.capitalizeWords(
+        AuthController.i.appUser.value.data?.userModel?.fullName ?? "dummy");
+    emailController.text =
+        AuthController.i.appUser.value.data?.userModel?.email ?? "";
+    phoneController.text = Constants.maskTextInputFormatterPhoneUSWithCode
+        .maskText(
+            AuthController.i.appUser.value.data?.userModel?.mobileNumber ?? "");
   }
 }

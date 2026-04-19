@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -151,16 +152,20 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
             return;
           }
           rsesetpassKey.currentState!.save();
-          AppDialogs.showSuccessDialog(
-            context,
-            description: AppStrings.passwordHasBeenUpdated,
-            title: AppStrings.congratulation,
-            btnTxt1: AppStrings.ok,
-            onTap1: () {
-              AppNavigation.navigatorPopUntil(
-                  context, AppRoutes.userProfileScreenRoute);
-            },
-          );
+             AuthController.i.changePassword(context,
+              currentPassword: oldPasswordController.text,
+              newPassword:
+                  passwordController.text); 
+          // AppDialogs.showSuccessDialog(
+          //   context,
+          //   description: AppStrings.passwordHasBeenUpdated,
+          //   title: AppStrings.congratulation,
+          //   btnTxt1: AppStrings.ok,
+          //   onTap1: () {
+          //     AppNavigation.navigatorPopUntil(
+          //         context, AppRoutes.userProfileScreenRoute);
+          //   },
+          // );
           // AppNavigation.navigateTo(
           //     context, AppRoutes.otpVerificationScreenRoute,
           //     arguments: OtpVerificationRoutingArgument(
