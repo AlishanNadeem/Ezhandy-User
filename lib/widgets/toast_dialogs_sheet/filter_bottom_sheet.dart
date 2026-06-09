@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+// import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 // import 'package:ezhandy_user/utils/app_colors.dart';
 // import 'package:ezhandy_user/utils/app_padding.dart';
 // import 'package:ezhandy_user/utils/app_strings.dart';

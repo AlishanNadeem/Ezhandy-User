@@ -1,21 +1,18 @@
+import 'package:ezhandy_user/module/core/all_services/controller/favourites_services_controller.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/enums.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
-import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
-import 'package:ezhandy_user/widgets/Slideable/slideable.dart';
-import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class FavouritesServices extends StatefulWidget {
@@ -26,7 +23,20 @@ class FavouritesServices extends StatefulWidget {
 }
 
 class _FavouritesServicesState extends State<FavouritesServices> {
-  bool isFav = true;
+  FavouritesServicesController get _controller {
+    if (Get.isRegistered<FavouritesServicesController>()) {
+      return Get.find<FavouritesServicesController>();
+    }
+    return Get.put(FavouritesServicesController());
+  }
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<FavouritesServicesController>()) {
+      Get.delete<FavouritesServicesController>();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,38 +49,111 @@ class _FavouritesServicesState extends State<FavouritesServices> {
         title: AppStrings.myFavorites,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-          child: ListView.separated(
-            padding: EdgeInsets.only(
-                top: AppPadding.padding20, bottom: AppPadding.padding25),
-            shrinkWrap: true,
-            itemCount: 20,
-            itemBuilder: (context, index) {
-              // final item = notifications[index];
-              return singleContainer(
-                amount: index + 13,
-                index: index,
-                isFav: isFav,
-                ontapLike: () {
-                  setState(() {
-                    // isFav=!isFav;
-                  });
-                },
-                onTap: () {
-                  AppNavigation.navigateTo(
-                    context,
-                    AppRoutes.serviceDetailsScreenRoute,
-                    arguments: ServiceRoutingArgument(
-                      type: ServiceType.instant.name,
-                    ),
-                  );
-                },
+          child: Obx(() {
+            final list = _controller.items;
+            final loading = _controller.isLoading.value;
+
+            if (loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (list.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 48.h),
+                  child: CustomText(
+                    text: AppStrings.noFavouriteServicesFound,
+                    color: AppColors.greyLight,
+                    is_alignLeft: false,
+                  ),
+                ),
               );
-            },
-            separatorBuilder: (context, index) {
-              return 10.verticalSpace;
-            },
-          ),
+            }
+
+            return ListView.separated(
+              padding: EdgeInsets.only(
+                  top: AppPadding.padding20, bottom: AppPadding.padding25),
+              shrinkWrap: true,
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                final row = list[index];
+                final service = row['service'];
+                final sMap = service is Map
+                    ? Map<String, dynamic>.from(service)
+                    : <String, dynamic>{};
+                final title =
+                    sMap['title']?.toString().trim().isNotEmpty == true
+                        ? sMap['title'].toString()
+                        : AppStrings.titleName;
+                final desc = sMap['description']?.toString().trim().isNotEmpty ==
+                        true
+                    ? sMap['description'].toString()
+                    : AppStrings.lorem5;
+                final amount = _cardAmount(sMap);
+                final imageUrl = _resolveMediaUrl(sMap['imageUrl']);
+                final user = sMap['user'];
+                final userMap =
+                    user is Map ? Map<String, dynamic>.from(user) : null;
+                final providerId = userMap?['id']?.toString() ??
+                    sMap['userId']?.toString();
+                final stId = sMap['serviceTypeId'];
+                final serviceTypeId = stId is int
+                    ? stId
+                    : int.tryParse(stId?.toString() ?? '');
+                final providerServiceId = sMap['id']?.toString() ??
+                    row['serviceId']?.toString();
+                final isQuick = sMap['isQuickService'] == true;
+                final deleteServiceId =
+                    FavouritesServicesController.serviceApiIdFromRow(row);
+                final heartBusy =
+                    _controller.removingServiceId.value == deleteServiceId;
+
+                return singleContainer(
+                  amount: amount,
+                  index: index,
+                  isFav: true,
+                  heartBusy: heartBusy,
+                  imageUrl: imageUrl,
+                  title: title,
+                  description: desc,
+                  ontapLike: deleteServiceId.isEmpty || heartBusy
+                      ? () {}
+                      : () => _controller
+                          .removeServiceFromFavourites(deleteServiceId),
+                  onTap: () {
+                    AppNavigation.navigateTo(
+                      context,
+                      AppRoutes.serviceDetailsScreenRoute,
+                      arguments: ServiceRoutingArgument(
+                        type: isQuick
+                            ? ServiceType.instant.name
+                            : ServiceType.schedule.name,
+                        serviceId: serviceTypeId,
+                        providerId: providerId,
+                        providerServiceId: providerServiceId,
+                      ),
+                    );
+                  },
+                );
+              },
+              separatorBuilder: (context, index) {
+                return 10.verticalSpace;
+              },
+            );
+          }),
         ));
+  }
+
+  String _cardAmount(Map<String, dynamic> service) {
+    final v = service['hourlyRate'] ?? service['visitCharges'];
+    if (v == null) return '0';
+    return v.toString();
+  }
+
+  String _resolveMediaUrl(dynamic path) {
+    final s = path?.toString().trim() ?? '';
+    if (s.isEmpty) return '';
+    if (s.startsWith('http://') || s.startsWith('https://')) return s;
+    return '${NetworkStrings.IMAGE_BASE_URL}$s';
   }
 
   Widget singleContainer(
@@ -78,7 +161,21 @@ class _FavouritesServicesState extends State<FavouritesServices> {
       required int index,
       amount,
       ontapLike,
-      isFav}) {
+      isFav,
+      bool heartBusy = false,
+      required String imageUrl,
+      required String title,
+      required String description}) {
+    final DecorationImage bgImage = imageUrl.isNotEmpty
+        ? DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkImage(imageUrl),
+          )
+        : const DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(AssetPath.tempCleaningImage),
+          );
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -86,14 +183,7 @@ class _FavouritesServicesState extends State<FavouritesServices> {
         height: 200.h, // fixed width for horizontal scrolling
         margin: EdgeInsets.only(bottom: 10.h),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
-            image: const DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(AssetPath.tempCleaningImage)
-
-                // NetworkImage(
-                //     "https://www.pristinehome.com.au/wp-content/uploads/2018/07/How-to-Choose-the-Best-House-Cleaning-Service.jpg")
-                )),
+            borderRadius: BorderRadius.circular(10.r), image: bgImage),
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -101,12 +191,15 @@ class _FavouritesServicesState extends State<FavouritesServices> {
             Row(
               children: [
                 GestureDetector(
-                    onTap: ontapLike,
+                    onTap: heartBusy ? null : ontapLike,
                     child: Icon(
                       isFav
                           ? Icons.favorite_rounded
                           : Icons.favorite_border_rounded,
                       size: 30.sp,
+                      color: heartBusy
+                          ? AppColors.grey.withValues(alpha: 0.5)
+                          : null,
                     )),
                 // Icon(Icons.favorite_border_rounded),
 
@@ -128,14 +221,15 @@ class _FavouritesServicesState extends State<FavouritesServices> {
               ],
             ),
             Spacer(),
-            detailsContainer(),
+            detailsContainer(title: title, description: description),
           ],
         ),
       ),
     );
   }
 
-  Widget detailsContainer() {
+  Widget detailsContainer(
+      {required String title, required String description}) {
     return Padding(
       padding: EdgeInsets.all(AppPadding.padding12),
       child: CustomContainer(
@@ -151,10 +245,10 @@ class _FavouritesServicesState extends State<FavouritesServices> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomText(text: AppStrings.titleName),
+                  CustomText(text: title),
                   5.verticalSpace,
                   CustomText(
-                    text: AppStrings.lorem5,
+                    text: description,
                     maxLines: 3,
                     // overflow: TextOverflow.ellipsis,
                   ),

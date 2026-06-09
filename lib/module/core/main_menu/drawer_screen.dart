@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ezhandy_user/module/auth/content/routing_arguments/content_routing_arguments.dart';
 // import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
-import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
@@ -17,6 +17,8 @@ import 'package:ezhandy_user/widgets/button_widgets/cross_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/app_logo.dart';
 import 'package:ezhandy_user/widgets/profile_widget/profile_picture_widget.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+
+import 'package:ezhandy_user/utils/network_strings.dart';
 
 // ignore: must_be_immutable
 class DrawerScreen extends StatefulWidget {
@@ -166,7 +168,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       //     args == AppStrings.CREATE_PROFILE ? true : false,
       // setFile: _setFile,
        profileImageUrl:
-            AuthController.i.appUser.value.data?.userModel?.profileImage,
+           "${NetworkStrings.IMAGE_BASE_URL}${AuthController.i.appUser.value.data?.userModel?.profileImage ?? ''}",
         // profileImage: _profileImage,
         assetPath:
             // args == AppStrings.CREATE_PROFILE

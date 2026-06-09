@@ -11,6 +11,10 @@ class NetworkStrings {
   // static const String IMAGE_BASE_URL =
   //     "https://server1.appsstaging.com/3559/parallel_universe/public/storage/";
 
+   static const String IMAGE_BASE_URL =
+      //live
+      "http://168.231.74.154:6252";
+
   static const String ACCEPT = 'application/json';
   static const int SUCCESS_CODE = 200;
   static const int NOT_FOUND_CODE = 400;
@@ -27,17 +31,146 @@ class NetworkStrings {
 
 //----------------------------Auth-----------------------------------
   static const String signupEndpoint = "user";
-  static const String verificationEmailEndpoint = "verify-email";
+  static const String verificationEmailEndpoint = "verify-otp";
   static const String verificationResetPasswordEndpoint = "verify-reset-otp";
   static const String resendCodeEndpoint = "resend-verification";
   static const String resetPassEndpoint = "reset-password";
   static const String signinEndpoint = "login";
   static const String changePasswordEndpoint = "change-password";
-  static const String editProfileEndpoint = "user/profile";
+  static const String editProfileEndpoint = "user/provider";
   static const String logoutEndpoint = "logout";
   static const String deleteAccountEndpoint = "user";
+  static const String serviceTypesEndpoint = "service-type/types";
+
+  /// GET [user/freelancers/{serviceTypeId}?isQuick=] — freelancers for a service type id.
+  static String freelancersByServiceId(int serviceId) =>
+      'user/freelancers/$serviceId';
+
+  /// GET [user/details/{id}] — provider profile by user id (UUID).
+  static String userDetailsById(String userId) => 'user/details/$userId';
+
+  /// POST [favourites/providers/{id}] — add provider to favourites (auth).
+  /// DELETE [favourites/providers/{id}] — remove from favourites (auth).
+  static String favouriteProvider(String providerId) =>
+      'favourites/providers/$providerId';
+
+  /// GET [favourites/providers/{id}/status] — whether provider is favourited (auth).
+  static String favouriteProviderStatus(String providerId) =>
+      'favourites/providers/$providerId/status';
+
+  /// POST [favourites/services/{id}] — add provider-service row to favourites (auth).
+  /// DELETE [favourites/services/{id}] — remove from favourites (auth).
+  static String favouriteService(String serviceId) =>
+      'favourites/services/$serviceId';
+
+  /// GET [favourites/services/{id}/status] — whether that service row is favourited (auth).
+  static String favouriteServiceStatus(String serviceId) =>
+      'favourites/services/$serviceId/status';
+
+  /// GET [provider/{id}] — provider service detail by provider-service row id (auth).
+  static String providerServiceDetail(String id) => 'provider/$id';
+
+  /// GET [favourites/services] — list of favourite service rows (auth).
+  static const String favouriteServicesListEndpoint = 'favourites/services';
+
+  /// GET [payment/user] — current user payment transactions (auth).
+  static const String userPaymentsEndpoint = 'payment/user';
+
+  /// GET [bookings/user] — current user's bookings (auth).
+  static const String userBookingsEndpoint = 'bookings/user';
+
+  /// POST [bookings] — create booking(s) (auth).
+  static const String createBookingsEndpoint = 'bookings';
+
+  /// POST [payment/create-booking-draft-checkout] — Stripe checkout for booking draft (auth).
+  static const String createBookingDraftCheckoutEndpoint =
+      'payment/create-booking-draft-checkout';
+
+  static const String bookingCheckoutSuccessPath =
+      '/booking/checkout/success';
+  static const String bookingCheckoutCancelPath = '/booking/checkout/cancel';
+
+  static String get bookingCheckoutSuccessUrl =>
+      '$IMAGE_BASE_URL$bookingCheckoutSuccessPath';
+
+  static String get bookingCheckoutCancelUrl =>
+      '$IMAGE_BASE_URL$bookingCheckoutCancelPath';
+
+  /// GET [bookings/check-active?serviceId=&providerId=] — active booking for provider-service row (auth).
+  /// [serviceId] query param is the provider-service row id (`providerServices[].id`).
+  static String checkActiveBooking({
+    required String providerServiceId,
+    required String providerId,
+  }) =>
+      'bookings/check-active?serviceId=$providerServiceId&providerId=$providerId';
+
+  /// GET [bookings/detail/{id}] — booking detail by id (auth).
+  static String bookingDetail(int id) => 'bookings/detail/$id';
+
+  /// PATCH [bookings/booking/status] — update booking status (auth).
+  static const String bookingStatusEndpoint = 'bookings/booking/status';
+
+  /// POST [ratings] — submit provider rating and review (auth).
+  static const String ratingsEndpoint = 'ratings';
+
+  /// GET [ratings/provider/{id}] — provider ratings and reviews (auth).
+  static String providerRatings(String providerId) =>
+      'ratings/provider/$providerId';
+
+  /// POST [reports] — submit booking report (auth).
+  static const String reportsEndpoint = 'reports';
+
+  /// GET [referrals/my-referrals] — referral summary + referral rows (auth).
+  static const String myReferralsEndpoint = 'referrals/my-referrals';
+
+  /// POST [community/posts] — create community post (multipart: description, image) (auth).
+  static const String communityPostsEndpoint = 'community/posts';
+
+  /// GET [community/posts/mine] — current user's posts (auth).
+  static const String communityPostsMineEndpoint = 'community/posts/mine';
+
+  /// DELETE [community/posts/{id}] — delete post by id (auth).
+  static String communityPostById(String id) => 'community/posts/$id';
+
+  /// POST [ask-pro/user/checkout] — Stripe checkout session for Ask a Pro (auth).
+  static const String askProCheckoutEndpoint = 'ask-pro/user/checkout';
+
+  static const String askProCheckoutSuccessPath = '/ask-pro/checkout/success';
+  static const String askProCheckoutCancelPath = '/ask-pro/checkout/cancel';
+
+  static String get askProCheckoutSuccessUrl =>
+      '$IMAGE_BASE_URL$askProCheckoutSuccessPath';
+
+  static String get askProCheckoutCancelUrl =>
+      '$IMAGE_BASE_URL$askProCheckoutCancelPath';
+
+  /// POST [ask-pro/query] — submit Ask a Pro question (multipart) (auth).
+  static const String askProQueryEndpoint = 'ask-pro/query';
+
+  /// GET [live-chat/my-chats] — current user's chat list (auth).
+  static const String myChatsEndpoint = 'live-chat/my-chats';
+
+  /// GET [live-chat/{chatId}/history/chat] — chat message history (auth).
+  static String chatHistory(String chatId) =>
+      'live-chat/$chatId/history/chat';
+
+  /// GET [categories] — category list with UUID ids (auth).
+  static const String categoriesEndpoint = 'categories';
+
+  /// GET/POST [community/posts/{id}/comments] — list / add comments (auth).
+  static String communityPostComments(String postId) =>
+      'community/posts/$postId/comments';
+
+  /// GET [community/posts/{id}/reactions] — reaction counts + users (auth).
+  static String communityPostReactions(String postId) =>
+      'community/posts/$postId/reactions';
+
   static const String contactUsEndpoint = "contact-us";
+  static const String queriesEndpoint = "queries";
   static const String contentEndpoint = "cms/public";
+
+  /// GET [pages/{slug}] — CMS page by slug (about, privacy, terms, refund).
+  static String pageBySlug(String slug) => 'pages/$slug';
   static const String settingsEndpoint = "user/toggle";
   static const String emergencyEndpoint = "emergency";
   static const String singleVoiceEndpoint = "tasks/voice-note";
@@ -409,7 +542,10 @@ class NetworkStrings {
   // static const String createMyStoreEndpoint = "add_update_store";
   // static const String myStoreEndpoint = "store";
   // static const String myWishlistEndpoint = "wishlist";
-  // static const String productsEndpoint = "products";
+  static const String productsEndpoint = 'products';
+
+  /// GET [products/owner/{ownerId}] — products for the logged-in user.
+  static String productsByOwner(String ownerId) => 'products/owner/$ownerId';
   // static const String addProductEndpoint = "add_update_product";
   // static const String productDetailEndpoint = "product-details";
   // static const String deleteProductEndpoint = "delete-product";

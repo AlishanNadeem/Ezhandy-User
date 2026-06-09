@@ -1,12 +1,16 @@
-import 'dart:developer';
+import 'package:ezhandy_user/module/core/booking/controller/booking_details_controller.dart';
+import 'package:ezhandy_user/module/core/booking/model/booking_detail_model.dart';
+import 'package:ezhandy_user/module/core/booking/routing_arguments/invoice_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/routing_arguments/report_issue_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/routing_arguments/review_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/booking/routing_arguments/work_documents_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
-import 'package:ezhandy_user/utils/constant.dart';
-import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -19,312 +23,432 @@ import 'package:ezhandy_user/widgets/row/two_text_row.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class BookingDetails extends StatefulWidget {
-  String status;
-  BookingDetails({required this.status, super.key});
+  final int bookingId;
+  final String? initialStatus;
+
+  const BookingDetails({
+    required this.bookingId,
+    this.initialStatus,
+    super.key,
+  });
 
   @override
   State<BookingDetails> createState() => _BookingDetailsState();
 }
 
 class _BookingDetailsState extends State<BookingDetails> {
-  int? currentHourIndex;
-  @override
-  Widget build(BuildContext context) {
-    return BackgroundImage(
-        leading: AssetPath.backIcon,
-        onclickLead: () {
-          Get.back();
-        },
-        // appBarheight: 50.h,
-        title: AppStrings.booking,
-        actionWidget: (widget.status == AppStrings.inRoute ||
-                widget.status == AppStrings.started ||
-                widget.status == AppStrings.completedUnPaid)
-            ? Padding(
-                padding: const EdgeInsets.only(right: AppPadding.padding12),
-                child: GestureDetector(
-                    onTap: () {
-                      AppNavigation.navigateTo(
-                          context, AppRoutes.chatScreenRoute,
-                          arguments: ChatRoutingArgument(isBooking: false));
-                    },
-                    child: (Image.asset(
-                      AssetPath.messageIcon,
-                      width: 30.w,
-                      height: 30.h,
-                    ))))
-            : null,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppPadding.padding12),
-                child: Column(
-                  children: [
-                    15.verticalSpace,
-                    CustomContainer(
-                        isPadding: false,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.all(AppPadding.padding12),
-                              child: CustomText(
-                                  text: AppStrings.service,
-                                  // color: AppColors.blueDark,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Divider(color: AppColors.blueDark),
-                            serviceDetailsWidget(),
-                            // reScheduleWidget(),
-                          ],
-                        )),
-                    10.verticalSpace,
-                    CustomContainer(
-                        isPadding: false,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.all(AppPadding.padding12),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  CustomText(
-                                      text: AppStrings.bookingDetails,
-                                      // color: AppColors.blueDark,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold),
-                                  CustomText(
-                                      text:
-                                          "${AppStrings.status}: ${widget.status}",
-                                      fontWeight: FontWeight.w600),
-                                ],
-                              ),
-                            ),
-                            Divider(color: AppColors.blueDark),
-                            bookingDetailsWidget(),
-                            // reScheduleWidget(),
-                          ],
-                        )),
-                    if (widget.status == AppStrings.pending) ...[
-                      15.verticalSpace,
-                      CustomButton(
-                        text: AppStrings.cancel,
-                        onclick: () {
-                          AppDialogs.showSuccessDialog(context,
-                              description:
-                                  "Are you sure you want to cancel this \nbooking?",
-                              // title: AppStrings.logout,
-                              image: AssetPath.tumbIcon,
-                              isDoneShow: false,
-                              btnTxt1: AppStrings.yes,
-                              onTap1: () {
-                                AppNavigation.navigatorPop(context);
-                                AppDialogs.showRejectDialog(context,
-                                    barrierDismissible: true,
-                                    // description:
-                                    //     "Are you sure you want to cancel this \nbooking?",
-                                    title: "Cancellation Reason",
-                                    // image: AssetPath.tumbIcon,
-                                    isDoneShow: false,
-                                    btnTxt1: AppStrings.submit,
-                                    onTap1: () {
-                                      AppNavigation.navigatorPop(context);
-                                      AppDialogs.showSuccessDialog(
-                                        context,
-                                        description:
-                                            "Booking has been cancelled successfully.",
-                                        title: AppStrings.congratulation,
-                                        // image: AssetPath.deletePopUpIcon,
-                                        isDoneShow: true,
-                                        btnTxt1: AppStrings.ok,
-                                        onTap1: () {
-                                          // AppNavigation.navigatorPop(context);
-                                          AppNavigation.navigatorPopUntil(
-                                              context,
-                                              AppRoutes.mainMenuScreenRoute);
-                                        },
-                                      );
-                                    },
-                                    btnTxt2: AppStrings.cancel,
-                                    onTap2: () {
-                                      AppNavigation.navigatorPop(context);
-                                    });
-                              },
-                              btnTxt2: AppStrings.no,
-                              onTap2: () {
-                                AppNavigation.navigatorPop(context);
-                              });
-                        },
-                      )
-                    ],
-                    rejectReasonWidget(),
-                    15.verticalSpace,
-                    if (widget.status == AppStrings.accepted ||
-                        widget.status == AppStrings.inRoute ||
-                        widget.status == AppStrings.started ||
-                        widget.status == AppStrings.completedPaid ||
-                        widget.status == AppStrings.completedUnPaid) ...[
-                      CustomContainer(
-                          isPadding: false,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.all(AppPadding.padding12),
-                                child: CustomText(
-                                    text: AppStrings.providerDetails,
-                                    // color: AppColors.blueDark,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Divider(color: AppColors.blueDark),
-                              providerDetailsWidget(),
-                              // reScheduleWidget(),
-                            ],
-                          )),
-                      15.verticalSpace,
-                      if (widget.status == AppStrings.started ||
-                          widget.status == AppStrings.completedPaid ||
-                          widget.status == AppStrings.completedUnPaid) ...[
-                        CustomContainer(
-                            isPadding: false,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(
-                                      AppPadding.padding12),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CustomText(
-                                          text: AppStrings.workDocuments,
-                                          // color: AppColors.blueDark,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold),
-                                      widget.status == AppStrings.started
-                                          ? SizedBox.shrink()
-                                          : CustomText(
-                                              text: AppStrings.invoice,
-                                              // color: AppColors.blueDark,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.bold),
-                                    ],
-                                  ),
-                                ),
-                                Divider(color: AppColors.blueDark),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      10.horizontalSpace,
-                                      GestureDetector(
-                                        onTap: () {
-                                          AppNavigation.navigateTo(
-                                              context,
-                                              AppRoutes
-                                                  .workDocumentsScreenRoute);
-                                        },
-                                        child: Image.asset(
-                                            AssetPath.documentTotalIcon,
-                                            width: 50.w,
-                                            height: 50.h),
-                                      ),
-                                      Spacer(),
-                                      widget.status == AppStrings.started
-                                          ? SizedBox.shrink()
-                                          : GestureDetector(
-                                              onTap: () {
-                                                AppNavigation.navigateTo(
-                                                    context,
-                                                    AppRoutes
-                                                        .invoiceScreenRoute);
-                                              },
-                                              child: Image.asset(
-                                                  AssetPath.documentTotalIcon,
-                                                  width: 50.w,
-                                                  height: 50.h),
-                                            ),
-                                      10.horizontalSpace,
-                                    ],
-                                  ),
-                                ),
-                                // reScheduleWidget(),
-                              ],
-                            )),
-                        15.verticalSpace,
-                      ],
-                      reportReviewButtonWidget(),
-                      endWorkButtonWidget(),
-                      refundButtonWidget(),
-                    ],
-                    widget.status == AppStrings.inRoute
-                        ? CustomContainer(
-                            height: 200.h,
-                            width: 1.sw,
-                            isPadding: false,
-                            child: Image.asset(
-                              AssetPath.map,
-                              fit: BoxFit.cover,
-                            ))
-                        : SizedBox.shrink(),
-                    25.verticalSpace,
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
-  }
+  late final BookingDetailsController _controller;
 
-  Widget rejectReasonWidget() {
-    return Visibility(
-      visible: widget.status == AppStrings.rejected ||
-          widget.status == AppStrings.cancelled,
-      child: Column(
-        children: [
-          10.verticalSpace,
-          CustomText(
-              text: widget.status == AppStrings.rejected
-                  ? AppStrings.rejectionReason
-                  : AppStrings.cancelationReason,
-              // color: AppColors.blueDark,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold),
-          10.verticalSpace,
-          CustomText(
-            text: AppStrings.lorem5,
-            color: AppColors.grey,
-          ),
-        ],
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.put(
+      BookingDetailsController(
+        bookingId: widget.bookingId,
+        initialStatus: widget.initialStatus,
       ),
+      tag: 'booking_${widget.bookingId}',
     );
   }
 
-  Padding serviceDetailsWidget() {
+  @override
+  void dispose() {
+    Get.delete<BookingDetailsController>(tag: 'booking_${widget.bookingId}');
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final status = _controller.status;
+      final detail = _controller.detail.value;
+      final c = _controller;
+
+      return BackgroundImage(
+          leading: AssetPath.backIcon,
+          onclickLead: Get.back,
+          title: AppStrings.booking,
+          actionWidget: c.showChatAction
+              ? Padding(
+                  padding: const EdgeInsets.only(right: AppPadding.padding12),
+                  child: GestureDetector(
+                      onTap: () {
+                        AppNavigation.navigateTo(
+                            context, AppRoutes.chatScreenRoute,
+                            arguments:
+                                ChatRoutingArgument(isBooking: false));
+                      },
+                      child: Image.asset(
+                        AssetPath.messageIcon,
+                        width: 30.w,
+                        height: 30.h,
+                      )))
+              : null,
+          child: _controller.isLoading.value
+              ? const Center(child: CircularProgressIndicator())
+              : (_controller.hasValidBookingId && detail == null)
+                  ? Center(
+                      child: CustomText(
+                        text: AppStrings.noBookingsFound,
+                        color: AppColors.greyLight,
+                        is_alignLeft: false,
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppPadding.padding12),
+                            child: Column(
+                              children: [
+                                15.verticalSpace,
+                                CustomContainer(
+                                    isPadding: false,
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(
+                                              AppPadding.padding12),
+                                          child: CustomText(
+                                              text: AppStrings.service,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Divider(color: AppColors.blueDark),
+                                        serviceDetailsWidget(detail),
+                                      ],
+                                    )),
+                                10.verticalSpace,
+                                CustomContainer(
+                                    isPadding: false,
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(
+                                              AppPadding.padding12),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              CustomText(
+                                                  text: AppStrings
+                                                      .bookingDetails,
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.bold),
+                                              CustomText(
+                                                  text:
+                                                      "${AppStrings.status}: $status",
+                                                  fontWeight: FontWeight.w600),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(color: AppColors.blueDark),
+                                        bookingDetailsWidget(detail),
+                                      ],
+                                    )),
+                                if (c.showProviderDetails) ...[
+                                  15.verticalSpace,
+                                  CustomContainer(
+                                      isPadding: false,
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(
+                                                AppPadding.padding12),
+                                            child: CustomText(
+                                                text: AppStrings
+                                                    .providerDetails,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Divider(color: AppColors.blueDark),
+                                          providerDetailsWidget(detail),
+                                        ],
+                                      )),
+                                ],
+                                if (c.showStatusReason)
+                                  rejectReasonWidget(detail),
+                                if (c.showReportMessage)
+                                  reportMessageWidget(),
+                                if (c.showActionButtons && c.isPending) ...[
+                                  15.verticalSpace,
+                                  CustomButton(
+                                    text: AppStrings.cancel,
+                                    onclick: () => _showCancelDialog(context),
+                                  )
+                                ],
+                                if (c.showActionButtons &&
+                                    c.showCancelledReportButton) ...[
+                                  15.verticalSpace,
+                                  CustomButton(
+                                    color: AppColors.black,
+                                    text: AppStrings.reportIssue,
+                                    onclick: () {
+                                      AppNavigation.navigateTo(
+                                        context,
+                                        AppRoutes.reportIssueScreenRoute,
+                                        arguments: ReportIssueRoutingArgument(
+                                          bookingId: _reportBookingId,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                                if (c.showWorkDocumentsCard) ...[
+                                  15.verticalSpace,
+                                    CustomContainer(
+                                        isPadding: false,
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(
+                                                  AppPadding.padding12),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  CustomText(
+                                                      text: AppStrings
+                                                          .workDocuments,
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  if (c.showInvoiceButton)
+                                                    CustomText(
+                                                        text:
+                                                            AppStrings.invoice,
+                                                        fontSize: 16.sp,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                ],
+                                              ),
+                                            ),
+                                            Divider(
+                                                color: AppColors.blueDark),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  10.horizontalSpace,
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      if (detail == null) {
+                                                        return;
+                                                      }
+                                                      AppNavigation.navigateTo(
+                                                        context,
+                                                        AppRoutes
+                                                            .workDocumentsScreenRoute,
+                                                        arguments:
+                                                            WorkDocumentsRoutingArgument(
+                                                          serviceTitle: detail
+                                                              .service?.title,
+                                                          serviceDescription:
+                                                              detail.service
+                                                                  ?.description,
+                                                          beforeImagePaths:
+                                                              detail
+                                                                  .beforeImagePaths,
+                                                          afterImagePaths: detail
+                                                              .afterImagePaths,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Image.asset(
+                                                        AssetPath
+                                                            .documentTotalIcon,
+                                                        width: 50.w,
+                                                        height: 50.h),
+                                                  ),
+                                                  const Spacer(),
+                                                  if (c.showInvoiceButton &&
+                                                      c.displayInvoice != null)
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        final invoice =
+                                                            c.displayInvoice;
+                                                        if (invoice == null) {
+                                                          return;
+                                                        }
+                                                        AppNavigation.navigateTo(
+                                                          context,
+                                                          AppRoutes
+                                                              .invoiceScreenRoute,
+                                                          arguments:
+                                                              InvoiceRoutingArgument(
+                                                            invoice: invoice,
+                                                            billToName: detail
+                                                                    ?.user
+                                                                    ?.fullName ??
+                                                                '',
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: Image.asset(
+                                                          AssetPath
+                                                              .documentTotalIcon,
+                                                          width: 50.w,
+                                                          height: 50.h),
+                                                    ),
+                                                  10.horizontalSpace,
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )),
+                                  15.verticalSpace,
+                                ],
+                                if (c.showActionButtons) ...[
+                                  providerCompletedActionsWidget(),
+                                  reportReviewButtonWidget(),
+                                  refundButtonWidget(),
+                                ],
+                                if (c.isInRoute) ...[
+                                  15.verticalSpace,
+                                  CustomContainer(
+                                    isPadding: false,
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(
+                                              AppPadding.padding12),
+                                          child: CustomText(
+                                            text: AppStrings
+                                                .liveProviderLocation,
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Divider(color: AppColors.blueDark),
+                                        SizedBox(
+                                          height: 200.h,
+                                          width: double.infinity,
+                                          child: Image.asset(
+                                            AssetPath.map,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                                25.verticalSpace,
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ));
+    });
+  }
+
+  int get _reportBookingId =>
+      _controller.detail.value?.id ?? widget.bookingId;
+
+  void _showCancelDialog(BuildContext context) {
+    AppDialogs.showSuccessDialog(context,
+        description: "Are you sure you want to cancel this \nbooking?",
+        image: AssetPath.tumbIcon,
+        isDoneShow: false,
+        btnTxt1: AppStrings.yes,
+        onTap1: () {
+          AppNavigation.navigatorPop(context);
+          AppDialogs.showRejectDialog(context,
+              barrierDismissible: true,
+              title: "Cancellation Reason",
+              isDoneShow: false,
+              btnTxt1: AppStrings.submit,
+              btnTxt2: AppStrings.cancel,
+              onTap2: () => AppNavigation.navigatorPop(context),
+              onSubmitWithReason: (reason) async {
+                final ok = await _controller.cancelBooking(
+                  statusReason: reason,
+                );
+                if (!context.mounted) return;
+                if (ok) {
+                  AppDialogs.showSuccessDialog(
+                    context,
+                    description: "Booking has been cancelled successfully.",
+                    title: AppStrings.congratulation,
+                    isDoneShow: true,
+                    btnTxt1: AppStrings.ok,
+                    onTap1: () {
+                      AppNavigation.navigatorPopUntil(
+                          context, AppRoutes.mainMenuScreenRoute);
+                    },
+                  );
+                }
+              });
+        },
+        btnTxt2: AppStrings.no,
+        onTap2: () => AppNavigation.navigatorPop(context));
+  }
+
+  Widget rejectReasonWidget(BookingDetail? detail) {
+    return Column(
+      children: [
+        15.verticalSpace,
+        CustomText(
+          text: _controller.isRejected
+              ? AppStrings.rejectionReason
+              : AppStrings.cancelationReason,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.bold,
+        ),
+        10.verticalSpace,
+        CustomText(
+          text: _controller.statusReasonText,
+          color: AppColors.grey,
+        ),
+      ],
+    );
+  }
+
+  Widget reportMessageWidget() {
+    return Column(
+      children: [
+        15.verticalSpace,
+        CustomText(
+          text: AppStrings.reportMessage,
+          fontSize: 20.sp,
+          fontWeight: FontWeight.bold,
+        ),
+        10.verticalSpace,
+        CustomText(
+          text: _controller.reportMessageText,
+          color: AppColors.grey,
+        ),
+      ],
+    );
+  }
+
+  Padding serviceDetailsWidget(BookingDetail? detail) {
+    final service = detail?.service;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
       child: Column(
         children: [
           5.verticalSpace,
           TwoTextRow(
-              firstText: "${AppStrings.service}:", secondText: "Cleaning"),
+              firstText: "${AppStrings.service}:",
+              secondText: service?.title ?? '—'),
           TwoTextRow(
-              firstText: "${AppStrings.visitCharges}:", secondText: "\$10"),
+              firstText: "${AppStrings.visitCharges}:",
+              secondText: _formatMoney(service?.visitCharges)),
           TwoTextRow(
-              firstText: "${AppStrings.hourlyRate}:", secondText: "\$10"),
+              firstText: "${AppStrings.hourlyRate}:",
+              secondText: _formatMoney(service?.hourlyRate)),
           10.verticalSpace,
         ],
       ),
     );
   }
 
-  Padding bookingDetailsWidget() {
+  Padding bookingDetailsWidget(BookingDetail? detail) {
+    final user = detail?.user;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
       child: Column(
@@ -332,92 +456,56 @@ class _BookingDetailsState extends State<BookingDetails> {
           5.verticalSpace,
           TwoTextRow(
               firstText: "${AppStrings.bookingId}:",
-              secondText: "#${AppStrings.dummyOrderNumber}"),
+              secondText: detail != null ? '#${detail.id}' : '—'),
           TwoTextRow(
               firstText: "${AppStrings.bookingDate}:",
-              secondText: AppStrings.dummyDate),
+              secondText: _formatDate(detail?.bookingDate)),
           TwoTextRow(
               firstText: "${AppStrings.userName}:",
-              secondText: AppStrings.dummyName),
+              secondText: user?.fullName ?? '—'),
           TwoTextRow(
               firstText: "${AppStrings.phoneNumber}:",
-              secondText: AppStrings.dummyPhoneNUmber),
+              secondText: user?.mobileNumber ?? '—'),
           TwoTextRow(
               firstText: "${AppStrings.emailAddress}:",
-              secondText: AppStrings.dummyEmail),
+              secondText: user?.email ?? '—'),
           TwoTextRow(
-              firstText: "${AppStrings.address}:",
-              secondText: AppStrings.lorem1),
+              firstText: "${AppStrings.duration}:",
+              secondText: _formatDurationAsHours(detail?.duration)),
           TwoTextRow(
               firstText: "${AppStrings.serviceDate}:",
-              secondText: AppStrings.dummyDate),
+              secondText: _formatDate(detail?.bookingDate)),
           TwoTextRow(
               firstText: "${AppStrings.serviceTime}:",
-              secondText: AppStrings.dummytime),
+              secondText: _formatTimeSlots(detail?.timeSlots)),
+          if (detail?.totalAmount != null)
+            TwoTextRow(
+                firstText: "${AppStrings.charges}:",
+                secondText: _formatMoney(detail?.totalAmount)),
           10.verticalSpace,
         ],
       ),
     );
   }
 
-  Padding providerDetailsWidget() {
+  Padding providerDetailsWidget(BookingDetail? detail) {
+    final provider = detail?.provider;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
       child: Column(
         children: [
           5.verticalSpace,
           TwoTextRow(
-              firstText: "Provider Name:", secondText: AppStrings.dummyName),
+              firstText: "Provider Name:",
+              secondText: provider?.fullName ?? '—'),
           TwoTextRow(
               firstText: "${AppStrings.phoneNumber}:",
-              secondText: AppStrings.dummyPhoneNUmber),
-          widget.status == AppStrings.started ||
-                  widget.status == AppStrings.completedPaid ||
-                  widget.status == AppStrings.completedUnPaid
-              ? TwoTextRow(
-                  firstText: "${AppStrings.starttime}:",
-                  secondText: AppStrings.dummytime)
-              : SizedBox.shrink(),
+              secondText: provider?.mobileNumber ?? '—'),
+          if (_controller.isStarted || _controller.isCompleted)
+            TwoTextRow(
+                firstText: "${AppStrings.starttime}:",
+                secondText: _formatCreatedTime(detail?.createdAt)),
           10.verticalSpace,
-        ],
-      ),
-    );
-  }
-
-  Widget reScheduleWidget() {
-    return Visibility(
-      // visible: widget.status == BookingType.Reschedule.name,
-      child: Column(
-        children: [
-          Divider(color: AppColors.blueDark),
-          Padding(
-            padding: const EdgeInsets.all(AppPadding.padding12),
-            child: CustomText(
-                text: AppStrings.reScheduleTimeAndDate,
-                color: AppColors.blueDark,
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold),
-          ),
-          Divider(
-            color: AppColors.blueDark,
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-            child: Column(
-              children: [
-                5.verticalSpace,
-                TwoTextRow(
-                    firstText: "${AppStrings.sessionDate}:",
-                    secondText: AppStrings.dummyDate),
-                TwoTextRow(
-                    firstText: "${AppStrings.sessionTime}:",
-                    secondText:
-                        "${AppStrings.dummytime} - ${AppStrings.dummytime}"),
-                10.verticalSpace,
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -425,145 +513,86 @@ class _BookingDetailsState extends State<BookingDetails> {
 
   Widget reportReviewButtonWidget() {
     return Visibility(
-        visible: (widget.status == AppStrings.completedPaid),
+      visible: _controller.isCompletedPaid,
+      child: CustomButton(
+        text: "Rate and Review",
+        onclick: () {
+          final providerId = _controller.detail.value?.provider?.id ?? '';
+          AppNavigation.navigateTo(
+            context,
+            AppRoutes.writeReviewScreenRoute,
+            arguments: ReviewRoutingArgument(
+              providerId: providerId,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget providerCompletedActionsWidget() {
+    return Obx(() {
+      final endingWork = _controller.isEndingWork.value;
+      return Visibility(
+        visible: _controller.showProviderCompletedActions,
         child: Row(
           children: [
             Expanded(
               child: CustomButton(
+                text: endingWork ? 'Submitting...' : AppStrings.endWork,
+                onclick: endingWork ? null : _onEndWork,
+              ),
+            ),
+            if (_controller.showReportIssueButton) ...[
+              10.horizontalSpace,
+              Expanded(
+                child: CustomButton(
                   color: AppColors.black,
-                  text:
-                      // (
-                      // widget.status == BookingType.Upcoming.name ||
-                      //       widget.status == BookingType.InProcess.name)
-                      //   ? AppStrings.joinSession
-                      //   :
-                      AppStrings.reportIssue,
-                  onclick:
-                      // (widget.status == BookingType.Upcoming.name ||
-                      //         widget.status == BookingType.InProcess.name)
-                      //     ? () {
-                      //         AppNavigation.navigateTo(
-                      //             context, AppRoutes.videoCallScreenRoute);
-                      //       }
-                      //     :
-                      () {
+                  text: AppStrings.reportIssue,
+                  onclick: () {
                     AppNavigation.navigateTo(
-                        context, AppRoutes.reportIssueScreenRoute);
-                  }),
-            ),
-            10.horizontalSpace,
-            Expanded(
-              child: CustomButton(
-                  text:
-                      // (
-                      // widget.status == BookingType.Upcoming.name ||
-                      //       widget.status == BookingType.InProcess.name)
-                      //   ? AppStrings.joinSession
-                      //   :
-                      "Rate and Review",
-                  onclick:
-                      // (widget.status == BookingType.Upcoming.name ||
-                      //         widget.status == BookingType.InProcess.name)
-                      //     ? () {
-                      //         AppNavigation.navigateTo(
-                      //             context, AppRoutes.videoCallScreenRoute);
-                      //       }
-                      //     :
-                      () {
-                    AppNavigation.navigateTo(
-                        context, AppRoutes.writeReviewScreenRoute);
-                  }),
-            ),
+                      context,
+                      AppRoutes.reportIssueScreenRoute,
+                      arguments: ReportIssueRoutingArgument(
+                        bookingId: _reportBookingId,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ],
-        ));
+        ),
+      );
+    });
   }
 
-  Widget endWorkButtonWidget() {
-    return Visibility(
-        visible: (widget.status == AppStrings.completedUnPaid),
-        child: CustomButton(
-            text:
-                // (
-                // widget.status == BookingType.Upcoming.name ||
-                //       widget.status == BookingType.InProcess.name)
-                //   ? AppStrings.joinSession
-                //   :
-                AppStrings.payFurtherAmount,
-            onclick:
-                // (widget.status == BookingType.Upcoming.name ||
-                //         widget.status == BookingType.InProcess.name)
-                //     ? () {
-                //         AppNavigation.navigateTo(
-                //             context, AppRoutes.videoCallScreenRoute);
-                //       }
-                //     :
-                () {
-              AppDialogs.showSuccessDialog(
-                context,
-                description: "Payment has been done successfully.",
-                title: AppStrings.congratulation,
-                // image: AssetPath.deletePopUpIcon,
-                isDoneShow: true,
-                btnTxt1: AppStrings.ok,
-                onTap1: () {
-                  AppNavigation.navigatorPop(context);
-                  // AppNavigation.navigatorPopUntil(
-                  //     context, AppRoutes.mainMenuScreenRoute);
-                },
-              );
+  Future<void> _onEndWork() async {
+    final ok = await _controller.endWork();
+    if (!mounted) return;
 
-              setState(() {
-                widget.status = AppStrings.completedPaid;
-              });
-              // AppDialogs.showSuccessDialog(context,
-              //     description: AppStrings.refundPolicyWork,
-              //     // title: AppStrings.deleteAccount,
-              //     image: AssetPath.tumbIcon,
-              //     isDoneShow: false,
-              //     btnTxt1: AppStrings.refund,
-              //     onTap1: () {
-              //       AppNavigation.navigatorPop(context);
-              //       AppDialogs.showSuccessDialog(
-              //         context,
-              //         description: AppStrings.oneOfOurRepresentative,
-              //         title: AppStrings.refundRequestSubmitted,
-              //         btnTxt1: AppStrings.goToHome,
-              //         onTap1: () {
-              //           AppNavigation.navigatorPopUntil(
-              //               context, AppRoutes.mainMenuScreenRoute);
-              //         },
-              //       );
-              //     },
-              //     btnTxt2: AppStrings.cancel,
-              //     onTap2: () {
-              //       AppNavigation.navigatorPop(context);
-              //     });
-            }));
+    if (ok) {
+      AppDialogs.showSuccessDialog(
+        context,
+        description: "Work has been ended successfully.",
+        title: AppStrings.congratulation,
+        isDoneShow: true,
+        btnTxt1: AppStrings.ok,
+        onTap1: () {
+          AppNavigation.navigatorPop(context);
+        },
+      );
+    }
   }
 
   Widget refundButtonWidget() {
     return Visibility(
-        visible: (widget.status == AppStrings.accepted),
+        visible: _controller.isAccepted,
         child: CustomButton(
-            text:
-                // (
-                // widget.status == BookingType.Upcoming.name ||
-                //       widget.status == BookingType.InProcess.name)
-                //   ? AppStrings.joinSession
-                //   :
-                AppStrings.refund,
-            onclick:
-                // (widget.status == BookingType.Upcoming.name ||
-                //         widget.status == BookingType.InProcess.name)
-                //     ? () {
-                //         AppNavigation.navigateTo(
-                //             context, AppRoutes.videoCallScreenRoute);
-                //       }
-                //     :
-                () {
+            text: AppStrings.refund,
+            onclick: () {
               AppDialogs.showSuccessDialog(context,
                   description: AppStrings.refundPolicyWork,
-                  // title: AppStrings.deleteAccount,
                   image: AssetPath.tumbIcon,
                   isDoneShow: false,
                   btnTxt1: AppStrings.refund,
@@ -581,42 +610,57 @@ class _BookingDetailsState extends State<BookingDetails> {
                     );
                   },
                   btnTxt2: AppStrings.cancel,
-                  onTap2: () {
-                    AppNavigation.navigatorPop(context);
-                  });
+                  onTap2: () => AppNavigation.navigatorPop(context));
             }));
   }
 
-  Widget buttonWidget(BuildContext context) {
-    log(widget.status.toString());
-    log(widget.status.toString());
+  String _formatDate(String? value) {
+    if (value == null || value.isEmpty) return '—';
+    final dt = DateTime.tryParse(value);
+    if (dt == null) return value;
+    return DateFormat('dd MMM yyyy').format(dt);
+  }
 
-    return Visibility(
-      // visible: (
-      // widget.status == BookingType.Upcoming.name ||
-      //   widget.status == BookingType.InProcess.name ||
-      // widget.status == BookingType.Past.name
-      // ),
-      child: CustomButton(
-        text:
-            // (
-            // widget.status == BookingType.Upcoming.name ||
-            //       widget.status == BookingType.InProcess.name)
-            //   ? AppStrings.joinSession
-            //   :
-            AppStrings.rateService,
-        onclick:
-            // (widget.status == BookingType.Upcoming.name ||
-            //         widget.status == BookingType.InProcess.name)
-            //     ? () {
-            //         AppNavigation.navigateTo(
-            //             context, AppRoutes.videoCallScreenRoute);
-            //       }
-            //     :
-            () {
-          AppNavigation.navigateTo(context, AppRoutes.writeReviewScreenRoute);
-        },
-      ),
-    );
+  String _formatCreatedTime(String? value) {
+    if (value == null || value.isEmpty) return '—';
+    final dt = DateTime.tryParse(value);
+    if (dt == null) return value;
+    return DateFormat('hh:mm a').format(dt.toLocal());
+  }
+
+  String _formatTimeSlots(List<String>? slots) {
+    if (slots == null || slots.isEmpty) return '—';
+    return slots
+        .map((s) => s
+            .replaceAll('_', ' ')
+            .toLowerCase()
+            .split(' ')
+            .map((w) =>
+                w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+            .join(' '))
+        .join(', ');
+  }
+
+  String _formatMoney(String? amount) {
+    if (amount == null || amount.isEmpty) return '—';
+    return '\$$amount';
+  }
+
+  String _formatDurationAsHours(String? durationMinutes) {
+    if (durationMinutes == null || durationMinutes.trim().isEmpty) {
+      return '—';
+    }
+    final minutes = int.tryParse(durationMinutes.trim());
+    if (minutes == null || minutes <= 0) return '—';
+
+    if (minutes % 60 == 0) {
+      final hours = minutes ~/ 60;
+      return hours == 1 ? '1 hour' : '$hours hours';
+    }
+
+    final hours = minutes / 60;
+    final formatted =
+        hours.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+    return '$formatted hours';
   }
 }

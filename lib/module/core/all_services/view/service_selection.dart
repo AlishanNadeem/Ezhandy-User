@@ -1,4 +1,8 @@
+import 'package:ezhandy_user/module/core/all_services/controller/create_booking_controller.dart';
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
+import 'package:ezhandy_user/utils/checkout_browser.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
@@ -21,30 +25,74 @@ import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class ServiceSelection extends StatefulWidget {
-  // String? serviceName;
-  ServiceSelection({super.key});
+  final ServiceRoutingArgument? args;
+
+  const ServiceSelection({this.args, super.key});
+
+  factory ServiceSelection.fromArgs(ServiceRoutingArgument? args) {
+    return ServiceSelection(args: args);
+  }
 
   @override
   State<ServiceSelection> createState() => _ServiceSelectionState();
 }
 
 class _ServiceSelectionState extends State<ServiceSelection> {
+  final CreateBookingController _createBookingController =
+      Get.put(CreateBookingController());
+
+  static const _hourOptions = <MapEntry<String, int>>[
+    MapEntry('2 hrs', 120),
+    MapEntry('3 hrs', 180),
+    MapEntry('4 hrs', 240),
+    MapEntry('5 hrs', 300),
+    MapEntry('6 hrs', 360),
+    MapEntry('7 hrs', 420),
+    MapEntry('8 hrs', 480),
+  ];
+
   String? primaryServiceValue;
   String? secondaryServiceValue;
   String? filterStartValue;
   var serviceList = ["Service 1", "Service 2", "Service 3"];
 
-  // String? filterStartValue;
+  String? selectedHoursLabel;
+  int? selectedDurationMinutes;
 
-  // bool isLike=false;
-  
+  ServiceRoutingArgument? get _bookingArgs => widget.args;
+
+  Map<String, dynamic>? get _service => _bookingArgs?.service;
+
+  int get _selectedHours => (selectedDurationMinutes ?? 0) ~/ 60;
+
+  double get _visitCharges => _parseAmount(_service?['visitCharges']);
+
+  double get _hourlyRate => _parseAmount(_service?['hourlyRate']);
+
+  double get _hourlyTotal => _hourlyRate * _selectedHours;
+
+  double get _subtotal => _visitCharges + _hourlyTotal;
+
+  double get _total => _subtotal;
+
+  List<String> get _hourLabels =>
+      _hourOptions.map((option) => option.key).toList();
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<CreateBookingController>()) {
+      Get.delete<CreateBookingController>();
+    }
+    super.dispose();
+  }
+
   @override
   void initState() {
-   primaryServiceValue="Service 1";
-    // TODO: implement initState
     super.initState();
+    primaryServiceValue = 'Service 1';
+    selectedHoursLabel = _hourOptions.first.key;
+    selectedDurationMinutes = _hourOptions.first.value;
   }
-  
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -58,27 +106,161 @@ class _ServiceSelectionState extends State<ServiceSelection> {
             padding:
                 const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
             child: Column(children: [
-              20.verticalSpace,
-              CustomText(
-                  text: AppStrings.primaryService,
-                  color: AppColors.orange,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.sp),
-              20.verticalSpace,
-              primaryServiceDropDown(),
-              20.verticalSpace,
-              CustomText(
-                  text: AppStrings.secondaryService,
-                  color: AppColors.orange,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.sp),
-              20.verticalSpace,
-              secondaryServiceDropDown(),
-              20.verticalSpace,
-              noteWidget(),
-              20.verticalSpace,
-              btnWidget(context),
-            ])));
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  20.verticalSpace,
+                  CustomText(
+                    text: AppStrings.howManyHoursDoYouNeed,
+                    color: AppColors.orange,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                  ),
+                  20.verticalSpace,
+                  hoursDropDown(),
+                  20.verticalSpace,
+                  CustomText(
+                    text: AppStrings.primaryService,
+                    color: AppColors.orange,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                  ),
+                  20.verticalSpace,
+                  primaryServiceDropDown(),
+                  20.verticalSpace,
+                  CustomText(
+                    text: AppStrings.secondaryService,
+                    color: AppColors.orange,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                  ),
+                  20.verticalSpace,
+                  secondaryServiceDropDown(),
+                  20.verticalSpace,
+                  bookingSummaryWidget(),
+                  20.verticalSpace,
+                  noteWidget(),
+                  20.verticalSpace,
+                ],
+              ),
+            ),
+          ),
+          btnWidget(context),
+          20.verticalSpace,
+        ]),
+      ),
+    );
+  }
+
+  double _parseAmount(dynamic value) {
+    if (value == null) return 0;
+    final cleaned = value.toString().replaceAll(RegExp(r'[^\d.-]'), '');
+    return double.tryParse(cleaned) ?? 0;
+  }
+
+  String _formatMoney(double amount) {
+    if (amount == amount.roundToDouble()) {
+      return '\$${amount.toInt()}';
+    }
+    return '\$${amount.toStringAsFixed(2)}';
+  }
+
+  Widget bookingSummaryWidget() {
+    final hours = _selectedHours;
+
+    return CustomContainer(
+      borderColor: AppColors.orange,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: AppStrings.bookingSummary,
+            fontWeight: FontWeight.w700,
+            fontSize: 16.sp,
+          ),
+          12.verticalSpace,
+          _summaryRow(AppStrings.visitCharges, _formatMoney(_visitCharges)),
+          8.verticalSpace,
+          _summaryRow(
+            '${AppStrings.hourlyRate} ($hours hrs × ${_formatMoney(_hourlyRate)})',
+            _formatMoney(_hourlyTotal),
+          ),
+          12.verticalSpace,
+          const Divider(thickness: 1),
+          12.verticalSpace,
+          _summaryRow(
+            AppStrings.subtotal,
+            _formatMoney(_subtotal),
+            isBold: true,
+          ),
+          8.verticalSpace,
+          _summaryRow(
+            AppStrings.total,
+            _formatMoney(_total),
+            isBold: true,
+            valueColor: AppColors.orange,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _summaryRow(
+    String label,
+    String value, {
+    bool isBold = false,
+    Color? valueColor,
+  }) {
+    final style = TextStyle(
+      fontSize: 14.sp,
+      fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+      color: AppColors.black,
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(label, style: style),
+        ),
+        Text(
+          value,
+          style: style.copyWith(
+            color: valueColor ?? AppColors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget hoursDropDown() {
+    return CustomDropDown2(
+      dropDownWidth: 0.95.sw,
+      dropDownData: _hourLabels,
+      borderColor: AppColors.greyBorder,
+      borderRadius: 10.r,
+      hintText: AppStrings.selectHours,
+      dropdownValue: selectedHoursLabel,
+      dropdownListColor: AppColors.white,
+      hintTextColor: AppColors.black,
+      onChanged: (value) {
+        final label = value.toString();
+        final minutes = _hourOptions
+            .firstWhere(
+              (option) => option.key == label,
+              orElse: () => _hourOptions.first,
+            )
+            .value;
+        setState(() {
+          selectedHoursLabel = label;
+          selectedDurationMinutes = minutes;
+          _bookingArgs?.durationMinutes = minutes;
+        });
+      },
+    );
   }
 
   Widget primaryServiceDropDown() {
@@ -119,15 +301,59 @@ class _ServiceSelectionState extends State<ServiceSelection> {
     );
   }
 
-  CustomButton btnWidget(BuildContext context) {
-    return CustomButton(
-      text: AppStrings.next,
-      onclick: () {
-        AppNavigation.navigateTo(
-          context,
-          AppRoutes.chooseYourPaymentMethodScreenRoute,
-        );
-      },
+  Widget btnWidget(BuildContext context) {
+    return Obx(
+      () => CustomButton(
+        text: AppStrings.confirmBooking,
+        onclick: _createBookingController.isSubmitting.value
+            ? () {}
+            : () => _onConfirmBooking(context),
+      ),
+    );
+  }
+
+  Future<void> _onConfirmBooking(BuildContext context) async {
+    final args = _bookingArgs;
+    if (args == null) {
+      AppDialogs.showToast(message: 'Missing booking details. Go back and try again.');
+      return;
+    }
+
+    final duration = selectedDurationMinutes;
+    if (duration == null || duration <= 0) {
+      AppDialogs.showToast(message: 'Please select hours.');
+      return;
+    }
+    if (args.selectedDate == null) {
+      AppDialogs.showToast(message: 'Please select a booking date.');
+      return;
+    }
+    if (args.selectedTimeSlot == null) {
+      AppDialogs.showToast(message: 'Please select a time slot.');
+      return;
+    }
+
+    args.durationMinutes = duration;
+
+    final checkoutUrl = await _createBookingController.startBookingDraftCheckout(
+      args: args,
+      durationMinutes: duration,
+      totalAmount: _total,
+    );
+
+    if (!mounted) return;
+
+    if (checkoutUrl == null || checkoutUrl.isEmpty) {
+      AppDialogs.showToast(message: 'Unable to start checkout.');
+      return;
+    }
+
+    CheckoutBrowser.open(
+      context,
+      checkoutUrl: checkoutUrl,
+      successUrl: NetworkStrings.bookingCheckoutSuccessUrl,
+      cancelUrl: NetworkStrings.bookingCheckoutCancelUrl,
+      successRoute: AppRoutes.bookingHistoryScreenRoute,
     );
   }
 

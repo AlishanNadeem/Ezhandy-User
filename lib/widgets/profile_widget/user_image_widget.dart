@@ -29,13 +29,23 @@ class UserImageWidget extends StatelessWidget {
         child: CircleAvatar(
           radius: size,
           backgroundColor: color ?? AppColors.white,
-          child: image == null
+          child: image == null || image!.trim().isEmpty
               ? CircleAvatar(
                   radius: size - 2,
-                  backgroundImage: AssetImage(AssetPath.avatarIcon))
-              : CircleAvatar(backgroundImage: NetworkImage(
-                  // NetworkStrings.IMAGE_BASE_URL +
-                  image!)),
+                  backgroundImage: const AssetImage(AssetPath.avatarIcon))
+              : ClipOval(
+                  child: Image.network(
+                    image!,
+                    width: size * 2,
+                    height: size * 2,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => CircleAvatar(
+                      radius: size - 2,
+                      backgroundImage:
+                          const AssetImage(AssetPath.avatarIcon),
+                    ),
+                  ),
+                ),
         ));
   }
 }

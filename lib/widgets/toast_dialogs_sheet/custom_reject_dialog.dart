@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
@@ -15,6 +16,7 @@ import 'package:ezhandy_user/widgets/toast_dialogs_sheet/custom_dialoge.dart';
 // ignore: must_be_immutable
 class CustomRejectDialog extends StatelessWidget {
   void Function()? onTap1, onTap2;
+  void Function(String reason)? onSubmitWithReason;
   String? title, btnTxt1, btnTxt2, image;
   bool isDoneShow, barrierDismissible;
 
@@ -27,6 +29,7 @@ class CustomRejectDialog extends StatelessWidget {
     required this.isDoneShow,
     this.onTap1,
     this.onTap2,
+    this.onSubmitWithReason,
     super.key,
   });
 
@@ -34,9 +37,7 @@ class CustomRejectDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap1,
-      child: CustomDialogs(
+    return CustomDialogs(
         image: image,
         onTap1: barrierDismissible
             ? () {
@@ -70,7 +71,7 @@ class CustomRejectDialog extends StatelessWidget {
                       child: CustomButton(
                           borderRadius: 35.r,
                           text: btnTxt1 ?? "",
-                          onclick: onTap1),
+                          onclick: () => _onSubmit(context)),
                     ),
                     10.horizontalSpace,
                     Expanded(
@@ -87,8 +88,23 @@ class CustomRejectDialog extends StatelessWidget {
             ]),
           ),
         ),
-      ),
     );
+  }
+
+  void _onSubmit(BuildContext context) {
+    final reason = subjectController.text.trim();
+    final validation = reason.validateEmpty(AppStrings.message);
+    if (validation != null) {
+      AppDialogs.showToast(message: validation);
+      return;
+    }
+
+    AppNavigation.navigatorPop(context);
+    if (onSubmitWithReason != null) {
+      onSubmitWithReason!(reason);
+    } else {
+      onTap1?.call();
+    }
   }
 
   Image imageWidget() {

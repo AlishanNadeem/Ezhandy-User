@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/auth/controller/social_login_controller.dart';
-import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';

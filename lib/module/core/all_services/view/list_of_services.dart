@@ -1,49 +1,46 @@
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/all_services/controller/list_of_services_controller.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
-import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
-import 'package:ezhandy_user/widgets/profile_widget/user_image_widget.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
-import 'package:ezhandy_user/widgets/Slideable/slideable.dart';
-import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class ListOfServices extends StatefulWidget {
-  String? type;
+  final String? type;
+  final bool isQuick;
 
-  ListOfServices({this.type, super.key});
+  const ListOfServices({this.type, required this.isQuick, super.key});
 
   @override
   State<ListOfServices> createState() => _ListOfServicesState();
 }
 
 class _ListOfServicesState extends State<ListOfServices> {
-  // String? filterStartValue;
-  List<bool> servicesList = [
-    false,
-    false,
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ];
-  // bool isLike=false;
+  late final ListOfServicesController _listController;
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.isRegistered<ListOfServicesController>()) {
+      Get.delete<ListOfServicesController>();
+    }
+    _listController =
+        Get.put(ListOfServicesController(isQuick: widget.isQuick));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -60,39 +57,44 @@ class _ListOfServicesState extends State<ListOfServices> {
               searchTextField(),
               10.verticalSpace,
               Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.only(bottom: AppPadding.padding25),
-                  shrinkWrap: true,
-                  // physics: NeverScrollableScrollPhysics(),
-                  itemCount: servicesList.length,
-                  itemBuilder: (context, index) {
-                    // final item = notifications[index];
-                    return singleContainer(
-                        index: index,
+                child: Obx(() {
+                  if (_listController.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (_listController.servicesList.isEmpty) {
+                    return Center(
+                      child: CustomText(
+                        text: "No services found",
+                        color: AppColors.greyLight,
+                      ),
+                    );
+                  }
+                  return ListView.separated(
+                    padding: EdgeInsets.only(bottom: AppPadding.padding25),
+                    shrinkWrap: true,
+                    itemCount: _listController.servicesList.length,
+                    itemBuilder: (context, index) {
+                      final service = _listController.servicesList[index];
+                      return singleContainer(
+                        service: service,
                         onTap: () {
                           !AuthController.i.isLoginSignUp.value
                               ? signinSignUpPopup()
                               : AppNavigation.navigateTo(
                                   context, AppRoutes.servicesScreenRoute,
                                   arguments: ServiceRoutingArgument(
-                                      serviceName: AppStrings.titleName,
-                                      type: widget.type));
-                        }
-                        // ontap: () {
-                        //   // AppNavigation.navigateTo(context, AppRoutes.chatScreenRoute,
-                        //   //     arguments: ChatRoutingArgument(isBooking: true));
-                        // },
-                        // time: "1 min ago",
-                        // des: "Hello everyone",
-                        // image: AssetPath.userIcon,
-                        // lastMes: AppStrings.lorem5,
-                        // name: AppStrings.dummyName,
-                        );
-                  },
-                  separatorBuilder: (context, index) {
-                    return 20.verticalSpace;
-                  },
-                ),
+                                      serviceName: service['name']?.toString(),
+                                      type: widget.type,
+                                      serviceId: _parseServiceId(service['id']),
+                                    ));
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return 20.verticalSpace;
+                    },
+                  );
+                }),
               ),
             ],
           ),
@@ -104,7 +106,6 @@ class _ListOfServicesState extends State<ListOfServices> {
       context,
       barrierDismissible: true,
       description: AppStrings.inOrderToAccessThis,
-      // title: AppStrings.deleteDocument,
       image: AssetPath.tumbIcon,
       isDoneShow: false,
       btnTxt1: AppStrings.logIn.toUpperCase(),
@@ -117,53 +118,56 @@ class _ListOfServicesState extends State<ListOfServices> {
         AppNavigation.navigateToRemovingAll(
             context, AppRoutes.loginScreenRoute);
         AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
-        // AppNavigation.navigatorPop(context);
       },
     );
   }
 
-  Widget singleContainer({onTap, index}) {
+  Widget singleContainer({required dynamic service, required VoidCallback onTap}) {
+    final backgroundUrl = _resolveMediaUrl(service['imagePath']);
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // width: .45.sw,
         height: .3.sh,
-        // padding: EdgeInsets.all(AppPadding.padding12),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.r),
             image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage(AssetPath.tempCleaningImage)
-
-                // NetworkImage(
-                //     "https://www.pristinehome.com.au/wp-content/uploads/2018/07/How-to-Choose-the-Best-House-Cleaning-Service.jpg")
-                )),
+                image: backgroundUrl.isNotEmpty
+                    ? NetworkImage(backgroundUrl)
+                    : AssetImage(AssetPath.tempCleaningImage) as ImageProvider)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [10.verticalSpace, detailsContainer()],
+          children: [10.verticalSpace, detailsContainer(service)],
         ),
       ),
     );
   }
 
-  Widget detailsContainer() {
+  Widget detailsContainer(dynamic service) {
+    final iconUrl = _resolveMediaUrl(service['iconImagePath']);
     return Padding(
       padding: EdgeInsets.all(AppPadding.padding12),
       child: CustomContainer(
           child: Row(
         children: [
           CircleAvatar(
-              radius: 30.r,
-              backgroundImage: NetworkImage(
-                  "https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396")),
+            radius: 30.r,
+            backgroundColor: AppColors.greyLight.withValues(alpha: 0.3),
+            backgroundImage:
+                iconUrl.isNotEmpty ? NetworkImage(iconUrl) : null,
+            child: iconUrl.isEmpty
+                ? Icon(Icons.category_outlined, size: 28.sp)
+                : null,
+          ),
           10.horizontalSpace,
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomText(text: AppStrings.titleName),
+                CustomText(text: service['name']?.toString() ?? ''),
                 5.verticalSpace,
                 CustomText(
-                  text: AppStrings.lorem5,
+                  text: service['description']?.toString() ?? '',
                   maxLines: 3,
                 )
               ],
@@ -180,7 +184,22 @@ class _ListOfServicesState extends State<ListOfServices> {
       prefxicon: AssetPath.searchIcon,
       hint: AppStrings.searchAnything,
       inputFormatters: [LengthLimitingTextInputFormatter(35)],
-      // controller: firstNameController,
     );
+  }
+
+  String _resolveMediaUrl(dynamic path) {
+    final s = path?.toString() ?? '';
+    if (s.isEmpty) return '';
+    if (s.startsWith('http://') || s.startsWith('https://')) {
+      return s;
+    }
+    return '${NetworkStrings.IMAGE_BASE_URL}$s';
+  }
+
+  int? _parseServiceId(dynamic id) {
+    if (id == null) return null;
+    if (id is int) return id;
+    if (id is num) return id.toInt();
+    return int.tryParse(id.toString());
   }
 }

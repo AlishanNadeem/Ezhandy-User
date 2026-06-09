@@ -29,20 +29,23 @@ class CustomContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: onTap,
-      child: Container(
-        height: height,
-        width: width,
-        padding: isPadding ? EdgeInsets.all(AppPadding.padding12) : EdgeInsets.zero,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(radius ?? 10.sp),
-            color: bgColor ?? AppColors.white,
-            border: Border.all(color: borderColor ?? AppColors.greyBorder),
-            gradient: isGradient ? gradient ?? AppGradients.buttonGradient : null,
-            boxShadow: boxShadow 
-            ),
-        child: child,
-      ),
+    final box = Container(
+      height: height,
+      width: width,
+      padding:
+          isPadding ? EdgeInsets.all(AppPadding.padding12) : EdgeInsets.zero,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(radius ?? 10.sp),
+          color: bgColor ?? AppColors.white,
+          border: Border.all(color: borderColor ?? AppColors.greyBorder),
+          gradient:
+              isGradient ? gradient ?? AppGradients.buttonGradient : null,
+          boxShadow: boxShadow),
+      child: child,
     );
+    if (onTap != null) {
+      return GestureDetector(onTap: onTap, child: box);
+    }
+    return box;
   }
 }

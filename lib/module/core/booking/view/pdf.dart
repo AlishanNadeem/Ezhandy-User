@@ -9,6 +9,9 @@ class InvoicePdf {
     required String billTo,
     required List<Map<String, String>> costItems,
     required List<Map<String, String>> otherItems,
+    String? subtotal,
+    String? tax,
+    String? total,
   }) async {
     final pdf = pw.Document();
 
@@ -96,15 +99,28 @@ class InvoicePdf {
 
           pw.SizedBox(height: 20),
 
-          // Total Row
+          if (subtotal != null) ...[
+            pw.SizedBox(height: 12),
+            pw.Align(
+              alignment: pw.Alignment.centerRight,
+              child: pw.Text('Sub Total: $subtotal'),
+            ),
+          ],
+          if (tax != null) ...[
+            pw.Align(
+              alignment: pw.Alignment.centerRight,
+              child: pw.Text('Tax: $tax'),
+            ),
+          ],
+          pw.SizedBox(height: 8),
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.end,
             children: [
-              pw.Text("Total: ",
+              pw.Text('Total: ',
                   style: pw.TextStyle(
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.Text(
-                _calculateTotal(costItems, otherItems),
+                total ?? _calculateTotal(costItems, otherItems),
                 style: pw.TextStyle(
                     fontSize: 14, fontWeight: pw.FontWeight.bold),
               ),

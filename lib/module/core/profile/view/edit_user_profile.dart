@@ -118,14 +118,13 @@ class _EditUserProfileState extends State<EditUserProfile> {
 
   ProfilePictureWidget profileWidget() {
     return ProfilePictureWidget(
-        showUpload: true,
-        setFile: _setFile,
-        profileImage: _profileImage,
-        assetPath: null,
-         profileImageUrl:
+      showUpload: true,
+      setFile: _setFile,
+      profileImage: _profileImage,
+      assetPath: null,
+      profileImageUrl:
           AuthController.i.appUser.value.data?.userModel?.profileImage,
-  
-        );
+    );
   }
 
   _setFile(File? file) {
@@ -222,16 +221,13 @@ class _EditUserProfileState extends State<EditUserProfile> {
       text: AppStrings.update,
       onclick: () {
         if (editProfileKey.currentState!.validate()) {
-          AppDialogs.showSuccessDialog(
-            context,
-            description: AppStrings.profileUpdatedSuccessful,
-            title: AppStrings.congratulation,
-            btnTxt1: AppStrings.ok,
-            onTap1: () {
-              AppNavigation.navigatorPopUntil(
-                  context, AppRoutes.userProfileScreenRoute);
-            },
-          );
+          AuthController.i.editProfile(
+              context: context,
+              media: _profileImage,
+              name: fullNameController.text,
+              phone: phoneController.text);
+
+        
         }
 
         FocusScope.of(context).unfocus();

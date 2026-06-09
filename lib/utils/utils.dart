@@ -24,15 +24,16 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 
 class Utils {
   // ///-------------------- Capitalize word -------------------- ///
-  static String capitalizeWords(String text) {
-    final words = text.split(' ');
-    final capitalizedWords = words.map((word) {
-      final firstLetter = word[0].toUpperCase();
-      final restOfWord = word.substring(1);
-      return '$firstLetter$restOfWord';
-    });
-    return capitalizedWords.join(' ');
-  }
+ static String capitalizeWords(String text) {
+  return text
+      .trim()
+      .split(RegExp(r'\s+')) // handles multiple spaces
+      .map((word) {
+        if (word.isEmpty) return ''; // safety check
+        return word[0].toUpperCase() + word.substring(1).toLowerCase();
+      })
+      .join(' ');
+}
 
   // // ///-------------------- Video Extention -------------------- ///
   // static bool vedioExtension(String filePath) {

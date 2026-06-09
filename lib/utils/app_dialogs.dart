@@ -223,7 +223,9 @@ class AppDialogs {
     bool barrierDismissible = false,
     // required String description,
     final Function()? onTap1,
-    final Function()? onTap2,}) {
+    final Function()? onTap2,
+    final void Function(String reason)? onSubmitWithReason,
+  }) {
     return showDialog(
       
         barrierDismissible: barrierDismissible, // Prevent dismiss on tap outside
@@ -239,32 +241,40 @@ class AppDialogs {
               isDoneShow: isDoneShow,
               title: title,
               onTap1: onTap1,
-              onTap2: onTap2,),
+              onTap2: onTap2,
+              onSubmitWithReason: onSubmitWithReason,
+            ),
           );
         });
   }
 
 
 static Future showCommunityCommentsDialog(
-    context,
-  ) {
+    BuildContext context, {
+    required String postId,
+    int reactionTotal = 0,
+  }) {
     return showDialog(
-        barrierDismissible: false, // Prevent dismiss on tap outside
+        barrierDismissible: false,
         barrierColor: AppColors.orange.withOpacity(0.8),
         context: context,
         builder: (context) {
-          return CommunityCommentsDialog();
+          return CommunityCommentsDialog(
+            postId: postId,
+            reactionTotal: reactionTotal,
+          );
         });
   }
   static Future showCommunityLikeDialog(
-    context,
-  ) {
+    BuildContext context, {
+    required String postId,
+  }) {
     return showDialog(
         barrierDismissible: false, // Prevent dismiss on tap outside
         barrierColor: AppColors.orange.withOpacity(0.8),
         context: context,
         builder: (context) {
-          return CommunityLikeDialog();
+          return CommunityLikeDialog(postId: postId);
         });
   }
 

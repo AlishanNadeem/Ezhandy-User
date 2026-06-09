@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
-import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/widgets/profile_widget/user_image_widget.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:flutter/material.dart';

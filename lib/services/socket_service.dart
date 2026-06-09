@@ -6,7 +6,7 @@
 // import 'package:ezhandy_user/module/core/chat/model/online_user_model.dart';
 // import 'package:ezhandy_user/module/core/chat/model/order_chat_model.dart';
 // import 'package:ezhandy_user/module/core/chat/model/user_chat_model.dart';
-// import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+// import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 // import 'package:ezhandy_user/module/core/user/single_user/group_activity/model/group_chat_model.dart';
 // import 'package:ezhandy_user/services/firebase_messaging_service.dart';
 // import 'package:ezhandy_user/utils/app_dialogs.dart';

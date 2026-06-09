@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
-import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/services/firebase_messaging_service.dart';
 import 'package:ezhandy_user/utils/routes/app_router.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
@@ -13,6 +13,7 @@ import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/keyboard_dismiss_overser.dart';
 import 'package:ezhandy_user/utils/routes/app_router.dart';
 import 'package:ezhandy_user/utils/scroll_view.dart';
+import 'package:ezhandy_user/utils/webview_platform_init.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ Future<void> firebaseMessagingBackgroundHandler(
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+  await initWebViewPlatform();
   //  Stripe.publishableKey = AppConstant.STRIPE_KEY;
   await Firebase.initializeApp(); // 🔥 Register background handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);

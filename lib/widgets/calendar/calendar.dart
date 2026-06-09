@@ -8,12 +8,14 @@ class CustomCalendar extends StatefulWidget {
   final List<DateTime> highlightedDates;
   final Function(DateTime selectedDate)? onDateSelected;
   final DateTime? initialFocusedDate;
+  final DateTime? selectedDate;
 
   const CustomCalendar({
     Key? key,
     required this.highlightedDates,
     this.onDateSelected,
     this.initialFocusedDate,
+    this.selectedDate,
   }) : super(key: key);
 
   @override
@@ -27,15 +29,64 @@ class _CustomCalendarState extends State<CustomCalendar> {
   @override
   void initState() {
     super.initState();
-    focusedDay = widget.initialFocusedDate ?? DateTime.now();
-    selectedDay = widget.highlightedDates[0];
+    _applyInitialSelection();
   }
 
-  bool isSameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
+  @override
+  void didUpdateWidget(CustomCalendar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.highlightedDates != widget.highlightedDates ||
+        oldWidget.initialFocusedDate != widget.initialFocusedDate ||
+        !_isSameCalendarDay(oldWidget.selectedDate, widget.selectedDate)) {
+      _applyInitialSelection();
+    }
+  }
 
-  bool isHighlighted(DateTime day) {
-    return widget.highlightedDates.any((d) => isSameDay(d, day));
+  void _applyInitialSelection() {
+    final available = widget.highlightedDates.map(_dateOnlyLocal).toList();
+    if (available.isNotEmpty) {
+      final initial = widget.selectedDate != null
+          ? _dateOnlyLocal(widget.selectedDate!)
+          : (widget.initialFocusedDate != null
+              ? _dateOnlyLocal(widget.initialFocusedDate!)
+              : available.first);
+      focusedDay = initial;
+      selectedDay = available.firstWhere(
+        (d) => _isSameCalendarDay(d, initial),
+        orElse: () => available.first,
+      );
+    } else {
+      focusedDay = _dateOnlyLocal(
+        widget.initialFocusedDate ?? DateTime.now(),
+      );
+      selectedDay = widget.selectedDate != null
+          ? _dateOnlyLocal(widget.selectedDate!)
+          : null;
+    }
+  }
+
+  /// Normalizes to local calendar date (fixes UTC vs local mismatch from TableCalendar).
+  static DateTime _dateOnlyLocal(DateTime d) {
+    final local = d.toLocal();
+    return DateTime(local.year, local.month, local.day);
+  }
+
+  static bool _isSameCalendarDay(DateTime? a, DateTime? b) {
+    if (a == null || b == null) return a == b;
+    final da = _dateOnlyLocal(a);
+    final db = _dateOnlyLocal(b);
+    return da.year == db.year && da.month == db.month && da.day == db.day;
+  }
+
+  bool _isTodayOrFuture(DateTime day) {
+    final today = _dateOnlyLocal(DateTime.now());
+    return !_dateOnlyLocal(day).isBefore(today);
+  }
+
+  bool isAvailable(DateTime day) {
+    if (!_isTodayOrFuture(day)) return false;
+    return widget.highlightedDates
+        .any((d) => _isSameCalendarDay(d, day));
   }
 
   @override
@@ -44,8 +95,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
       firstDay: DateTime.utc(2020, 1, 1),
       lastDay: DateTime.utc(2030, 12, 31),
       focusedDay: focusedDay,
+      enabledDayPredicate: isAvailable,
       selectedDayPredicate: (day) =>
-          isSameDay(selectedDay ?? DateTime.now(), day),
+          selectedDay != null && _isSameCalendarDay(selectedDay, day),
       startingDayOfWeek: StartingDayOfWeek.monday,
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
@@ -87,51 +139,50 @@ class _CustomCalendarState extends State<CustomCalendar> {
         selectedTextStyle: const TextStyle(color: Colors.white),
       ),
       calendarBuilders: CalendarBuilders(
-        defaultBuilder: (context, day, _) {
-          bool highlighted = isHighlighted(day);
-          return Container(
-            margin: EdgeInsets.only(bottom: 5.h),
-            width: 43.w,
-            height: 35.h,
-            alignment: Alignment.center,
-            decoration: highlighted
-                ? BoxDecoration(
-                    color: isSameDay(selectedDay!, day)
-                        ? AppColors.orange
-                        : AppColors.orange.withOpacity(0.7),
-                    // : Colors.deepPurple.withOpacity(0.7),
-                    // shape: BoxShape.circle,
-                    borderRadius: BorderRadius.circular(10.r))
-                : null,
-            child: Text(
-              '${day.day}',
-              style: TextStyle(
-                color: highlighted ? Colors.white : Colors.black,
-              ),
-            ),
-          );
-        },
-        outsideBuilder: (context, day, _) {
-          return Center(
-            child: Text(
-              '${day.day}',
-              style: const TextStyle(color: AppColors.red),
-            ),
-          );
-        },
+        defaultBuilder: (context, day, _) => _dayCell(day),
+        outsideBuilder: (context, day, _) => _dayCell(day, isOutside: true),
+        disabledBuilder: (context, day, _) => _dayCell(day, isDisabled: true),
       ),
       onDaySelected: (selected, focused) {
-        if (isHighlighted(selected)) {
-          setState(() {
-            selectedDay = selected;
-            focusedDay = focused;
-          });
-
-          if (widget.onDateSelected != null) {
-            widget.onDateSelected!(selected);
-          }
-        }
+        if (!isAvailable(selected)) return;
+        final day = _dateOnlyLocal(selected);
+        setState(() {
+          selectedDay = day;
+          focusedDay = _dateOnlyLocal(focused);
+        });
+        widget.onDateSelected?.call(day);
       },
+    );
+  }
+
+  Widget _dayCell(DateTime day, {bool isOutside = false, bool isDisabled = false}) {
+    final available = isAvailable(day);
+    final selected =
+        selectedDay != null && _isSameCalendarDay(selectedDay, day);
+    final enabled = available && !isDisabled;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 5.h),
+      width: 43.w,
+      height: 35.h,
+      alignment: Alignment.center,
+      decoration: enabled
+          ? BoxDecoration(
+              color: selected
+                  ? AppColors.orange
+                  : AppColors.orange.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(10.r),
+            )
+          : null,
+      child: Text(
+        '${day.day}',
+        style: TextStyle(
+          color: enabled
+              ? Colors.white
+              : (isOutside ? AppColors.red : AppColors.greyLight),
+          fontWeight: enabled ? FontWeight.w500 : FontWeight.normal,
+        ),
+      ),
     );
   }
 }

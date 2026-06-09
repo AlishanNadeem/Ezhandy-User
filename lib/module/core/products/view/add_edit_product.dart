@@ -22,6 +22,8 @@ import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+import 'package:ezhandy_user/module/core/products/controller/market_place_controller.dart';
+import 'package:ezhandy_user/module/core/products/controller/product_controller.dart';
 
 class AddEditProduct extends StatefulWidget {
   String type;
@@ -32,6 +34,8 @@ class AddEditProduct extends StatefulWidget {
 }
 
 class _AddEditProductState extends State<AddEditProduct> {
+
+  late ProductController _productController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   TextEditingController productNameController = TextEditingController();
@@ -102,6 +106,9 @@ class _AddEditProductState extends State<AddEditProduct> {
     "Workbenches"
   ];
   void initState() {
+
+     _productController = Get.put(ProductController());
+
     if (AddEditType.edit.name == widget.type) {
       setController();
     }
@@ -335,10 +342,23 @@ class _AddEditProductState extends State<AddEditProduct> {
   }
 
   Widget categoryDropDown() {
+  return Obx(() {
+    // Loading state
+    if (_productController.categoriesLoading.value) {
+      return SizedBox(
+        height: 50.h,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Build list of category names for dropdown
+    List<String> categoryNames = _productController.categoryList
+        .map((e) => e['name'].toString())
+        .toList();
+
     return CustomDropDown2(
-      // width: 95.w, // 👈 Controls button width
-      dropDownWidth: .93.sw, // 👈 Controls dropdown menu width
-      dropDownData: categoryList,
+      dropDownWidth: .93.sw,
+      dropDownData: categoryNames,
       dropDownHeight: 500.h,
       borderRadius: 10.r,
       hintText: AppStrings.selectCategory,
@@ -349,6 +369,13 @@ class _AddEditProductState extends State<AddEditProduct> {
       onChanged: (value) {
         setState(() {
           categoryValue = value.toString();
+          // ✅ Find and save the selected category id
+          final selected = _productController.categoryList
+              .firstWhere((e) => e['name'] == value, orElse: () => null);
+          if (selected != null) {
+            _productController.selectedCategoryId = selected['id'];
+            print("✅ Selected Category ID: ${_productController.selectedCategoryId}");
+          }
         });
       },
       validator: (value) {
@@ -358,7 +385,8 @@ class _AddEditProductState extends State<AddEditProduct> {
         return null;
       },
     );
-  }
+  });
+}
 
   Widget _phoneNumberTextField() {
     return CustomTextField(
@@ -470,41 +498,68 @@ class _AddEditProductState extends State<AddEditProduct> {
         );
   }
 
-  Widget buttonWidget(context) {
+Widget buttonWidget(context) {
+  print("🔨 buttonWidget built"); // ← is widget even building?
+  return Obx(() {
+    print("🔄 Obx rebuilt, isLoading: ${_productController.isLoading.value}");
     return CustomButton(
-        text: AddEditType.add.name == widget.type
-            ? AppStrings.add
-            : AppStrings.update,
-        onclick: () {
-          final isValid = formKey.currentState!.validate();
-          if (!isValid) {
-            return;
-          }
-          formKey.currentState!.save();
-          AppNavigation.navigatorPop(context);
-          AppDialogs.showSuccessDialog(
-            context,
-            description: AddEditType.add.name == widget.type
-                ? AppStrings.productHasBeenAddedSuccessfully
-                : AppStrings.productHasBeenUpdatedSuccessfully,
-            title: AppStrings.congratulation,
-            btnTxt1: AppStrings.ok,
-            onTap1: () {
-              AppNavigation.navigatorPop(
-                  Constants.navigatorKey.currentContext!);
-            },
-          );
-          // AppNavigation.navigateTo(
-          //     context, AppRoutes.otpVerificationScreenRoute,
-          //     arguments: OtpVerificationRoutingArgument(
-          //         type: OtpType.forget.name,
-          //         emailAndPhone: emailController.text,
-          //         text: emailController.text));
-          // AuthController.i
-          //     .forgotPass(email: forgotPassRepo.email_controller.text);
-          // ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
-          FocusScope.of(context).unfocus();
-        });
+      text: AddEditType.add.name == widget.type
+          ? AppStrings.add
+          : AppStrings.update,
+      onclick: () {
+        print("👆 Button tapped!"); // ← is button tapped?
+
+        // if (_productController.isLoading.value) {
+        //   print("⏳ Still loading...");
+        //   return;
+        // }
+
+        final isValid = formKey.currentState!.validate();
+        print("✅ Form valid: $isValid");
+        if (!isValid) return;
+
+        if (_productController.selectedCategoryId == null) {
+          print("❌ No category selected");
+          return;
+        }
+
+        formKey.currentState!.save();
+        FocusScope.of(context).unfocus();
+
+        print("🚀 Calling createProduct...");
+
+        _productController.createProduct(
+          title: productNameController.text,
+          description: descriptionController.text,
+          price: priceController.text,
+          image: documentList.isNotEmpty ? documentList[0] : null,
+          onSuccess: AddEditType.add.name == widget.type
+              ? () => _showProductAddedSuccessDialog()
+              : null,
+        );
+      },
+    );
+  });
+}
+
+  void _showProductAddedSuccessDialog() {
+    if (!mounted) return;
+    AppDialogs.showSuccessDialog(
+      context,
+      description: AppStrings.productHasBeenAddedSuccessfully,
+      title: AppStrings.congratulation,
+      isDoneShow: true,
+      btnTxt1: AppStrings.ok,
+      onTap1: () {
+        AppNavigation.navigatorPop(context);
+        if (Get.isRegistered<MarketPlaceController>()) {
+          final c = Get.find<MarketPlaceController>();
+          c.getMyProducts();
+          c.getProducts();
+        }
+        AppNavigation.navigatorPop(context);
+      },
+    );
   }
 
   void setController() {

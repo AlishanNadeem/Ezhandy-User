@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/module/core/transaction_history/transaction_history_controller.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
@@ -8,8 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
-import 'package:ezhandy_user/widgets/Slideable/slideable.dart';
-import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class TransactionHistory extends StatefulWidget {
@@ -20,6 +19,21 @@ class TransactionHistory extends StatefulWidget {
 }
 
 class _TransactionHistoryState extends State<TransactionHistory> {
+  TransactionHistoryController get _controller {
+    if (Get.isRegistered<TransactionHistoryController>()) {
+      return Get.find<TransactionHistoryController>();
+    }
+    return Get.put(TransactionHistoryController());
+  }
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<TransactionHistoryController>()) {
+      Get.delete<TransactionHistoryController>();
+    }
+    super.dispose();
+  }
+
   // String? filterStartValue;
   // var filterList = ["All", "Weekly", "Monthly"];
   @override
@@ -31,36 +45,76 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         },
         title: AppStrings.transactionHistory,
         appBarheight: 50,
-        child:
-        
-         Padding(
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-          child: ListView.separated(
-            padding: EdgeInsets.only(
-                top: AppPadding.padding20, bottom: AppPadding.padding25),
-            shrinkWrap: true,
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              // final item = notifications[index];
-              return singleWidget(
-                date: AppStrings.dummyDate,
-                visitTime: "10S",
-                additionalFee: "15\$",
-                bookingId: "1234567",
-                total: "10",
+          child: Obx(() {
+            if (_controller.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final list = _controller.items;
+            if (list.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 48.h),
+                  child: CustomText(
+                    text: AppStrings.noTransactionsFound,
+                    color: AppColors.greyLight,
+                    is_alignLeft: false,
+                  ),
+                ),
               );
-            },
-            separatorBuilder: (context, index) {
-              return 10.verticalSpace;
-            },
-          ),
+            }
+            return ListView.separated(
+              padding: EdgeInsets.only(
+                  top: AppPadding.padding20, bottom: AppPadding.padding25),
+              shrinkWrap: true,
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                final row = list[index];
+                return singleWidget(
+                  date: _formatCreatedAt(row['createdAt']),
+                  additionalFee: _formatCommission(row['commission']),
+                  bookingId: _bookingIdForUi(row),
+                  total: _amountForUi(row),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return 10.verticalSpace;
+              },
+            );
+          }),
         ));
-  
-  
-  
   }
 
-  Widget singleWidget({date, bookingId, visitTime, additionalFee, total}) {
+  String _formatCreatedAt(dynamic createdAt) {
+    if (createdAt == null) return '';
+    final dt = DateTime.tryParse(createdAt.toString());
+    if (dt == null) return createdAt.toString();
+    return DateFormat('dd MMM yyyy, hh:mm a').format(dt.toLocal());
+  }
+
+  String _formatCommission(dynamic commission) {
+    if (commission == null) return '\$0';
+    return '\$${commission.toString()}';
+  }
+
+  String _bookingIdForUi(Map<String, dynamic> row) {
+    final ids = row['bookingIds'];
+    if (ids is List && ids.isNotEmpty) {
+      return ids.first.toString();
+    }
+    return row['referenceId']?.toString() ??
+        row['id']?.toString() ??
+        '—';
+  }
+
+  String _amountForUi(Map<String, dynamic> row) {
+    final v = row['totalAmount'] ?? row['amount'];
+    if (v == null) return '0';
+    return v.toString();
+  }
+
+  Widget singleWidget({date, bookingId, additionalFee, total}) {
     return CustomContainer(
       child: Column(
         children: [
@@ -75,8 +129,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                 fontSize: 10.sp,
               ),
               CustomText(
-                text:
-                    "${AppStrings.visit}: $visitTime ${AppStrings.additional}: $additionalFee",
+                text: "${AppStrings.additional}: $additionalFee",
                 color: AppColors.greyLight,
                 fontSize: 10.sp,
               )

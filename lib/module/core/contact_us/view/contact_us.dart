@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:ezhandy_user/utils/app_dialogs.dart';
+import 'package:ezhandy_user/module/core/contact_us/data/repository/contact_us_repository.dart';
 import 'package:ezhandy_user/utils/constant.dart';
-import 'package:ezhandy_user/utils/routes/app_navigation.dart';
-import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/utils/validator_extensions.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
@@ -24,6 +22,7 @@ class ContactUs extends StatefulWidget {
 
 class _ContactUsState extends State<ContactUs> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final ContactUsRepository _contactUsRepository = ContactUsRepository();
 
   TextEditingController userNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -161,15 +160,10 @@ class _ContactUsState extends State<ContactUs> {
             return;
           }
           formKey.currentState!.save();
-          AppDialogs.showSuccessDialog(
+          _contactUsRepository.submitQueryRepo(
             context,
-            description: AppStrings.yourMessageHasBeenSubmittedSuccessfully,
-            title: AppStrings.congratulation,
-            btnTxt1: AppStrings.ok,
-            onTap1: () {
-              AppNavigation.navigatorPopUntil(
-                  context, AppRoutes.mainMenuScreenRoute);
-            },
+            subject: subjectController.text.trim(),
+            message: messageController.text.trim(),
           );
           // AppNavigation.navigateTo(
           //     context, AppRoutes.otpVerificationScreenRoute,

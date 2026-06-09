@@ -1,3 +1,6 @@
+import 'package:ezhandy_user/module/core/rating_review_report/controller/rating_screen_controller.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/model/provider_ratings_model.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/routing_arguments/review_routing_arguments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -13,22 +16,40 @@ import 'package:ezhandy_user/widgets/rating_star/rating_star.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class RatingScreen extends StatefulWidget {
-  const RatingScreen({super.key});
+  final String? providerId;
+
+  const RatingScreen({this.providerId, super.key});
+
+  factory RatingScreen.fromArgs(ReviewRoutingArgument? args) {
+    return RatingScreen(providerId: args?.providerId);
+  }
 
   @override
   State<RatingScreen> createState() => _RatingScreenState();
 }
 
 class _RatingScreenState extends State<RatingScreen> {
-  // double initialRating = 4;
+  static const _tagPrefix = 'rating_screen_';
 
-  final List<Map<String, dynamic>> ratings = [
-    {"num": "5", "count": "300", "percent": 0.8},
-    {"num": "4", "count": "150", "percent": 0.7},
-    {"num": "3", "count": "100", "percent": 0.6},
-    {"num": "2", "count": "50", "percent": 0.5},
-    {"num": "1", "count": "10", "percent": 0.4},
-  ];
+  String get _controllerTag => '$_tagPrefix${widget.providerId ?? 'none'}';
+
+  RatingScreenController get _controller {
+    if (Get.isRegistered<RatingScreenController>(tag: _controllerTag)) {
+      return Get.find<RatingScreenController>(tag: _controllerTag);
+    }
+    return Get.put(
+      RatingScreenController(providerId: widget.providerId ?? ''),
+      tag: _controllerTag,
+    );
+  }
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<RatingScreenController>(tag: _controllerTag)) {
+      Get.delete<RatingScreenController>(tag: _controllerTag);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,66 +61,80 @@ class _RatingScreenState extends State<RatingScreen> {
       title: AppStrings.reviewAndRating,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-        child: Column(
-          children: [
-            20.verticalSpace,
+        child: Obx(() {
+          if (_controller.isLoading.value && _controller.ratingsData.value == null) {
+            return const Expanded(
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-            /// Row: Ratings chart + Overall rating number
-            Row(
-              children: [
-                ratingBarWidget(),
-                10.horizontalSpace,
-                avgRatingWidget(),
-              ],
-            ),
-            reviewListWidget(),
+          final data = _controller.ratingsData.value;
+          final breakdown = data?.starBreakdown ??
+              [
+                {"num": "5", "count": "0", "percent": 0.0},
+                {"num": "4", "count": "0", "percent": 0.0},
+                {"num": "3", "count": "0", "percent": 0.0},
+                {"num": "2", "count": "0", "percent": 0.0},
+                {"num": "1", "count": "0", "percent": 0.0},
+              ];
 
-            25.verticalSpace,
-          ],
-        ),
+          return Column(
+            children: [
+              20.verticalSpace,
+              Row(
+                children: [
+                  ratingBarWidget(breakdown),
+                  10.horizontalSpace,
+                  avgRatingWidget(data),
+                ],
+              ),
+              reviewListWidget(data?.ratings ?? const []),
+              25.verticalSpace,
+            ],
+          );
+        }),
       ),
     );
   }
 
-  Widget reviewListWidget() {
+  Widget reviewListWidget(List<ProviderRatingItem> reviews) {
     return Expanded(
       child: ListView.separated(
-        // scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         itemBuilder: (context, index) {
-          return reviewContainer();
+          return reviewContainer(reviews[index]);
         },
         separatorBuilder: (context, index) {
           return 10.verticalSpace;
         },
-        itemCount: 5,
+        itemCount: reviews.length,
       ),
     );
   }
 
-  CustomContainer reviewContainer() {
+  CustomContainer reviewContainer(ProviderRatingItem review) {
     return CustomContainer(
         boxShadow: AppShadows.shadow1,
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ratingWidget(initialRating: 4.5),
+            ratingWidget(initialRating: review.rating.toDouble()),
             5.verticalSpace,
             CustomText(
-                text: AppStrings.dummyEventName,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold),
+              text: review.ratingUser?.fullName ?? '',
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
+            ),
             5.verticalSpace,
             CustomText(
-              text: AppStrings.lorem5,
+              text: review.review,
               color: AppColors.grey,
             ),
           ],
         ));
   }
 
-  Column ratingBarWidget() {
+  Column ratingBarWidget(List<Map<String, dynamic>> ratings) {
     return Column(
       children: ratings
           .map((r) => Padding(
@@ -114,7 +149,10 @@ class _RatingScreenState extends State<RatingScreen> {
     );
   }
 
-  Column avgRatingWidget() {
+  Column avgRatingWidget(ProviderRatingsData? data) {
+    final ratingText = data?.currentRating ?? '0';
+    final totalReviews = data?.totalRatings ?? 0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -122,7 +160,7 @@ class _RatingScreenState extends State<RatingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomText(
-              text: AppStrings.dummyRating,
+              text: ratingText,
               fontSize: 30.sp,
               fontWeight: FontWeight.bold,
               color: AppColors.black,
@@ -137,7 +175,7 @@ class _RatingScreenState extends State<RatingScreen> {
           ],
         ),
         CustomText(
-          text: "278 ${AppStrings.reviews}",
+          text: "$totalReviews ${AppStrings.reviews}",
           is_alignLeft: false,
           fontSize: 10.sp,
         ),
@@ -147,7 +185,7 @@ class _RatingScreenState extends State<RatingScreen> {
 
   Widget ratingWidget({required double initialRating}) {
     return RatingStar(
-      ignoreGestures: true, // Change to false if you want it clickable
+      ignoreGestures: true,
       itemSize: 25.sp,
       initialRating: initialRating,
       onRatingUpdate: (rating) {
@@ -173,15 +211,10 @@ class _RatingScreenState extends State<RatingScreen> {
         ),
         10.horizontalSpace,
         SizedBox(
-          width: 0.6.sw, // Fixed width for bars so they align neatly
+          width: 0.6.sw,
           child: PercentageIndicator(percent: percent),
         ),
         10.horizontalSpace,
-        // CustomText(
-        //   align: Alignment.topCenter,
-        //   text: ratCount,
-        //   is_alignLeft: false,
-        // ),
       ],
     );
   }

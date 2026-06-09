@@ -74,6 +74,8 @@ class AppRoutes {
       "/create_a_new_post_screenRoute";
   static const String createAProPostScreenRoute =
       "/create_a_pro_post_screenRoute";
+  static const String checkoutWebViewScreenRoute =
+      "/checkout_webview_screenRoute";
   static const String myPostsScreenRoute = "/my_post_screenRoute";
 
   static const String brandCollaborationScreenRoute =

@@ -1,4 +1,6 @@
 class BookingRoutingArgument {
-  String Status;
-  BookingRoutingArgument({required this.Status});
+  final int? bookingId;
+  final String Status;
+
+  BookingRoutingArgument({this.bookingId, required this.Status});
 }

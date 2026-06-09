@@ -1,3 +1,5 @@
+import 'package:ezhandy_user/module/core/rating_review_report/controller/write_review_controller.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/routing_arguments/review_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:flutter/material.dart';
@@ -16,29 +18,48 @@ import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class WriteReviewScreen extends StatefulWidget {
-  WriteReviewScreen({super.key});
+  final String providerId;
+
+  const WriteReviewScreen({required this.providerId, super.key});
+
+  factory WriteReviewScreen.fromArgs(ReviewRoutingArgument? args) {
+    return WriteReviewScreen(providerId: args?.providerId ?? '');
+  }
 
   @override
   State<WriteReviewScreen> createState() => _WriteReviewScreenState();
 }
 
 class _WriteReviewScreenState extends State<WriteReviewScreen> {
-  TextEditingController controller = TextEditingController();
-  double initialRating = 0.0;
+  final TextEditingController _reviewController = TextEditingController();
+  double _rating = 0.0;
+  late final WriteReviewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.put(
+      WriteReviewController(providerId: widget.providerId),
+      tag: 'write_review_${widget.providerId}',
+    );
+  }
+
+  @override
+  void dispose() {
+    _reviewController.dispose();
+    Get.delete<WriteReviewController>(tag: 'write_review_${widget.providerId}');
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
-        // is_registration: widget.isRegistration,
         leading: AssetPath.backIcon,
-        onclickLead: () {
-          Get.back();
-        },
-        // appBarheight: 50.h,
+        onclickLead: Get.back,
         title: AppStrings.rateProvider,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.start
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               10.verticalSpace,
@@ -51,8 +72,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
               10.verticalSpace,
               textField(),
               10.verticalSpace,
-              // Spacer(),
-              buttonWidget(),
+              Obx(() => buttonWidget()),
               25.verticalSpace,
             ],
           ),
@@ -61,50 +81,73 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
 
   Widget ratingWidget() {
     return RatingStar(
-      // ignoreGestures: true, // Change to false if you want it clickable
       itemSize: 25.sp,
-      initialRating: initialRating,
+      initialRating: _rating,
       onRatingUpdate: (rating) {
-        setState(() {
-          initialRating = rating;
-        });
+        setState(() => _rating = rating);
       },
     );
   }
 
   Widget buttonWidget() {
+    final submitting = _controller.isSubmitting.value;
     return CustomButton(
-      text: AppStrings.submit,
-      onclick: () {
-AppDialogs.showSuccessDialog(
-            context,
-            description: AppStrings.reviewSubmittedSuccessfully,
-            title: AppStrings.congratulation,
-            btnTxt1: AppStrings.ok,
-            onTap1: () {
-        AppNavigation.navigatorPop(context);
-        AppNavigation.navigatorPop(Constants.navigatorKey.currentContext!);
-              // AppNavigation.navigateToRemovingAll(
-              //     context, AppRoutes.userProfileScreenRoute);
-            },
-          );      },
+      text: submitting ? 'Submitting...' : AppStrings.submit,
+      onclick: submitting ? null : _onSubmit,
     );
+  }
+
+  Future<void> _onSubmit() async {
+    if (widget.providerId.trim().isEmpty) {
+      AppDialogs.showToast(message: 'Provider not found for this booking.');
+      return;
+    }
+
+    final stars = _rating.round().clamp(1, 5);
+    if (_rating <= 0) {
+      AppDialogs.showToast(message: 'Please select a rating.');
+      return;
+    }
+
+    final review = _reviewController.text.trim();
+    if (review.isEmpty) {
+      AppDialogs.showToast(message: 'Please write a review.');
+      return;
+    }
+
+    final ok = await _controller.submitRating(
+      rating: stars,
+      review: review,
+    );
+
+    if (!mounted) return;
+
+    if (ok) {
+      AppDialogs.showSuccessDialog(
+        context,
+        description: AppStrings.reviewSubmittedSuccessfully,
+        title: AppStrings.congratulation,
+        btnTxt1: AppStrings.ok,
+        onTap1: () {
+          AppNavigation.navigatorPop(context);
+          AppNavigation.navigatorPop(Constants.navigatorKey.currentContext!);
+        },
+      );
+    }
   }
 
   Widget textField() {
     return CustomTextField(
       borderRadius: 15.r,
-      // fillColor: AppColors.fieldColor,
       fontColor: AppColors.black,
       hintColor: AppColors.grey,
       prefixIconColor: AppColors.green,
-
       divider: false,
       label: false,
       lines: 10,
       hint: AppStrings.writeAReview,
       inputFormatters: [LengthLimitingTextInputFormatter(275)],
-      controller: controller,
+      controller: _reviewController,
     );
   }
 }

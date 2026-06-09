@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
-import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,7 +64,7 @@ class SignInRepository extends ResponseListener {
     //         Context!, AppRoutes.mainMenuScreenRoute);
 
     // log("----------  a is ${convert.jsonEncode(a)}");
-    if (a.data!.userModel?.isEmailVerified == false ||
+    if (response['data']['isEmailVerified'] == false ||
         a.data!.userModel?.isEmailVerified == 0) {
       AppNavigation.navigateReplacementNamed(
           Context!, AppRoutes.otpVerificationScreenRoute,

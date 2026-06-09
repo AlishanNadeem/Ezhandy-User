@@ -317,6 +317,7 @@ class AppStrings {
   static const String passwordHasBeenUpdated = "Password has been updated";
   static const String issueHasBeenReportedSuccessfully =
       "Issue has been reported successfully";
+  static const String reportMessage = "Report Message";
   static const String reviewSubmittedSuccessfully =
       "Review submitted successfully";
   static const String passwordUpdated = "Password Updated";
@@ -868,6 +869,7 @@ class AppStrings {
 
 //Location
   static const String location = "Location";
+  static const String liveProviderLocation = "Live Provider Location";
   static const String allowLocationAccess = "Allow Location Access";
   static const String enableYourLocationManually =
       "Enable Your Location Manually";
@@ -903,6 +905,8 @@ class AppStrings {
   static const String bookings = "Bookings";
   static const String myBookings = "My Bookings";
   static const String messages = "Messages";
+  static const String noChatsFound = "No chats found";
+  static const String noMessagesFound = "No messages yet";
   static const String restaurantProfile = "Restaurant Profile";
 
   /// drawer
@@ -1109,7 +1113,18 @@ class AppStrings {
   static const appRecommended = 'App Recommended';
   static const bookAReservation = 'Book a Reservation';
   static const bookQuickServices = 'Book Quick Services';
+  static const viewMyBooking = 'View My Booking';
+  static const activeBookingTitle =
+      'You already have a booking for this service';
+  static const activeBookingMessagePrefix = 'Your booking is currently';
+  static const activeBookingMessageSuffix =
+      'You can book again once your current booking is completed or cancelled.';
+  static const bookedFor = 'Booked for:';
   static const serviceSelection = 'Service Selection';
+  static const howManyHoursDoYouNeed = 'How many hours do you need?';
+  static const selectHours = 'Select hours';
+  static const bookingSummary = 'Booking Summary';
+  static const confirmBooking = 'Pay & Confirm Booking';
   static const choosePaymentMethod = 'Choose Your Payment Method';
   static const selectAPaymentPlan = 'Select A Payment Plan';
   static const payOverTime = 'Pay Over Time';
@@ -1161,6 +1176,9 @@ class AppStrings {
 
   ///Chart
   static const String favorites = "Favorites";
+  static const String noFavouriteServicesFound = "No favourite services found";
+  static const String noTransactionsFound = "No transactions found";
+  static const String noBookingsFound = "No bookings found";
   static const String subtotal = "Sub Total";
   static const String chinese = "Chinese";
   static const String italian = "Italian";

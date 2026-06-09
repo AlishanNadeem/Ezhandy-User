@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:ezhandy_user/module/core/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/community/controller/create_pro_post_controller.dart';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/enums.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/utils/validator_extensions.dart';
@@ -41,72 +45,64 @@ class _CreateAProPostState extends State<CreateAProPost> {
   File? videoThumbnail;
 
   String? categoryValue;
-  var categoryList = [
-    "Adhesives",
-    "Allen keys",
-    "Angle grinders",
-    "Chalk lines",
-    "Chisels & hand planes",
-    "Circular saws",
-    "Circuit testers",
-    "Crimping tools",
-    "Drill bit sets & blade replacements",
-    "Drills",
-    "Drop cloths & painter’s tape",
-    "Ear protection",
-    "Electrical tape",
-    "Extension ladders",
-    "Faucet & basin wrenches",
-    "Fish tape",
-    "Hand saws",
-    "Hard hats",
-    "Hammers",
-    "Heat guns",
-    "Impact drivers",
-    "Jigsaws",
-    "Knee pads",
-    "Levels",
-    "Measuring & marking tools",
-    "Nail guns & staplers",
-    "Nail sets & hammers",
-    "Paint brushes",
-    "Paint sprayers",
-    "Pipe cutters",
-    "Pipe wrenches",
-    "Pliers",
-    "Power drills",
-    "Putty knives & scrapers",
-    "Reciprocating saws",
-    "Rollers & roller trays",
-    "Rotary tools",
-    "Safety goggles",
-    "Sanders",
-    "Sandpaper & sanding blocks",
-    "Saws",
-    "Screws, nails, bolts, anchors",
-    "Screwdrivers",
-    "Step ladders",
-    "Stud finders",
-    "Tape measures & rulers",
-    "Teflon tape & sealant tools",
-    "Tool belts & pouches",
-    "Toolboxes & storage cases",
-    "Utility knives & blades",
-    "Voltage testers & multimeters",
-    "Wire cutters & strippers",
-    "Work gloves",
-    "Workbenches"
-  ];
+  String? selectedCategoryId;
 
-  // String? filterStartValue;
-
-  // bool isLike=false;
+  final CreateProPostController _createProPostController =
+      Get.put(CreateProPostController());
 
   @override
-  void initState() {
-    //  primaryServiceValue="All";
-    // TODO: implement initState
-    super.initState();
+  void dispose() {
+    Get.delete<CreateProPostController>();
+    noteController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onPost() async {
+    if (selectedCategoryId == null || selectedCategoryId!.isEmpty) {
+      AppDialogs.showToast(message: AppStrings.selectCategory);
+      return;
+    }
+
+    print(
+      '📤 Ask Pro post data → ${jsonEncode({
+        'categoryId': selectedCategoryId,
+        'categoryName': categoryValue,
+        'question': noteController.text.trim(),
+        'image': _profileImage?.path,
+        'video': _profileVideo?.path,
+      })}',
+    );
+
+    final ok = await _createProPostController.submitQuery(
+      categoryId: selectedCategoryId!,
+      question: noteController.text,
+      image: _profileImage,
+      video: _profileVideo,
+    );
+
+    if (!mounted) return;
+    if (ok) {
+      AppDialogs.showSuccessDialog(
+        context,
+        description: 'Post has been created successfully.',
+        title: AppStrings.congratulation,
+        btnTxt1: AppStrings.ok,
+        onTap1: () {
+          AppNavigation.navigatorPop(context);
+          AppNavigation.navigatorPop(
+              Constants.navigatorKey.currentContext!);
+          HomeController.i.selectedTab.value = 1;
+        },
+      );
+      FocusScope.of(context).unfocus();
+    }
+  }
+
+  List<String> _categoryNames() {
+    return _createProPostController.categories
+        .map((category) => category['name']?.toString() ?? '')
+        .where((name) => name.isNotEmpty)
+        .toList();
   }
 
   @override
@@ -133,21 +129,13 @@ class _CreateAProPostState extends State<CreateAProPost> {
                           children: [
                             UserImageWidget(
                               size: 20,
+                              image: _myProfileImageUrl(),
                             ),
                             10.horizontalSpace,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  text: "User Name",
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                CustomText(
-                                  text: "2 days",
-                                  fontSize: 10.sp,
-                                )
-                              ],
-                            )
+                            CustomText(
+                              text: _myDisplayName(),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ],
                         ),
                         20.verticalSpace,
@@ -271,6 +259,18 @@ class _CreateAProPostState extends State<CreateAProPost> {
             )));
   }
 
+  String _myDisplayName() {
+    return AuthController.i.appUser.value.data?.userModel?.fullName?.trim() ??
+        '';
+  }
+
+  String? _myProfileImageUrl() {
+    final profileImage =
+        AuthController.i.appUser.value.data?.userModel?.profileImage?.trim();
+    if (profileImage == null || profileImage.isEmpty) return null;
+    return '${NetworkStrings.IMAGE_BASE_URL}$profileImage';
+  }
+
   _setThumbnail(File? path) {
     setState(() {
       videoThumbnail = path;
@@ -308,62 +308,75 @@ class _CreateAProPostState extends State<CreateAProPost> {
   }
 
   Widget categoryDropDown() {
-    return CustomDropDown2(
-      // width: 95.w, // 👈 Controls button width
-      dropDownWidth: .93.sw, // 👈 Controls dropdown menu width
-      dropDownData: categoryList,
-      dropDownHeight: 500.h,
-      borderRadius: 10.r,
-      hintText: AppStrings.selectCategory,
-      dropdownValue: categoryValue,
-      dropdownListColor: AppColors.white,
-      borderColor: AppColors.greyBorder,
-      hintTextColor: AppColors.black,
-      onChanged: (value) {
-        setState(() {
-          categoryValue = value.toString();
-        });
-      },
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return AppStrings.selectCategory;
-        }
-        return null;
-      },
-    );
+    return Obx(() {
+      if (_createProPostController.categoriesLoading.value &&
+          _createProPostController.categories.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: CircularProgressIndicator(color: AppColors.orange),
+          ),
+        );
+      }
+
+      final categories = _categoryNames();
+      if (categories.isEmpty) {
+        return CustomText(
+          text: 'No categories found',
+          color: AppColors.greyLight,
+        );
+      }
+
+      return CustomDropDown2(
+        dropDownWidth: .93.sw,
+        dropDownHeight: 500.h,
+        borderRadius: 10.r,
+        hintText: AppStrings.selectCategory,
+        dropdownValue: categoryValue,
+        dropDownData: categories,
+        dropdownListColor: AppColors.white,
+        borderColor: AppColors.greyBorder,
+        hintTextColor: AppColors.black,
+        onChanged: (value) {
+          setState(() {
+            categoryValue = value.toString();
+            final selected = _createProPostController.categories.firstWhere(
+              (category) => category['name']?.toString() == value,
+              orElse: () => null,
+            );
+            selectedCategoryId = selected?['id']?.toString();
+            print(
+              '✅ Ask Pro selected category → '
+              'name=$categoryValue, id=$selectedCategoryId, raw=$selected',
+            );
+          });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return AppStrings.selectCategory;
+          }
+          return null;
+        },
+      );
+    });
   }
 
   Widget buttonWidget(context) {
-    return CustomButton(
+    return Obx(() {
+      final loading = _createProPostController.isLoading.value;
+      return CustomButton(
         text: AppStrings.post,
-        onclick: () {
-          final isValid = formKey.currentState!.validate();
-          if (!isValid) {
-            return;
-          }
-          formKey.currentState!.save();
-          AppDialogs.showSuccessDialog(
-            context,
-            description: "Post has been created successfully.",
-            title: AppStrings.congratulation,
-            btnTxt1: AppStrings.ok,
-            onTap1: () {
-              AppNavigation.navigatorPop(context);
-              AppNavigation.navigatorPop(
-                  Constants.navigatorKey.currentContext!);
-                  HomeController.i.selectedTab.value=1;
-            },
-          );
-          // AppNavigation.navigateTo(
-          //     context, AppRoutes.otpVerificationScreenRoute,
-          //     arguments: OtpVerificationRoutingArgument(
-          //         type: OtpType.forget.name,
-          //         emailAndPhone: emailController.text,
-          //         text: emailController.text));
-          // AuthController.i
-          //     .forgotPass(email: forgotPassRepo.email_controller.text);
-          // ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
-          FocusScope.of(context).unfocus();
-        });
+        onclick: loading
+            ? () {}
+            : () {
+                final isValid = formKey.currentState!.validate();
+                if (!isValid) {
+                  return;
+                }
+                formKey.currentState!.save();
+                _onPost();
+              },
+      );
+    });
   }
 }

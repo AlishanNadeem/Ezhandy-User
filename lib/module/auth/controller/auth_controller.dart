@@ -11,6 +11,7 @@ import 'package:ezhandy_user/module/auth/verification/data/repository/resend_cod
 import 'package:ezhandy_user/module/auth/verification/data/repository/verification_repository.dart';
 import 'package:ezhandy_user/module/core/main_menu/data/repository/delete_account_repository.dart';
 import 'package:ezhandy_user/module/core/main_menu/data/repository/logout_repository.dart';
+import 'package:ezhandy_user/module/core/profile/data/repository/edit_profile_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
@@ -68,10 +69,9 @@ class AuthController extends GetxController {
   //   );
   // }
 
-    void signIn(BuildContext context, {String? email, String? password}) {
+  void signIn(BuildContext context, {String? email, String? password}) {
     SignInRepository().signInRepo(context, email: email, password: password);
   }
-
 
   void signUp(
     BuildContext context, {
@@ -115,6 +115,7 @@ class AuthController extends GetxController {
     CreateNewPasswordRepository()
         .createNewPasswordRepo(context, email: email, password: password);
   }
+
   void changePassword(
     context, {
     String? newPassword,
@@ -124,33 +125,11 @@ class AuthController extends GetxController {
         newPassword: newPassword, currentPassword: currentPassword);
   }
 
-  // void createProfile({
-  //   String? firstName,
-  //   String? lastName,
-  //   // String? gender,
-  //   String? dob,
-  //   String? address,
-  //   String? city,
-  //   String? state,
-  //   String? country,
-  //   String? about,
-  //   File? profile_image,
-  //   bool? is_edit,
-  //   BuildContext? context,
-  // }) {
-  //   CreateProfileRepository().createProfileRepo(context,
-  //       firstName: firstName,
-  //       lastName: lastName,
-  //       about: about,
-  //       address: address,
-  //       city: city,
-  //       country: country,
-  //       dob: dob,
-  //       // gender: gender,
-  //       profile_image: profile_image,
-  //       state: state,
-  //       is_edit: is_edit);
-  // }
+  void editProfile(
+      {String? name, String? phone, File? media, BuildContext? context}) {
+    EditProfileRepository()
+        .editProfileRepo(context!, media: media, name: name, phone: phone);
+  }
 
   // void createHorseProfile(
   //   dynamic context, {

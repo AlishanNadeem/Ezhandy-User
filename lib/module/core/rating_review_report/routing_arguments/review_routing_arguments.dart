@@ -1,4 +1,6 @@
 class ReviewRoutingArgument {
-  bool? isViewOnly;
-  ReviewRoutingArgument({this.isViewOnly});
+  final bool? isViewOnly;
+  final String? providerId;
+
+  ReviewRoutingArgument({this.isViewOnly, this.providerId});
 }

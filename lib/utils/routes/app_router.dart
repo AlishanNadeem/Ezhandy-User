@@ -23,7 +23,11 @@ import 'package:ezhandy_user/module/core/all_services/view/service_details.dart'
 import 'package:ezhandy_user/module/core/all_services/view/service_selection.dart';
 import 'package:ezhandy_user/module/core/all_services/view/signin_with_affirm.dart';
 import 'package:ezhandy_user/module/core/all_services/view/single_service.dart';
+import 'package:ezhandy_user/utils/enums.dart';
+import 'package:ezhandy_user/widgets/web/checkout_webview_screen.dart';
 import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/booking/routing_arguments/invoice_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/booking/routing_arguments/work_documents_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/booking/view/booking_details.dart';
 import 'package:ezhandy_user/module/core/booking/view/booking_history.dart';
 import 'package:ezhandy_user/module/core/booking/view/invoice_screen.dart';
@@ -32,6 +36,7 @@ import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arg
 import 'package:ezhandy_user/module/core/chat/view/chat.dart';
 import 'package:ezhandy_user/module/core/chat/view/pro_chat.dart';
 import 'package:ezhandy_user/module/core/community/routing_arguments/add_edit_post_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/community/routing_arguments/checkout_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/community/view/create_a_new_post.dart';
 import 'package:ezhandy_user/module/core/community/view/create_a_pro_post.dart';
 import 'package:ezhandy_user/module/core/community/view/my_posts.dart';
@@ -48,7 +53,9 @@ import 'package:ezhandy_user/module/core/products/view/product_details.dart';
 import 'package:ezhandy_user/module/core/profile/view/edit_user_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/provider_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/user_profile.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/routing_arguments/review_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/rating_review_report/view/rating_screen.dart';
+import 'package:ezhandy_user/module/core/rating_review_report/routing_arguments/report_issue_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/rating_review_report/view/report_issue.dart';
 import 'package:ezhandy_user/module/core/rating_review_report/view/write_review_screen.dart';
 import 'package:ezhandy_user/module/core/transaction_history/transaction_history.dart';
@@ -141,25 +148,36 @@ class AppRouter {
           // case AppRoutes.appointmentSchedulingScreenRoute:
           //   return AppointmentScheduling();
           case AppRoutes.ratingScreenRoute:
-            return RatingScreen();
+            final ratingArgs = routeSettings.arguments is ReviewRoutingArgument
+                ? routeSettings.arguments as ReviewRoutingArgument
+                : null;
+            return RatingScreen.fromArgs(ratingArgs);
           // case AppRoutes.MyAppointmentScreenRoute:
           //   return MyAppointment();
           case AppRoutes.bookingScreenRoute:
             BookingRoutingArgument bookingArgument =
                 routeSettings.arguments as BookingRoutingArgument;
             return BookingDetails(
-              status: bookingArgument.Status,
+              bookingId: bookingArgument.bookingId ?? 0,
+              initialStatus: bookingArgument.Status,
             );
           // case AppRoutes.videoCallScreenRoute:
           //   return VideoCallScreen();
           case AppRoutes.workDocumentsScreenRoute:
-            return WorkDocuments();
+            final workDocsArgs =
+                routeSettings.arguments as WorkDocumentsRoutingArgument;
+            return WorkDocuments.fromArgs(workDocsArgs);
           case AppRoutes.invoiceScreenRoute:
-            return InvoiceScreen();
+            final invoiceArgs =
+                routeSettings.arguments as InvoiceRoutingArgument;
+            return InvoiceScreen.fromArgs(invoiceArgs);
           case AppRoutes.writeReviewScreenRoute:
-            return WriteReviewScreen();
+            final reviewArgs = routeSettings.arguments is ReviewRoutingArgument
+                ? routeSettings.arguments as ReviewRoutingArgument
+                : null;
+            return WriteReviewScreen.fromArgs(reviewArgs);
           case AppRoutes.reportIssueScreenRoute:
-            return ReportIssue();
+            return ReportIssue.fromArgs(routeSettings.arguments);
           // case AppRoutes.favouritesScreenRoute:
           //   return ReportIssue();
           case AppRoutes.listOfServicesScreenRoute:
@@ -168,12 +186,16 @@ class AppRouter {
 
             return ListOfServices(
               type: serviceArgument.type,
+              isQuick: serviceArgument.isQuick ??
+                  (serviceArgument.type == ServiceType.instant.name),
             );
           case AppRoutes.providerProfileScreenRoute:
             ServiceRoutingArgument serviceArgument =
                 routeSettings.arguments as ServiceRoutingArgument;
             return ProviderProfile(
               type: serviceArgument.type,
+              serviceId: serviceArgument.serviceId,
+              providerId: serviceArgument.providerId,
             );
           case AppRoutes.servicesScreenRoute:
             ServiceRoutingArgument serviceArgument =
@@ -181,21 +203,29 @@ class AppRouter {
             return SingleService(
               serviceName: serviceArgument.serviceName,
               type: serviceArgument.type,
+              serviceId: serviceArgument.serviceId,
             );
           case AppRoutes.chatScreenRoute:
-            ChatRoutingArgument chatArgument =
-                routeSettings.arguments as ChatRoutingArgument;
-            return ChatScreen(
-              isBooking: chatArgument.isBooking ?? false,
-              isCalls: chatArgument.isCalls ?? false,
-            );
+            final chatArgument = routeSettings.arguments is ChatRoutingArgument
+                ? routeSettings.arguments as ChatRoutingArgument
+                : null;
+            return ChatScreen.fromArgs(chatArgument);
           case AppRoutes.serviceDetailsScreenRoute:
             ServiceRoutingArgument serviceArgument =
                 routeSettings.arguments as ServiceRoutingArgument;
 
-            return ServiceDetails(type: serviceArgument.type);
+            return ServiceDetails(
+              type: serviceArgument.type,
+              serviceId: serviceArgument.serviceId,
+              providerId: serviceArgument.providerId,
+              providerServiceId: serviceArgument.providerServiceId,
+            );
           case AppRoutes.serviceSelectionScreenRoute:
-            return ServiceSelection();
+            final selectionArgs =
+                routeSettings.arguments is ServiceRoutingArgument
+                    ? routeSettings.arguments as ServiceRoutingArgument
+                    : null;
+            return ServiceSelection.fromArgs(selectionArgs);
           case AppRoutes.chooseYourPaymentMethodScreenRoute:
             return ChoosePaymentMethod();
           case AppRoutes.signInWithAffirmScreenRoute:
@@ -207,13 +237,21 @@ class AppRouter {
           case AppRoutes.favouritesScreenRoute:
             return FavouritesServices();
           case AppRoutes.scheduleBookingScreenRoute:
-            return ScheduleBooking();
+            final scheduleArgs =
+                routeSettings.arguments is ServiceRoutingArgument
+                    ? routeSettings.arguments as ServiceRoutingArgument
+                    : null;
+            return ScheduleBooking.fromArgs(scheduleArgs);
           case AppRoutes.marketPlaceScreenRoute:
             return MarketPlace();
           case AppRoutes.proChatScreenRoute:
             return ProChat();
           case AppRoutes.createAProPostScreenRoute:
             return CreateAProPost();
+          case AppRoutes.checkoutWebViewScreenRoute:
+            CheckoutRoutingArguments checkoutArgs =
+                routeSettings.arguments as CheckoutRoutingArguments;
+            return CheckoutWebViewScreen(args: checkoutArgs);
           case AppRoutes.createANewPostScreenRoute:
             AddEditPostRoutingArgument postArgument =
                 routeSettings.arguments as AddEditPostRoutingArgument;

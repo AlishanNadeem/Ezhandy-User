@@ -11,10 +11,14 @@ import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/image_with_text_container.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
+import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -24,6 +28,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+ late HomeController _homeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeController = Get.put(HomeController()); 
+    print("🏠 Home initState called");
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -220,8 +234,8 @@ class _HomeState extends State<Home> {
                 ? signinSignUpPopup()
                 : AppNavigation.navigateTo(
                     context, AppRoutes.listOfServicesScreenRoute,
-                    arguments:
-                        ServiceRoutingArgument(type: ServiceType.instant.name));
+                    arguments: ServiceRoutingArgument(
+                        type: ServiceType.instant.name, isQuick: true));
 
             ;
           },
@@ -236,7 +250,7 @@ class _HomeState extends State<Home> {
                 : AppNavigation.navigateTo(
                     context, AppRoutes.listOfServicesScreenRoute,
                     arguments: ServiceRoutingArgument(
-                        type: ServiceType.schedule.name));
+                        type: ServiceType.schedule.name, isQuick: false));
           },
           image1: AssetPath.tab2Icon,
           image2: AssetPath.homeCalendarIcon,
@@ -246,65 +260,45 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Row servicesRowWidget() {
+Widget servicesRowWidget() {
+  return Obx(() {
+    // Loading state - API not yet responded
+    if (_homeController.isLoading.value) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+if (_homeController.servicesList.isEmpty) {
+  return SizedBox(
+    width: double.infinity,
+    child: CustomText(
+      text: "No services found",
+      color: AppColors.greyLight,
+      is_alignLeft: false,  // ← centers it
+    ),
+  );
+}
+
+    // Show data
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        imageTextWidget(
-            ontap: () {
-              !AuthController.i.isLoginSignUp.value
-                  ? signinSignUpPopup()
-                  : AppNavigation.navigateTo(
-                      context, AppRoutes.servicesScreenRoute,
-                      arguments: ServiceRoutingArgument(
-                          serviceName: AppStrings.cleaning,
-                          type: ServiceType.instant.name));
-            },
-            text: AppStrings.cleaning,
-            image:
-                "https://plus.unsplash.com/premium_photo-1664910214915-b89e63fcb72e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG91c2UlMjBjbGVhbmluZyUyMHNlcnZpY2VzfGVufDB8fDB8fHww"),
-        imageTextWidget(
-            ontap: () {
-              !AuthController.i.isLoginSignUp.value
-                  ? signinSignUpPopup()
-                  : AppNavigation.navigateTo(
-                      context, AppRoutes.servicesScreenRoute,
-                      arguments: ServiceRoutingArgument(
-                          serviceName: AppStrings.painting,
-                          type: ServiceType.instant.name));
-            },
-            text: AppStrings.painting,
-            image:
-                "https://img.freepik.com/premium-photo/young-worker-painting-wall-room_392895-180827.jpg"),
-        imageTextWidget(
-            ontap: () {
-              !AuthController.i.isLoginSignUp.value
-                  ? signinSignUpPopup()
-                  : AppNavigation.navigateTo(
-                      context, AppRoutes.servicesScreenRoute,
-                      arguments: ServiceRoutingArgument(
-                          serviceName: AppStrings.electric,
-                          type: ServiceType.instant.name));
-            },
-            text: AppStrings.electric,
-            image:
-                "https://www.shutterstock.com/image-photo/male-electrician-worker-checking-repair-600nw-2272737695.jpg"),
-        imageTextWidget(
-            ontap: () {
-              !AuthController.i.isLoginSignUp.value
-                  ? signinSignUpPopup()
-                  : AppNavigation.navigateTo(
-                      context, AppRoutes.servicesScreenRoute,
-                      arguments: ServiceRoutingArgument(
-                          serviceName: AppStrings.plumber,
-                          type: ServiceType.instant.name));
-            },
-            text: AppStrings.plumber,
-            image:
-                "https://contractortrainingcenter.com/cdn/shop/articles/plumber_6fee758c-c0e1-41a1-a246-8c7d877c5846.jpg?v=1693506396"),
-      ],
+      children: _homeController.servicesList.take(5).map((service) {
+        return imageTextWidget(
+          ontap: () {
+            !AuthController.i.isLoginSignUp.value
+                ? signinSignUpPopup()
+                : AppNavigation.navigateTo(
+                    context, AppRoutes.servicesScreenRoute,
+                    arguments: ServiceRoutingArgument(
+                        serviceName: service['name'],
+                        type: ServiceType.instant.name));
+          },
+          text: service['name'] ?? '',
+          image: _serviceIconUrl(service),
+        );
+      }).toList(),
     );
-  }
+  });
+}
 
   Container adWidget() {
     return Container(
@@ -387,8 +381,8 @@ class _HomeState extends State<Home> {
             onTap: () {
               AppNavigation.navigateTo(
                   context, AppRoutes.listOfServicesScreenRoute,
-                  arguments:
-                      ServiceRoutingArgument(type: ServiceType.instant.name));
+                  arguments: ServiceRoutingArgument(
+                      type: ServiceType.instant.name, isQuick: true));
             },
             child: CustomText(
               text: AppStrings.seeAll,
@@ -459,5 +453,15 @@ class _HomeState extends State<Home> {
     if (hour >= 12 && hour < 17) return "Good Afternoon";
     if (hour >= 17 && hour < 21) return "Good Evening";
     return "Good Night";
+  }
+
+  /// Builds full icon URL from API `iconImagePath` + [NetworkStrings.IMAGE_BASE_URL].
+  String _serviceIconUrl(dynamic service) {
+    final path = service['iconImagePath']?.toString() ?? '';
+    if (path.isEmpty) return '';
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    return '${NetworkStrings.IMAGE_BASE_URL}$path';
   }
 }

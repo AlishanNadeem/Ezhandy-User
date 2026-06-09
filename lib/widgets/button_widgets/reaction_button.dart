@@ -2,8 +2,8 @@ import 'package:ezhandy_user/module/core/community/model/reaction_model.dart';
 import 'package:flutter/material.dart';
 
 class FacebookReactionButton extends StatefulWidget {
-  void Function()? onTap;
-   FacebookReactionButton({this.onTap ,super.key});
+  final void Function()? onTap;
+  FacebookReactionButton({this.onTap, super.key});
 
   @override
   State<FacebookReactionButton> createState() =>
@@ -15,20 +15,17 @@ class _FacebookReactionButtonState extends State<FacebookReactionButton> {
   Reaction? selectedReaction;
   OverlayEntry? overlayEntry;
 
+  /// Matches API: `thumb`, `heart`, `smile` only.
   final List<Reaction> reactions = [
-    Reaction("Like", Icons.thumb_up, Colors.blue),
-    Reaction("Love", Icons.favorite, Colors.red),
-    Reaction("Haha", Icons.emoji_emotions, Colors.orange),
-    Reaction("Wow", Icons.sentiment_satisfied, Colors.amber),
-    Reaction("Sad", Icons.sentiment_dissatisfied, Colors.blueGrey),
-    Reaction("Angry", Icons.sentiment_very_dissatisfied, Colors.redAccent),
+    Reaction("Thumb", Icons.thumb_up, Colors.blue),
+    Reaction("Heart", Icons.favorite, Colors.red),
+    Reaction("Smile", Icons.emoji_emotions, Colors.orange),
   ];
 
   void showReactions() {
     final renderBox =
         _key.currentContext!.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
-    final size = renderBox.size;
 
     overlayEntry = OverlayEntry(
       builder: (_) => Positioned(

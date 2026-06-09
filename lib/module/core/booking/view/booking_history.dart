@@ -1,3 +1,5 @@
+import 'package:ezhandy_user/module/core/booking/controller/booking_history_controller.dart';
+import 'package:ezhandy_user/module/core/booking/model/user_booking_model.dart';
 import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
@@ -13,8 +15,6 @@ import 'package:intl/intl.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
-import 'package:ezhandy_user/widgets/Slideable/slideable.dart';
-import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class BookingHistory extends StatefulWidget {
@@ -25,18 +25,24 @@ class BookingHistory extends StatefulWidget {
 }
 
 class _BookingHistoryState extends State<BookingHistory> {
-  // String? filterStartValue;
-  var statusList = [
-    // AppStrings.pending,
-    AppStrings.rejected,
-    // AppStrings.accepted,
-    AppStrings.cancelled,
-    // AppStrings.inRoute,
-    // AppStrings.started,
-    AppStrings.completedUnPaid,
-    AppStrings.completedPaid,
-    // AppStrings.assigned,
-  ];
+  final TextEditingController _searchController = TextEditingController();
+
+  BookingHistoryController get _controller {
+    if (Get.isRegistered<BookingHistoryController>()) {
+      return Get.find<BookingHistoryController>();
+    }
+    return Get.put(BookingHistoryController());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    if (Get.isRegistered<BookingHistoryController>()) {
+      Get.delete<BookingHistoryController>();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -44,46 +50,81 @@ class _BookingHistoryState extends State<BookingHistory> {
         onclickLead: () {
           Get.back();
         },
-        // appBarheight: 50.h,
         title: AppStrings.bookingHistory,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
           child: Column(
             children: [
               10.verticalSpace,
-                   
               searchTextField(),
               10.verticalSpace,
               Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.only(
-                      top: AppPadding.padding20, bottom: AppPadding.padding25),
-                  shrinkWrap: true,
-                  itemCount: statusList.length,
-                  itemBuilder: (context, index) {
-                    // final item = notifications[index];
-                    return singleWidget(
-                      ontap: () {
-                        AppNavigation.navigateTo(
-                            context, AppRoutes.bookingScreenRoute,
-                            arguments: BookingRoutingArgument(
-                                Status: statusList[index]));
-                      },
-                      date: AppStrings.dummyDate,
-                      status: statusList[index],
-                      // additionalFee: "15\$",
-                      bookingId: "1234567",
-                      total: "10",
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return 10.verticalSpace;
-                  },
-                ),
+                child: Obx(() => _buildBookingList(context)),
               ),
             ],
           ),
         ));
+  }
+
+  Widget _buildBookingList(BuildContext context) {
+    if (_controller.isLoading.value && _controller.bookings.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final list = _controller.filteredBookings;
+
+    return RefreshIndicator(
+      onRefresh: _controller.fetchUserBookings,
+      color: AppColors.orange,
+      child: list.isEmpty
+          ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.only(
+                top: AppPadding.padding20,
+                bottom: AppPadding.padding25,
+              ),
+              children: [
+                SizedBox(
+                  height: 0.5.sh,
+                  child: Center(
+                    child: CustomText(
+                      text: AppStrings.noBookingsFound,
+                      color: AppColors.greyLight,
+                      is_alignLeft: false,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.only(
+                top: AppPadding.padding20,
+                bottom: AppPadding.padding25,
+              ),
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                final booking = list[index];
+                return singleWidget(
+                  ontap: () {
+                    AppNavigation.navigateTo(
+                      context,
+                      AppRoutes.bookingScreenRoute,
+                      arguments: BookingRoutingArgument(
+                        bookingId: booking.bookingId,
+                        Status: booking.statusLabel,
+                      ),
+                    );
+                  },
+                  date: _formatBookingDate(booking),
+                  status: booking.statusLabel,
+                  bookingId: booking.bookingId.toString(),
+                  total: booking.amount,
+                );
+              },
+              separatorBuilder: (context, index) => 10.verticalSpace,
+            ),
+    );
   }
 
   Widget searchTextField() {
@@ -92,11 +133,18 @@ class _BookingHistoryState extends State<BookingHistory> {
       prefxicon: AssetPath.searchIcon,
       hint: AppStrings.searchAnything,
       inputFormatters: [LengthLimitingTextInputFormatter(35)],
-      // controller: firstNameController,
+      controller: _searchController,
+      onchange: _controller.updateSearch,
     );
   }
 
-
+  String _formatBookingDate(UserBooking booking) {
+    final dt = DateTime.tryParse(booking.bookingDate);
+    if (dt != null) {
+      return DateFormat('dd MMM yyyy').format(dt);
+    }
+    return booking.bookingDate;
+  }
 
   Widget singleWidget({date, bookingId, status, total, ontap}) {
     return CustomContainer(
@@ -128,13 +176,10 @@ class _BookingHistoryState extends State<BookingHistory> {
                 CustomText(
                   text: "${AppStrings.bookingId}: #$bookingId",
                   fontWeight: FontWeight.bold,
-                  // color: AppColors.greyLight,
-                  // fontSize: 14.sp,
                 ),
                 CustomText(
                   text: "\$ $total",
                   color: AppColors.orange,
-                  // fontSize: 14.sp,
                 )
               ]),
           5.verticalSpace,
@@ -142,23 +187,4 @@ class _BookingHistoryState extends State<BookingHistory> {
       ),
     );
   }
-
-  // String statusType(String? status) {
-  //   switch (status) {
-  //     case AppStrings.inProgress:
-  //       return BookingType.InProcess.name;
-  //     case AppStrings.past:
-  //       return BookingType.Past.name;
-  //     case AppStrings.pending:
-  //       return BookingType.Pending.name;
-  //     case AppStrings.rejected:
-  //       return BookingType.Rejected.name;
-  //     case AppStrings.reschedule:
-  //       return BookingType.Reschedule.name;
-  //     case AppStrings.upcoming:
-  //       return BookingType.Upcoming.name;
-  //     default:
-  //       return 'N/A';
-  //   }
-  // }
 }

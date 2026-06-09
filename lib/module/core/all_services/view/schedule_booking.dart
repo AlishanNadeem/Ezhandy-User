@@ -1,4 +1,5 @@
-import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/all_services/controller/schedule_booking_controller.dart';
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/constant.dart';
@@ -25,26 +26,60 @@ import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class ScheduleBooking extends StatefulWidget {
-  // String? serviceName;
-  ScheduleBooking({super.key});
+  final String? providerServiceId;
+  final String? providerId;
+  final int? serviceId;
+  final String? type;
+
+  const ScheduleBooking({
+    this.providerServiceId,
+    this.providerId,
+    this.serviceId,
+    this.type,
+    super.key,
+  });
+
+  factory ScheduleBooking.fromArgs(ServiceRoutingArgument? args) {
+    return ScheduleBooking(
+      providerServiceId: args?.providerServiceId,
+      providerId: args?.providerId,
+      serviceId: args?.serviceId,
+      type: args?.type,
+    );
+  }
 
   @override
   State<ScheduleBooking> createState() => _ScheduleBookingState();
 }
 
 class _ScheduleBookingState extends State<ScheduleBooking> {
-  String methodValue =   "Morning (8am - 12pm)";
-  int? currentHourIndex;
-  List<String> shiftList = [
-    "Morning (8am - 12pm)",
-    "Afternoon (12pm - 5pm)",
-    "Evening (5pm - 9:30pm)"
-  ];
-  // String? filterStartValue;
+  String get _controllerTag =>
+      'schedule_booking_${widget.providerServiceId ?? 'none'}';
 
-  // bool isLike=false;
+  ScheduleBookingController? get _controller {
+    final id = widget.providerServiceId?.trim() ?? '';
+    if (id.isEmpty) return null;
+    if (Get.isRegistered<ScheduleBookingController>(tag: _controllerTag)) {
+      return Get.find<ScheduleBookingController>(tag: _controllerTag);
+    }
+    return Get.put(
+      ScheduleBookingController(providerServiceId: id),
+      tag: _controllerTag,
+    );
+  }
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<ScheduleBookingController>(tag: _controllerTag)) {
+      Get.delete<ScheduleBookingController>(tag: _controllerTag);
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final controller = _controller;
+
     return BackgroundImage(
         leading: AssetPath.backIcon,
         onclickLead: () {
@@ -55,74 +90,103 @@ class _ScheduleBookingState extends State<ScheduleBooking> {
         child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-            child: Column(children: [
-              Expanded(
-                  child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    calendarWidget(),
-                    15.verticalSpace,
-                    CustomText(
-                        text: AppStrings.availabilityHour,
-                        // color: AppColors.blueDark,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold),
-                    10.verticalSpace,
-                    hourListWidget(),
-                    10.verticalSpace,
-                  ],
-                ),
-              )),
-              btnWidget(context),
-              20.verticalSpace
-            ])));
+            child: controller == null
+                ? Expanded(
+                    child: Center(
+                      child: CustomText(
+                        text: 'Missing service. Go back and try again.',
+                        color: AppColors.greyLight,
+                        is_alignLeft: false,
+                      ),
+                    ),
+                  )
+                : Obx(() {
+                    if (controller.isLoading.value &&
+                        controller.detail.value == null) {
+                      return const Expanded(
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                    final _ = controller.availableTimeSlots.length;
+                    return Column(children: [
+                      Expanded(
+                          child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            calendarWidget(controller),
+                            15.verticalSpace,
+                            CustomText(
+                                text: AppStrings.availabilityHour,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold),
+                            10.verticalSpace,
+                            hourListWidget(controller),
+                            10.verticalSpace,
+                          ],
+                        ),
+                      )),
+                      btnWidget(context, controller),
+                      20.verticalSpace
+                    ]);
+                  })));
   }
 
-  CustomCalendar calendarWidget() {
-    return CustomCalendar(
-      highlightedDates: [
-        DateTime(2021, 9, 2),
-        DateTime(2021, 9, 6),
-        DateTime(2021, 9, 15),
-        DateTime(2021, 9, 18),
-        DateTime(2021, 9, 24),
-        DateTime(2021, 9, 28),
-      ],
-      initialFocusedDate: DateTime(2021, 9, 1), // optional
-      onDateSelected: (date) {
-        print('Selected: $date');
-      },
-    );
+  Widget calendarWidget(ScheduleBookingController controller) {
+    final dates = controller.availableDates.toList();
+    if (dates.isEmpty) {
+      return CustomText(
+        text: 'No available dates for this provider.',
+        color: AppColors.greyLight,
+      );
+    }
+
+    return Obx(() {
+      final selected = controller.selectedDate.value ?? dates.first;
+      return CustomCalendar(
+        key: ValueKey(dates.map((d) => d.toIso8601String()).join(',')),
+        highlightedDates: dates,
+        initialFocusedDate: dates.first,
+        selectedDate: selected,
+        onDateSelected: controller.setSelectedDate,
+      );
+    });
   }
 
 
 
 
-  Widget hourListWidget() {
-    return ListView.separated(
-      physics: NeverScrollableScrollPhysics(),
-      // scrollDirection: Axis.horizontal,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppPadding.padding12),
-          child: CheckBoxWidget(
-              isChecked: methodValue == shiftList[index],
-              ontapCheck: () {
-                setState(() {
-                  methodValue = shiftList[index];
-                });
-              },
-              title: shiftList[index]),
+  Widget hourListWidget(ScheduleBookingController controller) {
+    return Obx(() {
+      final slots = controller.availableTimeSlots.toList();
+      if (slots.isEmpty) {
+        return CustomText(
+          text: controller.selectedDate.value == null
+              ? 'Select a date to see available time slots.'
+              : 'No time slots available for this date.',
+          color: AppColors.greyLight,
         );
-      },
-      separatorBuilder: (context, index) {
-        return Divider(
-          thickness: 1,
-        );
-      },
-      itemCount: shiftList.length,
-    );
+      }
+
+      final selected = controller.selectedTimeSlot.value;
+      return ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: slots.length,
+        itemBuilder: (context, index) {
+          final slot = slots[index];
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: AppPadding.padding12),
+            child: CheckBoxWidget(
+              isChecked: selected == slot,
+              ontapCheck: () => controller.selectedTimeSlot.value = slot,
+              title: slot.displayLabel,
+            ),
+          );
+        },
+        separatorBuilder: (context, index) => const Divider(thickness: 1),
+      );
+    });
   }
 
   CustomContainer availabilityHour({onTap, required bool isChecked}) {
@@ -148,16 +212,44 @@ class _ScheduleBookingState extends State<ScheduleBooking> {
     );
   }
 
-  CustomButton btnWidget(BuildContext context) {
+  CustomButton btnWidget(
+    BuildContext context,
+    ScheduleBookingController controller,
+  ) {
     return CustomButton(
       text: AppStrings.next,
       onclick: () {
-          AppNavigation.navigateTo(
-            context,
-            AppRoutes.serviceSelectionScreenRoute,
-          );
-      
-      
+        final date = controller.selectedDate.value;
+        final slot = controller.selectedTimeSlot.value;
+
+        if (date == null) {
+          AppDialogs.showToast(message: 'Please select a date.');
+          return;
+        }
+        if (slot == null) {
+          AppDialogs.showToast(message: 'Please select a time slot.');
+          return;
+        }
+
+        final service = controller.servicePayload.value;
+        if (service == null || service.isEmpty) {
+          AppDialogs.showToast(message: 'Service details are not loaded yet.');
+          return;
+        }
+
+        AppNavigation.navigateTo(
+          context,
+          AppRoutes.serviceSelectionScreenRoute,
+          arguments: ServiceRoutingArgument(
+            type: widget.type,
+            serviceId: widget.serviceId,
+            providerId: widget.providerId,
+            providerServiceId: widget.providerServiceId,
+            service: Map<String, dynamic>.from(service),
+            selectedDate: date,
+            selectedTimeSlot: slot,
+          ),
+        );
       },
     );
   }

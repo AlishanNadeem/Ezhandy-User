@@ -1,21 +1,21 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/affiliate_earning/controller/affiliate_earning_controller.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
-import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/profile_widget/user_image_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
-import 'package:ezhandy_user/widgets/Slideable/slideable.dart';
-import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+import 'package:ezhandy_user/widgets/toast_dialogs_sheet/toast.dart';
 
 class AffiliateEarning extends StatefulWidget {
   const AffiliateEarning({super.key});
@@ -25,8 +25,21 @@ class AffiliateEarning extends StatefulWidget {
 }
 
 class _AffiliateEarningState extends State<AffiliateEarning> {
-  String? filterStartValue;
-  // var filterList = ["All", "Weekly", "Monthly"];
+  AffiliateEarningController get _controller {
+    if (Get.isRegistered<AffiliateEarningController>()) {
+      return Get.find<AffiliateEarningController>();
+    }
+    return Get.put(AffiliateEarningController());
+  }
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<AffiliateEarningController>()) {
+      Get.delete<AffiliateEarningController>();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -47,15 +60,30 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                       20.verticalSpace,
                       CustomText(
                           text: AppStrings.yourReferralCode,
-                          // fontFamily: AppStrings.montserrat,
-                          // color: AppColors.blueDark,
                           is_alignLeft: false,
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold),
                       10.verticalSpace,
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 50),
-                        child: CustomContainer(
+                        child: Obx(() {
+                          final apiCode = _controller
+                              .referralData.value?['referralCode']
+                              ?.toString()
+                              .trim();
+                          final authCode = AuthController.i
+                                  .appUser
+                                  .value
+                                  .data
+                                  ?.userModel
+                                  ?.referralCode
+                                  ?.trim() ??
+                              '';
+                          final code = (apiCode != null && apiCode.isNotEmpty)
+                              ? apiCode
+                              : authCode;
+                          final display = code.isNotEmpty ? code : '—';
+                          return CustomContainer(
                             borderColor: AppColors.orange,
                             isPadding: false,
                             radius: 35.r,
@@ -65,8 +93,7 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   CustomText(
-                                      text: AppStrings.dummyRefCode,
-                                      // is_alignLeft: false,
+                                      text: display,
                                       color: AppColors.orange,
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.w600),
@@ -75,55 +102,72 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                                     borderRadius: 35.r,
                                     width: 80.w,
                                     text: "Copy",
+                                    onclick: code.isEmpty
+                                        ? null
+                                        : () async {
+                                            await Clipboard.setData(
+                                              ClipboardData(text: code),
+                                            );
+                                            ToastMessage(
+                                              toastmsg:
+                                                  'Referral code copied to clipboard',
+                                            );
+                                          },
                                   )
                                 ],
                               ),
-                            )),
+                            ),
+                          );
+                        }),
                       ),
                       20.verticalSpace,
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 90.w),
-                        child: CustomContainer(
+                        child: Obx(() {
+                          final raw =
+                              _controller.referralData.value?['totalEarned'];
+                          final amountLabel = _earningLabel(raw);
+                          return CustomContainer(
                             borderColor: AppColors.orange,
                             child: Column(
                               children: [
                                 CustomText(
-                                  text: AppStrings.dummyAmount,
+                                  text: amountLabel,
                                   color: AppColors.orange,
                                   is_alignLeft: false,
                                 ),
                                 CustomText(
                                   text: AppStrings.totalEarnings,
                                   is_alignLeft: false,
-                                  // color: AppColors.orange,
                                 )
                               ],
-                            )),
+                            ),
+                          );
+                        }),
                       ),
                       20.verticalSpace,
-                      ListView.separated(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: 10,
-                        itemBuilder: (context, index) {
-                          // final item = notifications[index];
-                          return singleWidget(
-                            // ontap: () {
-                            //   // AppNavigation.navigateTo(context, AppRoutes.chatScreenRoute,
-                            //   //     arguments: ChatRoutingArgument(isBooking: true));
-                            // },
-                            // time: "1 min ago",
-                            // des: "Hello everyone",
-                            image: AssetPath.userIcon,
-                            lastMes: AppStrings.lorem5,
-                            name: AppStrings.dummyName,
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return 20.verticalSpace;
-                        },
-                      ),
+                      Obx(() {
+                        final list = _controller.referrals;
+                        return ListView.separated(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            final r = list[index];
+                            return singleWidget(
+                              name: r['referredUserName']?.toString() ??
+                                  AppStrings.dummyName,
+                              lastMes: r['referredEmail']?.toString() ??
+                                  AppStrings.lorem5,
+                              earning: r['earning'],
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return 20.verticalSpace;
+                          },
+                        );
+                      }),
                       25.verticalSpace,
                     ],
                   ),
@@ -134,27 +178,16 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                 onclick: () {
                   AppDialogs.showSuccessDialog(context,
                       description: AppStrings.amountToBankAccount,
-                      title: AppStrings.withdraw+"!",
+                      title: AppStrings.withdraw + "!",
                       image: AssetPath.bankIcon,
                       isDoneShow: false,
                       btnTxt1: AppStrings.cancel,
                       onTap1: () {
                         AppNavigation.navigatorPop(context);
-                       
                       },
                       btnTxt2: AppStrings.confirm,
                       onTap2: () {
                         AppNavigation.navigatorPop(context);
-                        //  AppDialogs.showSuccessDialog(
-                        //   context,
-                        //   description: AppStrings.oneOfOurRepresentative,
-                        //   title: AppStrings.refundRequestSubmitted,
-                        //   btnTxt1: AppStrings.goToHome,
-                        //   onTap1: () {
-                        //     AppNavigation.navigatorPopUntil(
-                        //         context, AppRoutes.mainMenuScreenRoute);
-                        //   },
-                        // );
                       });
                 },
               ),
@@ -164,10 +197,34 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
         ));
   }
 
-  Widget singleWidget({ name, image, lastMes}) {
+  /// Matches previous placeholder style; uses API [totalEarned] when present.
+  String _earningLabel(dynamic v) {
+    if (v == null) return AppStrings.dummyAmount;
+    final n = v is num ? v.toDouble() : double.tryParse(v.toString());
+    if (n == null) return AppStrings.dummyAmount;
+    if (n == n.roundToDouble()) {
+      return '\$${n.toInt()}';
+    }
+    return '\$${n.toStringAsFixed(2)}';
+  }
+
+  String _earningSuffix(dynamic v) {
+    if (v == null) return '\$0';
+    final n = v is num ? v.toDouble() : double.tryParse(v.toString());
+    if (n == null) return '\$0';
+    if (n == n.roundToDouble()) {
+      return '\$${n.toInt()}';
+    }
+    return '\$${n.toStringAsFixed(2)}';
+  }
+
+  Widget singleWidget({
+    required dynamic name,
+    required dynamic lastMes,
+    dynamic earning,
+  }) {
     return CustomContainer(
       isPadding: false,
-      // onTap: ontap,
       child: Padding(
         padding: const EdgeInsets.only(
             top: AppPadding.padding14,
@@ -181,30 +238,15 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
             Expanded(
               flex: 6,
               child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomText(
                     text: name,
-                    // color: AppColors.orange,
                     fontWeight: FontWeight.w500,
-                    // fontSize: 10.sp,
                   ),
-                  // CustomText(
-                  //   text: des,
-                  //   // color: AppColors.orange,
-                  //   // fontWeight: FontWeight.w500,
-                  //   maxLines: 1,
-
-                  //   fontSize: 12.sp,
-                  // ),
                   CustomText(
                     text: lastMes,
-                    // color: AppColors.orange,
-                    // fontWeight: FontWeight.w500,
                     maxLines: 1,
                     fontSize: 12.sp,
-                    // fontSize: 10.sp,
                   ),
                 ],
               ),
@@ -218,7 +260,7 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                       topLeft: Radius.circular(35.r),
                       bottomLeft: Radius.circular(35.r))),
               child: CustomText(
-                text: "\$254",
+                text: _earningSuffix(earning),
                 color: AppColors.white,
               ),
             )

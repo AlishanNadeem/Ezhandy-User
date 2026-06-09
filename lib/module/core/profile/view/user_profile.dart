@@ -16,6 +16,7 @@ import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/profile_widget/profile_picture_widget.dart';
 import 'package:ezhandy_user/widgets/row/two_text_row.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});
@@ -154,11 +155,7 @@ class _UserProfileState extends State<UserProfile> {
       // is_pickImage:
       //     args == AppStrings.CREATE_PROFILE ? true : false,
       // setFile: _setFile,
-      profileImageUrl:
-
-
-
-          AuthController.i.appUser.value.data!.userModel?.profileImage,
+      profileImageUrl: "${NetworkStrings.IMAGE_BASE_URL}${AuthController.i.appUser.value.data?.userModel?.profileImage ?? ''}",
       // profileImage: _profileImage,
       assetPath:
       //     // args == AppStrings.CREATE_PROFILE

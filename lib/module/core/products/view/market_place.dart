@@ -20,6 +20,8 @@ import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:printing/printing.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
+import 'package:ezhandy_user/module/core/products/controller/market_place_controller.dart';
 
 class MarketPlace extends StatefulWidget {
   const MarketPlace({super.key});
@@ -31,10 +33,10 @@ class MarketPlace extends StatefulWidget {
 class _MarketPlaceState extends State<MarketPlace>
     with SingleTickerProviderStateMixin {
   late TabController controller;
+  final MarketPlaceController _marketPlaceController = Get.put(MarketPlaceController());
   @override
   void initState() {
     controller = TabController(length: 2, vsync: this, initialIndex: 0);
-
     // TODO: implement initState
     super.initState();
   }
@@ -82,15 +84,14 @@ class _MarketPlaceState extends State<MarketPlace>
                         ),
                         unselectedLabelColor: AppColors.black,
                         onTap: (val) {
-                          if (val == 0) {
-                            // HomeController.i.getStory();
-                          } else {
-                            // HomeController.i.getFlics();
-                          }
                           setState(() {
-                            // index = val;
                             controller.index = val;
                           });
+                          if (val == 0) {
+                            _marketPlaceController.getProducts();
+                          } else {
+                            _marketPlaceController.getMyProducts();
+                          }
                         },
                         labelStyle: TextStyle(
                           fontSize: 14.sp,
@@ -205,82 +206,123 @@ class _MarketPlaceState extends State<MarketPlace>
       children: [
         searchTextField(),
         10.verticalSpace,
-        // 10.verticalSpace,
         CustomText(text: AppStrings.products, fontWeight: FontWeight.bold),
         10.verticalSpace,
         Expanded(
-          child: GridView.builder(
-            shrinkWrap: true,
-            // physics:
-            //     NeverScrollableScrollPhysics(), // so it doesn't conflict with parent scroll
-            padding: EdgeInsets.zero,
-            itemCount: 15,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, // 3 items per row
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 0.85, // adjust height/width ratio
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return CustomContainer(
-                onTap: () {
-                  AppNavigation.navigateTo(
-                      context, AppRoutes.productDetailScreenRoute);
-                },
-                isPadding: false,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 80.h,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10.r),
-                              topRight: Radius.circular(10.r)),
-                          image: DecorationImage(
-                              image: NetworkImage((index % 2 == 0)
-                                  ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvkwjZwZRu4oZI77vfJ8-HBpILp4KL-gPX5w&s"
-                                  : "https://plus.unsplash.com/premium_photo-1664035152480-b13ff54094f5?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
-                              fit: BoxFit.cover)),
+          child: Obx(() => _buildProductsTab()),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductsTab() {
+    final loading = _marketPlaceController.productsLoading.value;
+    final list = _marketPlaceController.productsList;
+
+    if (loading && list.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return RefreshIndicator(
+      onRefresh: _marketPlaceController.getProducts,
+      color: AppColors.orange,
+      child: list.isEmpty
+          ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: 0.4.sh,
+                  child: Center(
+                    child: CustomText(
+                      text: "No products found",
+                      color: AppColors.greyLight,
+                      is_alignLeft: false,
                     ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                3.verticalSpace,
-                                CustomText(
-                                  text: "Hamkmers",
-                                  maxLines: 1,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                2.verticalSpace,
-                                CustomText(
-                                  text: "\$ 10.00",
-                                  color: AppColors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ],
-                            ),
+                  ),
+                ),
+              ],
+            )
+          : GridView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              itemCount: list.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 0.85,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                final product = list[index];
+                final imageUrl = product['mainImagePath'] != null
+                    ? "${NetworkStrings.IMAGE_BASE_URL}${product['mainImagePath']}"
+                    : "https://via.placeholder.com/150";
+
+                return CustomContainer(
+                  onTap: () {
+                    AppNavigation.navigateTo(
+                      context,
+                      AppRoutes.productDetailScreenRoute,
+                      arguments: product['id'],
+                    );
+                  },
+                  isPadding: false,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 80.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10.r),
+                            topRight: Radius.circular(10.r),
                           ),
-                          Image.asset(AssetPath.cartIcon,
+                          image: DecorationImage(
+                            image: NetworkImage(imageUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 5.w,
+                          vertical: 3.h,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  3.verticalSpace,
+                                  CustomText(
+                                    text: product['title'] ?? '',
+                                    maxLines: 1,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  2.verticalSpace,
+                                  CustomText(
+                                    text: "\$ ${product['price'] ?? '0.00'}",
+                                    color: AppColors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Image.asset(
+                              AssetPath.cartIcon,
                               color: AppColors.orange,
                               width: 20.w,
-                              height: 20.h),
-                        ],
+                              height: 20.h,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        )
-      ],
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 
@@ -289,126 +331,171 @@ class _MarketPlaceState extends State<MarketPlace>
       children: [
         searchTextField(),
         10.verticalSpace,
-        // 10.verticalSpace,
-        CustomText(text: AppStrings.products, fontWeight: FontWeight.bold),
+        CustomText(text: AppStrings.myProducts, fontWeight: FontWeight.bold),
         10.verticalSpace,
         Expanded(
-          child: ListView.separated(
-            shrinkWrap: true,
-            itemCount: 15,
-            padding: EdgeInsets.only(bottom: AppPadding.padding50),
-            itemBuilder: (BuildContext ctxt, int index) {
-              return CustomContainer(
-                onTap: () {
-                  AppNavigation.navigateTo(
-                      context, AppRoutes.productDetailScreenRoute);
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: 100.w,
-                      height: 100.h,
-                      decoration: BoxDecoration(
+          child: Obx(() => _buildMyProductsTab()),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMyProductsTab() {
+    final loading = _marketPlaceController.myProductsLoading.value;
+    final list = _marketPlaceController.myProductsList;
+
+    if (loading && list.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return RefreshIndicator(
+      onRefresh: _marketPlaceController.getMyProducts,
+      color: AppColors.orange,
+      child: list.isEmpty
+          ? ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.only(bottom: AppPadding.padding50),
+              children: [
+                SizedBox(
+                  height: 0.4.sh,
+                  child: Center(
+                    child: CustomText(
+                      text: "No products found",
+                      color: AppColors.greyLight,
+                      is_alignLeft: false,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: list.length,
+              padding: EdgeInsets.only(bottom: AppPadding.padding50),
+              itemBuilder: (BuildContext ctxt, int index) {
+                final product = list[index];
+                final imageUrl = product['mainImagePath'] != null
+                    ? "${NetworkStrings.IMAGE_BASE_URL}${product['mainImagePath']}"
+                    : "https://via.placeholder.com/150";
+
+                return CustomContainer(
+                  onTap: () {
+                    AppNavigation.navigateTo(
+                      context,
+                      AppRoutes.productDetailScreenRoute,
+                      arguments: product['id'],
+                    );
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 100.w,
+                        height: 100.h,
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.r),
                           image: DecorationImage(
-                              image: NetworkImage((index % 2 == 0)
-                                  ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvkwjZwZRu4oZI77vfJ8-HBpILp4KL-gPX5w&s"
-                                  : "https://plus.unsplash.com/premium_photo-1664035152480-b13ff54094f5?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
-                              fit: BoxFit.cover)),
-                    ),
-                    10.horizontalSpace,
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        // mainAxisAlignment: MainAxisAlignment.center,
-                        // mainAxisSize: MainAxisSize.max,
-                        children: [
-                          10.verticalSpace,
-                          CustomText(
-                            text: "Hammers",
-                            fontWeight: FontWeight.bold,
+                            image: NetworkImage(imageUrl),
+                            fit: BoxFit.cover,
                           ),
-                          CustomText(text: "\$ 10.00"),
-                          CustomText(
-                            text: AppStrings.lorem3,
-                            fontSize: 12.sp,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    // Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        AppDialogs.showSuccessDialog(context,
-                            description:
-                                AppStrings.areYouSureYouWantToDeleteThisProduct,
-                            // title: AppStrings.logout,
+                      10.horizontalSpace,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            10.verticalSpace,
+                            CustomText(
+                              text: product['title'] ?? '',
+                              fontWeight: FontWeight.bold,
+                            ),
+                            CustomText(
+                              text: "\$ ${product['price'] ?? '0.00'}",
+                              color: AppColors.orange,
+                            ),
+                            CustomText(
+                              text: product['description'] ?? '',
+                              fontSize: 12.sp,
+                              maxLines: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          AppDialogs.showSuccessDialog(
+                            context,
+                            description: AppStrings
+                                .areYouSureYouWantToDeleteThisProduct,
                             image: AssetPath.deletePopUpIcon,
                             isDoneShow: false,
                             btnTxt1: AppStrings.yes,
-                            onTap1: () { AppDialogs.showSuccessDialog(
-                                context,
-                                description: "Product has been Deleted Successfully",
-                                title: AppStrings.congratulation,
-                                // image: AssetPath.deletePopUpIcon,
-                                isDoneShow: true,
-                                btnTxt1: AppStrings.ok,
-                                onTap1: () {
-                                  // AppNavigation.navigatorPop(context);
-                                   AppNavigation.navigatorPopUntil(
-                                  context, AppRoutes.marketPlaceScreenRoute);
+                            onTap1: () {
+                              AppNavigation.navigatorPop(context);
+                              _marketPlaceController.deleteProduct(
+                                productId: product['id'],
+                                onSuccess: () {
+                                  AppDialogs.showSuccessDialog(
+                                    context,
+                                    description:
+                                        "Product has been Deleted Successfully",
+                                    title: AppStrings.congratulation,
+                                    isDoneShow: true,
+                                    btnTxt1: AppStrings.ok,
+                                    onTap1: () {
+                                      AppNavigation.navigatorPop(context);
+                                    },
+                                  );
                                 },
                               );
-
                             },
                             btnTxt2: AppStrings.no,
                             onTap2: () {
                               AppNavigation.navigatorPop(context);
-                             
-                             
-                            });
-                      },
-                      child: CircleAvatar(
+                            },
+                          );
+                        },
+                        child: CircleAvatar(
                           backgroundColor: AppColors.orange,
                           radius: 10.r,
                           child: Image.asset(
                             AssetPath.deleteIcon,
                             width: 10.w,
                             height: 10.h,
-                          )),
-                    ),
-                    10.horizontalSpace,
-                    GestureDetector(
-                      onTap: () {
-                        AppNavigation.navigateTo(
-                            context, AppRoutes.addEditProductScreenRoute,
+                          ),
+                        ),
+                      ),
+                      10.horizontalSpace,
+                      GestureDetector(
+                        onTap: () {
+                          AppNavigation.navigateTo(
+                            context,
+                            AppRoutes.addEditProductScreenRoute,
                             arguments: AddEditProductRoutingArgument(
-                                type: AddEditType.edit.name));
-                      },
-                      child: CircleAvatar(
+                              type: AddEditType.edit.name,
+                            ),
+                          );
+                        },
+                        child: CircleAvatar(
                           backgroundColor: AppColors.orange,
                           radius: 10.r,
                           child: Image.asset(
                             AssetPath.editIcon,
                             width: 10.w,
                             height: 10.h,
-                          )),
-                    ),
-                  ],
-                ),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return SizedBox(
-                height: 10.h,
-              );
-            },
-          ),
-        )
-      ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return SizedBox(height: 10.h);
+              },
+            ),
     );
   }
 
