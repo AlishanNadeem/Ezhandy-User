@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/community/controller/community_posts_controller.dart';
 import 'package:ezhandy_user/module/core/community/controller/create_post_controller.dart';
+import 'package:ezhandy_user/module/core/community/controller/my_posts_controller.dart';
 import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -24,7 +26,17 @@ import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class CreateANewPost extends StatefulWidget {
   final String? type;
-  CreateANewPost({this.type, super.key});
+  final String? postId;
+  final String? description;
+  final String? imageUrl;
+
+  CreateANewPost({
+    this.type,
+    this.postId,
+    this.description,
+    this.imageUrl,
+    super.key,
+  });
 
   @override
   State<CreateANewPost> createState() => _CreateANewPostState();
@@ -40,12 +52,61 @@ class _CreateANewPostState extends State<CreateANewPost> {
   TextEditingController noteController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   File? _profileImage;
+  String? _existingImageUrl;
+
+  bool get _isEditMode => AddEditType.edit.name == widget.type;
+
+  @override
+  void initState() {
+    super.initState();
+    noteController.text = widget.description?.trim() ?? '';
+    final imageUrl = resolveMediaUrl(widget.imageUrl);
+    _existingImageUrl = imageUrl.isEmpty ? null : imageUrl;
+  }
 
   @override
   void dispose() {
     Get.delete<CreatePostController>();
     noteController.dispose();
     super.dispose();
+  }
+
+  Future<void> _onUpdatePost() async {
+    final postId = widget.postId?.trim() ?? '';
+    if (postId.isEmpty) return;
+
+    final ok = await _createPostController.updatePost(
+      postId: postId,
+      description: noteController.text,
+      image: _profileImage,
+    );
+    if (!mounted) return;
+    if (ok) {
+      await _refreshPostsAfterUpdate();
+      if (!mounted) return;
+
+      AppDialogs.showSuccessDialog(
+        context,
+        description: 'Post has been Updated successfully.',
+        title: AppStrings.congratulation,
+        btnTxt1: AppStrings.ok,
+        onTap1: () {
+          AppNavigation.navigatorPop(context);
+          AppNavigation.navigatorPop(
+              Constants.navigatorKey.currentContext!);
+        },
+      );
+      FocusScope.of(context).unfocus();
+    }
+  }
+
+  Future<void> _refreshPostsAfterUpdate() async {
+    if (Get.isRegistered<MyPostsController>()) {
+      await MyPostsController.i.fetchMyPosts();
+    }
+    if (Get.isRegistered<CommunityPostsController>()) {
+      await CommunityPostsController.i.fetchPosts();
+    }
   }
 
   Future<void> _onCreatePost() async {
@@ -123,20 +184,29 @@ class _CreateANewPostState extends State<CreateANewPost> {
                           ),
                         ),
                         10.verticalSpace,
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            height: 100.h,
-                            width: 150.w,
-                            decoration: BoxDecoration(
+                        if (_profileImage != null ||
+                            (_existingImageUrl != null &&
+                                _existingImageUrl!.isNotEmpty))
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              height: 100.h,
+                              width: 150.w,
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15.r),
                                 image: _profileImage != null
                                     ? DecorationImage(
                                         image: FileImage(_profileImage!),
-                                        fit: BoxFit.cover)
-                                    : null),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : DecorationImage(
+                                        image: NetworkImage(
+                                            _existingImageUrl!),
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
                           ),
-                        ),
                       ]),
                     ),
                   ),
@@ -196,21 +266,10 @@ class _CreateANewPostState extends State<CreateANewPost> {
                     return;
                   }
                   formKey.currentState!.save();
-                  if (AddEditType.add.name == widget.type) {
-                    _onCreatePost();
+                  if (_isEditMode) {
+                    _onUpdatePost();
                   } else {
-                    AppDialogs.showSuccessDialog(
-                      context,
-                      description: "Post has been Updated successfully.",
-                      title: AppStrings.congratulation,
-                      btnTxt1: AppStrings.ok,
-                      onTap1: () {
-                        AppNavigation.navigatorPop(context);
-                        AppNavigation.navigatorPop(
-                            Constants.navigatorKey.currentContext!);
-                      },
-                    );
-                    FocusScope.of(context).unfocus();
+                    _onCreatePost();
                   }
                 });
     });

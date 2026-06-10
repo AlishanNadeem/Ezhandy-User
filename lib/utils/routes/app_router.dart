@@ -256,7 +256,12 @@ class AppRouter {
           case AppRoutes.createANewPostScreenRoute:
             AddEditPostRoutingArgument postArgument =
                 routeSettings.arguments as AddEditPostRoutingArgument;
-            return CreateANewPost(type: postArgument.type);
+            return CreateANewPost(
+              type: postArgument.type,
+              postId: postArgument.postId,
+              description: postArgument.description,
+              imageUrl: postArgument.imageUrl,
+            );
           case AppRoutes.myPostsScreenRoute:
             return MyPosts();
           case AppRoutes.addEditProductScreenRoute:

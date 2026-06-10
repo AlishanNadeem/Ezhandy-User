@@ -150,7 +150,7 @@ class NetworkStrings {
   /// GET [community/posts/mine] — current user's posts (auth).
   static const String communityPostsMineEndpoint = 'community/posts/mine';
 
-  /// DELETE [community/posts/{id}] — delete post by id (auth).
+  /// PATCH/DELETE [community/posts/{id}] — update or delete post by id (auth).
   static String communityPostById(String id) => 'community/posts/$id';
 
   /// POST [ask-pro/user/checkout] — Stripe checkout session for Ask a Pro (auth).

@@ -60,6 +60,52 @@ class CreatePostController extends GetxController {
 
     return outcome ?? false;
   }
+
+  /// Updates a community post. Returns whether the API reported success.
+  Future<bool> updatePost({
+    required String postId,
+    required String description,
+    File? image,
+  }) async {
+    if (isLoading.value) return false;
+    if (postId.trim().isEmpty) return false;
+
+    isLoading.value = true;
+    bool? outcome;
+
+    try {
+      final formData = dio.FormData.fromMap({
+        'description': description.trim(),
+        if (image != null)
+          'image': await dio.MultipartFile.fromFile(
+            image.path,
+            filename: _basename(image.path),
+          ),
+      });
+
+      final response = await DioClient().patchRequest(
+        endPoint: NetworkStrings.communityPostById(postId.trim()),
+        data: formData,
+        isHeaderRequire: true,
+      );
+
+      if (response == null) {
+        return false;
+      }
+
+      await DioClient().validateResponse(
+        response: response,
+        responseListener: _CreatePostListener(
+          onSuccessCallback: (_) => outcome = true,
+          onFailureCallback: (_) => outcome = false,
+        ),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+
+    return outcome ?? false;
+  }
 }
 
 class _CreatePostListener extends ResponseListener {

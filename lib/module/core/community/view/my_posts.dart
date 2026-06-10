@@ -296,9 +296,16 @@ class _MyPostsState extends State<MyPosts> {
     switch (selected) {
       case 'edit':
         if (!context.mounted) return;
-        AppNavigation.navigateTo(context, AppRoutes.createANewPostScreenRoute,
-            arguments:
-                AddEditPostRoutingArgument(type: AddEditType.edit.name));
+        AppNavigation.navigateTo(
+          context,
+          AppRoutes.createANewPostScreenRoute,
+          arguments: AddEditPostRoutingArgument(
+            type: AddEditType.edit.name,
+            postId: post.id,
+            description: post.description,
+            imageUrl: post.image,
+          ),
+        );
         break;
 
       case 'delete':
