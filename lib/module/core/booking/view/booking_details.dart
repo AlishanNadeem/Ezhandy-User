@@ -174,7 +174,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                                 if (c.showActionButtons && c.isPending) ...[
                                   15.verticalSpace,
                                   CustomButton(
-                                    text: AppStrings.cancel,
+                                    text: AppStrings.cancelAndRefund,
                                     onclick: () => _showCancelDialog(context),
                                   )
                                 ],

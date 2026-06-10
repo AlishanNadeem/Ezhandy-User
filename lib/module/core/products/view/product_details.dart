@@ -20,11 +20,12 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
 
-  final ProductDetailController _controller = Get.put(ProductDetailController());
+  late final ProductDetailController _controller;
   int _current = 0;
 
   @override
   void initState() {
+    _controller = Get.put(ProductDetailController());
     super.initState();
     final String productId = Get.arguments ?? '';
     print("📦 Product ID received: $productId");
@@ -32,44 +33,49 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   @override
+  void dispose() {
+    if (Get.isRegistered<ProductDetailController>()) {
+      Get.delete<ProductDetailController>();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Obx(() {
+    return BackgroundImage(
+      extendBodyBehindAppBar: true,
+      title: AppStrings.productDetails,
+      titleColor: AppColors.white,
+      leading: AssetPath.backIcon,
+      onclickLead: () {
+        Get.back();
+      },
+      child: Obx(() {
+        if (_controller.isLoading.value && _controller.product.value == null) {
+          return const Column(
+            children: [
+              Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          );
+        }
 
-      // ── Loading state ──
-      if (_controller.isLoading.value) {
-        return Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(
-              color: AppColors.orange,
-            ),
-          ),
-        );
-      }
+        final product = _controller.product.value ?? {};
 
-      final product = _controller.product.value;
+        final imageUrl = product['mainImagePath'] != null
+            ? "${product['mainImagePath']}"
+            : null;
+        final imageList = imageUrl != null ? [imageUrl] : <String>[];
 
-      // ── Build image list from API ──
-      final imageUrl = product['mainImagePath'] != null
-          ? "${NetworkStrings.IMAGE_BASE_URL}${product['mainImagePath']}"
-          : null;
-      List<String> imageList = imageUrl != null ? [imageUrl] : [];
-
-      return BackgroundImage(
-        extendBodyBehindAppBar: true,
-        title: AppStrings.productDetails,
-        titleColor: AppColors.white,
-        leading: AssetPath.backIcon,
-        onclickLead: () {
-          Get.back();
-        },
-        child: Column(
+        return Column(
           children: [
             slider_container(imageList),
             detailsContainerWidget(product),
           ],
-        ),
-      );
-    });
+        );
+      }),
+    );
   }
 
   // ── Details Container ──
@@ -157,6 +163,17 @@ class _ProductDetailState extends State<ProductDetail> {
                 image: AssetPath.profileCircleIcon,
                 title: product['owner']?['fullName'] ?? '',
               ),
+              if ((product['owner']?['email']?.toString().trim() ?? '').isNotEmpty)
+                detailsRow(
+                  image: AssetPath.emailIcon,
+                  title: product['owner']?['email']?.toString() ?? '',
+                ),
+              if ((product['owner']?['phone']?.toString().trim() ?? '')
+                  .isNotEmpty)
+                detailsRow(
+                  image: AssetPath.callIcon,
+                  title: product['owner']?['phone']?.toString() ?? '',
+                ),
               10.verticalSpace,
             ],
           ),

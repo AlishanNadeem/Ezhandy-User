@@ -57,7 +57,7 @@ class DioClient {
     Map<String, dynamic>? queryParameters,
     ResponseListener? responseListener,
     bool? isHeaderRequire,
-    bool isLoader = true,
+    bool isLoader = false,
   }) async {
     Response? response;
 

@@ -192,7 +192,7 @@ class _HomeState extends State<Home> {
                 fontWeight: FontWeight.bold,
               ),
               CustomText(
-                text: AppStrings.lorem5,
+                text: AppStrings.earnWithUsDescription,
                 color: AppColors.grey,
                 maxLines: 4,
               ),

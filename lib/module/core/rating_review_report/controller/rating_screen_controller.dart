@@ -27,6 +27,7 @@ class RatingScreenController extends GetxController {
     final response = await DioClient().getRequest(
       endPoint: NetworkStrings.providerRatings(id),
       isHeaderRequire: true,
+      isLoader: false,
     );
 
     await DioClient().validateResponse(

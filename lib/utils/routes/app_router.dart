@@ -15,6 +15,7 @@ import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_
 import 'package:ezhandy_user/module/core/all_services/view/choose_payment_method.dart';
 import 'package:ezhandy_user/module/core/all_services/view/favourites_services.dart';
 import 'package:ezhandy_user/module/core/all_services/view/list_of_services.dart';
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/past_work_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/all_services/view/past_work.dart';
 import 'package:ezhandy_user/module/core/all_services/view/pay_over_time.dart';
 import 'package:ezhandy_user/module/core/all_services/view/schedule_booking.dart';
@@ -271,7 +272,11 @@ class AppRouter {
           case AppRoutes.orderDetailScreenRoute:
             return OrderDetail();
           case AppRoutes.pastworkScreenRoute:
-            return PastWork();
+            final pastWorkArgs =
+                routeSettings.arguments is PastWorkRoutingArgument
+                    ? routeSettings.arguments as PastWorkRoutingArgument
+                    : null;
+            return PastWork.fromArgs(pastWorkArgs);
           // case AppRoutes.einRegistrationFormScreenRoute:
           //   return EINRegistrationForm();
           // case AppRoutes.complianceManagementScreenRoute:

@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/module/core/notification/controller/notification_controller.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,29 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  String? filterStartValue;
-  var filterList = ["All", "Read", "Unread"];
+  NotificationController get _controller {
+    if (Get.isRegistered<NotificationController>()) {
+      return Get.find<NotificationController>();
+    }
+    return Get.put(NotificationController());
+  }
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<NotificationController>()) {
+      Get.delete<NotificationController>();
+    }
+    super.dispose();
+  }
+
+  DateTime? _parseNotificationDate(dynamic value) {
+    if (value == null) return null;
+    if (value is Map && value.isEmpty) return null;
+    final text = value.toString().trim();
+    if (text.isEmpty || text == '{}') return null;
+    return DateTime.tryParse(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BackgroundImage(
@@ -34,35 +56,43 @@ class _NotificationScreenState extends State<NotificationScreen> {
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
           child: Column(
             children: [
-              // CustomText(
-              //     text: AppStrings.notifications,
-              //     fontFamily: AppStrings.montserrat,
-              //     color: AppColors.blueDark,
-              //     fontSize: 20.sp,
-              //     fontWeight: FontWeight.bold),
-              // 20.verticalSpace,
               filterRowWidget(),
               Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    // final item = notifications[index];
-                    return SlidableWidget(
-                      child: notificationWidget(isUnRead:index==0,
-                        image: AssetPath.infoIcon,
-                        title: "Lorem Ipsum Dolor",
-                        description:
-                            "Lorem Ipsum is simply dummy text of the printing and typesetting",
-                        date: DateTime(2023, 12, 29, 16, 45),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return 20.verticalSpace;
-                  },
-                ),
+                child: Obx(() {
+                  if (_controller.isLoading.value &&
+                      _controller.notifications.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final items = _controller.filteredNotifications;
+                  return ListView.separated(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      final notificationId = item['id']?.toString() ?? '';
+                      return SlidableWidget(
+                        child: GestureDetector(
+                          onTap: notificationId.isEmpty
+                              ? null
+                              : () => _controller.markAsRead(notificationId),
+                          behavior: HitTestBehavior.opaque,
+                          child: notificationWidget(
+                            isUnRead: !NotificationController.isNotificationRead(item),
+                            image: AssetPath.infoIcon,
+                            title: item['title']?.toString() ?? '',
+                            description: item['description']?.toString() ?? '',
+                            date: _parseNotificationDate(item['createdAt']),
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return 20.verticalSpace;
+                    },
+                  );
+                }),
               ),
               20.verticalSpace,
             ],
@@ -70,10 +100,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ));
   }
 
-  Widget notificationWidget({isUnRead,image, title, description, date}) {
+  Widget notificationWidget({
+    isUnRead,
+    image,
+    title,
+    description,
+    DateTime? date,
+  }) {
     return Container(
       decoration: const BoxDecoration(
-        color: AppColors.white, // 👈 Make the card white
+        color: AppColors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12),
           bottomLeft: Radius.circular(12),
@@ -110,18 +146,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 CustomText(
                   text: description,
                 ),
-                4.verticalSpace,
-                Text(
-                  DateFormat("dd MMM yyyy - HH:mm a").format(date),
-                  style: const TextStyle(fontSize: 12, color: AppColors.grey),
-                ),
+                if (date != null) ...[
+                  4.verticalSpace,
+                  Text(
+                    DateFormat("dd MMM yyyy - HH:mm a").format(date.toLocal()),
+                    style: const TextStyle(fontSize: 12, color: AppColors.grey),
+                  ),
+                ],
               ],
             ),
           ),
-          Visibility(visible: isUnRead,
+          Visibility(
+            visible: isUnRead,
             child: CircleAvatar(
               radius: 5.sp,
-              backgroundColor: AppColors.orange
+              backgroundColor: AppColors.orange,
             ),
           )
         ],
@@ -138,20 +177,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget filterDropDown() {
-    return CustomDropDown2(
-      width: 110.w, // 👈 Controls button width
-      dropDownWidth: 150.w, // 👈 Controls dropdown menu width
-      dropDownData: filterList,
-      borderColor: AppColors.transparent,
-      hintText: "All",
-      dropdownValue: filterStartValue,
-      dropdownListColor: AppColors.white,
-      hintTextColor: AppColors.black,
-      onChanged: (value) {
-        setState(() {
-          filterStartValue = value.toString();
-        });
-      },
+    return Obx(
+      () => CustomDropDown2(
+        width: 110.w,
+        dropDownWidth: 150.w,
+        dropDownData: NotificationController.readFilterOptions,
+        borderColor: AppColors.transparent,
+        hintText: "All",
+        dropdownValue: _controller.readFilter.value,
+        dropdownListColor: AppColors.white,
+        hintTextColor: AppColors.black,
+        onChanged: (value) {
+          _controller.updateReadFilter(value.toString());
+        },
+      ),
     );
   }
 }

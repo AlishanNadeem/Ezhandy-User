@@ -107,7 +107,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
                   fontWeight: FontWeight.w700,
                   fontSize: 16.sp,
                 ),
-                CustomText(text: _aboutText(user)),
+                CustomText(text: _aboutUsDisplay(user)),
                 15.verticalSpace,
                 Row(
                   children: [
@@ -453,17 +453,10 @@ class _ProviderProfileState extends State<ProviderProfile> {
     });
   }
 
-  String _aboutText(Map<String, dynamic>? user) {
-    if (user == null) return AppStrings.lorem5;
-    final addr = user['address']?.toString().trim() ?? '';
-    if (addr.isNotEmpty) return addr;
-    final email = user['email']?.toString().trim() ?? '';
-    final mobile = user['mobileNumber']?.toString().trim() ?? '';
-    final parts = <String>[];
-    if (email.isNotEmpty) parts.add(email);
-    if (mobile.isNotEmpty) parts.add(mobile);
-    if (parts.isEmpty) return "No details provided.";
-    return parts.join(' · ');
+  String _aboutUsDisplay(Map<String, dynamic>? user) {
+    final s = user?['aboutUs']?.toString().trim() ?? '';
+    if (s.isEmpty) return "No details provided.";
+    return s;
   }
 
   String _displayOrDash(dynamic v) {

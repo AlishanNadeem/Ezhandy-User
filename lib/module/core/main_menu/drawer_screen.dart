@@ -168,7 +168,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       //     args == AppStrings.CREATE_PROFILE ? true : false,
       // setFile: _setFile,
        profileImageUrl:
-           "${NetworkStrings.IMAGE_BASE_URL}${AuthController.i.appUser.value.data?.userModel?.profileImage ?? ''}",
+           "${AuthController.i.appUser.value.data?.userModel?.profileImage ?? ''}",
         // profileImage: _profileImage,
         assetPath:
             // args == AppStrings.CREATE_PROFILE

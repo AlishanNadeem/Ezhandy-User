@@ -1,6 +1,7 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
+import 'package:ezhandy_user/utils/local_search_helper.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,24 @@ class MarketPlaceController extends GetxController {
   RxBool productsLoading = false.obs;
   RxBool myProductsLoading = false.obs;
   RxBool deleteLoading = false.obs;
+  final RxString productsSearchQuery = ''.obs;
+  final RxString myProductsSearchQuery = ''.obs;
+
+  List<dynamic> get filteredProductsList => filterMapsByTitleKey(
+        items: productsList,
+        query: productsSearchQuery.value,
+        titleKey: 'title',
+      );
+
+  List<dynamic> get filteredMyProductsList => filterMapsByTitleKey(
+        items: myProductsList,
+        query: myProductsSearchQuery.value,
+        titleKey: 'title',
+      );
+
+  void updateProductsSearch(String value) => productsSearchQuery.value = value;
+
+  void updateMyProductsSearch(String value) => myProductsSearchQuery.value = value;
 
   @override
   void onInit() {

@@ -204,7 +204,7 @@ class _MarketPlaceState extends State<MarketPlace>
   Widget productsWidget() {
     return Column(
       children: [
-        searchTextField(),
+        searchTextField(onSearch: _marketPlaceController.updateProductsSearch),
         10.verticalSpace,
         CustomText(text: AppStrings.products, fontWeight: FontWeight.bold),
         10.verticalSpace,
@@ -217,9 +217,9 @@ class _MarketPlaceState extends State<MarketPlace>
 
   Widget _buildProductsTab() {
     final loading = _marketPlaceController.productsLoading.value;
-    final list = _marketPlaceController.productsList;
+    final list = _marketPlaceController.filteredProductsList;
 
-    if (loading && list.isEmpty) {
+    if (loading && _marketPlaceController.productsList.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -255,7 +255,7 @@ class _MarketPlaceState extends State<MarketPlace>
               itemBuilder: (BuildContext context, int index) {
                 final product = list[index];
                 final imageUrl = product['mainImagePath'] != null
-                    ? "${NetworkStrings.IMAGE_BASE_URL}${product['mainImagePath']}"
+                    ? "${product['mainImagePath']}"
                     : "https://via.placeholder.com/150";
 
                 return CustomContainer(
@@ -329,7 +329,7 @@ class _MarketPlaceState extends State<MarketPlace>
   Widget myProductsWidget() {
     return Column(
       children: [
-        searchTextField(),
+        searchTextField(onSearch: _marketPlaceController.updateMyProductsSearch),
         10.verticalSpace,
         CustomText(text: AppStrings.myProducts, fontWeight: FontWeight.bold),
         10.verticalSpace,
@@ -342,9 +342,9 @@ class _MarketPlaceState extends State<MarketPlace>
 
   Widget _buildMyProductsTab() {
     final loading = _marketPlaceController.myProductsLoading.value;
-    final list = _marketPlaceController.myProductsList;
+    final list = _marketPlaceController.filteredMyProductsList;
 
-    if (loading && list.isEmpty) {
+    if (loading && _marketPlaceController.myProductsList.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -375,7 +375,7 @@ class _MarketPlaceState extends State<MarketPlace>
               itemBuilder: (BuildContext ctxt, int index) {
                 final product = list[index];
                 final imageUrl = product['mainImagePath'] != null
-                    ? "${NetworkStrings.IMAGE_BASE_URL}${product['mainImagePath']}"
+                    ? "${product['mainImagePath']}"
                     : "https://via.placeholder.com/150";
 
                 return CustomContainer(
@@ -511,7 +511,7 @@ class _MarketPlaceState extends State<MarketPlace>
   //   );
   // }
 
-  Widget searchTextField() {
+  Widget searchTextField({required void Function(String) onSearch}) {
     return Row(
       children: [
         Expanded(
@@ -529,7 +529,7 @@ class _MarketPlaceState extends State<MarketPlace>
             hint: AppStrings.searchAnything,
             hintColor: AppColors.greyBorder,
             inputFormatters: [LengthLimitingTextInputFormatter(35)],
-            // controller: firstNameController,
+            onchange: onSearch,
           ),
         ),
         10.horizontalSpace,

@@ -65,7 +65,7 @@ class _CreateAProPostState extends State<CreateAProPost> {
 
     print(
       '📤 Ask Pro post data → ${jsonEncode({
-        'categoryId': selectedCategoryId,
+        'serviceTypeId': selectedCategoryId,
         'categoryName': categoryValue,
         'question': noteController.text.trim(),
         'image': _profileImage?.path,
@@ -74,28 +74,32 @@ class _CreateAProPostState extends State<CreateAProPost> {
     );
 
     final ok = await _createProPostController.submitQuery(
-      categoryId: selectedCategoryId!,
+      serviceTypeId: selectedCategoryId!,
       question: noteController.text,
       image: _profileImage,
       video: _profileVideo,
     );
 
     if (!mounted) return;
-    if (ok) {
-      AppDialogs.showSuccessDialog(
-        context,
-        description: 'Post has been created successfully.',
-        title: AppStrings.congratulation,
-        btnTxt1: AppStrings.ok,
-        onTap1: () {
-          AppNavigation.navigatorPop(context);
-          AppNavigation.navigatorPop(
-              Constants.navigatorKey.currentContext!);
-          HomeController.i.selectedTab.value = 1;
-        },
+    if (!ok) {
+      AppDialogs.showToast(
+        message: 'Unable to submit your question. Please try again.',
       );
-      FocusScope.of(context).unfocus();
+      return;
     }
+    AppDialogs.showSuccessDialog(
+      context,
+      description: 'Post has been created successfully.',
+      title: AppStrings.congratulation,
+      btnTxt1: AppStrings.ok,
+      onTap1: () {
+        AppNavigation.navigatorPop(context);
+        AppNavigation.navigatorPop(
+            Constants.navigatorKey.currentContext!);
+        HomeController.i.selectedTab.value = 1;
+      },
+    );
+    FocusScope.of(context).unfocus();
   }
 
   List<String> _categoryNames() {
@@ -367,7 +371,7 @@ class _CreateAProPostState extends State<CreateAProPost> {
       return CustomButton(
         text: AppStrings.post,
         onclick: loading
-            ? () {}
+            ? null
             : () {
                 final isValid = formKey.currentState!.validate();
                 if (!isValid) {
