@@ -1,4 +1,5 @@
 import 'package:ezhandy_user/module/core/all_services/controller/create_booking_controller.dart';
+import 'package:ezhandy_user/module/core/all_services/controller/service_selection_controller.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/booking/controller/booking_history_controller.dart';
 import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
@@ -42,6 +43,35 @@ class _ServiceSelectionState extends State<ServiceSelection> {
   final CreateBookingController _createBookingController =
       Get.put(CreateBookingController());
 
+  String get _selectionControllerTag =>
+      'service_selection_${_bookingArgs?.providerId ?? 'none'}';
+
+  ServiceSelectionController? get _selectionController {
+    final providerId = _bookingArgs?.providerId?.trim() ?? '';
+    if (providerId.isEmpty) return null;
+
+    final ServiceSelectionController controller;
+    if (Get.isRegistered<ServiceSelectionController>(tag: _selectionControllerTag)) {
+      controller =
+          Get.find<ServiceSelectionController>(tag: _selectionControllerTag);
+    } else {
+      controller = Get.put(
+        ServiceSelectionController(providerId: providerId),
+        tag: _selectionControllerTag,
+      );
+    }
+
+    controller.syncExclusions(
+      excludedProviderServiceIds: _excludedProviderServiceIds(),
+      excludedServiceTypeId: _bookingArgs?.serviceId,
+      excludedServiceLabel: _excludedServiceLabel(),
+    );
+
+    return controller;
+  }
+
+  static const _noneSecondaryOption = 'None';
+
   static const _hourOptions = <MapEntry<String, int>>[
     MapEntry('2 hrs', 120),
     MapEntry('3 hrs', 180),
@@ -52,10 +82,7 @@ class _ServiceSelectionState extends State<ServiceSelection> {
     MapEntry('8 hrs', 480),
   ];
 
-  String? primaryServiceValue;
   String? secondaryServiceValue;
-  String? filterStartValue;
-  var serviceList = ["Service 1", "Service 2", "Service 3"];
 
   String? selectedHoursLabel;
   int? selectedDurationMinutes;
@@ -66,13 +93,32 @@ class _ServiceSelectionState extends State<ServiceSelection> {
 
   int get _selectedHours => (selectedDurationMinutes ?? 0) ~/ 60;
 
-  double get _visitCharges => _parseAmount(_service?['visitCharges']);
+  Map<String, dynamic>? get _secondaryService =>
+      _selectionController?.findSecondaryServiceByLabel(secondaryServiceValue);
 
-  double get _hourlyRate => _parseAmount(_service?['hourlyRate']);
+  bool get _hasSecondaryService => _secondaryService != null;
 
-  double get _hourlyTotal => _hourlyRate * _selectedHours;
+  double get _primaryVisitCharges => _parseAmount(_service?['visitCharges']);
 
-  double get _subtotal => _visitCharges + _hourlyTotal;
+  double get _primaryHourlyRate => _parseAmount(_service?['hourlyRate']);
+
+  double get _primaryHourlyTotal => _primaryHourlyRate * _selectedHours;
+
+  double get _secondaryVisitCharges =>
+      _parseAmount(_secondaryService?['visitCharges']);
+
+  double get _secondaryHourlyRate =>
+      _parseAmount(_secondaryService?['hourlyRate']);
+
+  double get _secondaryHourlyTotal => _secondaryHourlyRate * _selectedHours;
+
+  double get _subtotal {
+    var total = _primaryVisitCharges + _primaryHourlyTotal;
+    if (_hasSecondaryService) {
+      total += _secondaryVisitCharges + _secondaryHourlyTotal;
+    }
+    return total;
+  }
 
   double get _total => _subtotal;
 
@@ -84,15 +130,54 @@ class _ServiceSelectionState extends State<ServiceSelection> {
     if (Get.isRegistered<CreateBookingController>()) {
       Get.delete<CreateBookingController>();
     }
+    if (Get.isRegistered<ServiceSelectionController>(tag: _selectionControllerTag)) {
+      Get.delete<ServiceSelectionController>(tag: _selectionControllerTag);
+    }
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    primaryServiceValue = 'Service 1';
     selectedHoursLabel = _hourOptions.first.key;
     selectedDurationMinutes = _hourOptions.first.value;
+  }
+
+  String _selectedServiceName() {
+    final service = _service;
+    if (service != null) {
+      final title = service['title']?.toString().trim() ?? '';
+      if (title.isNotEmpty) return title;
+
+      final serviceType = service['serviceType'];
+      if (serviceType is Map) {
+        final name = serviceType['name']?.toString().trim() ?? '';
+        if (name.isNotEmpty) return name;
+      }
+    }
+
+    final name = _bookingArgs?.serviceName?.trim() ?? '';
+    if (name.isNotEmpty) return name;
+
+    return '-';
+  }
+
+  String? _excludedServiceLabel() {
+    final name = _selectedServiceName();
+    return name == '-' ? null : name;
+  }
+
+  Set<String> _excludedProviderServiceIds() {
+    final ids = <String>{};
+    for (final value in [
+      _bookingArgs?.providerServiceId,
+      _service?['id'],
+      _service?['providerServiceId'],
+    ]) {
+      final id = value?.toString().trim() ?? '';
+      if (id.isNotEmpty) ids.add(id);
+    }
+    return ids;
   }
   @override
   Widget build(BuildContext context) {
@@ -129,7 +214,10 @@ class _ServiceSelectionState extends State<ServiceSelection> {
                     fontSize: 16.sp,
                   ),
                   20.verticalSpace,
-                  primaryServiceDropDown(),
+                  CustomText(
+                    text: _selectedServiceName(),
+                    fontWeight: FontWeight.w500,
+                  ),
                   20.verticalSpace,
                   CustomText(
                     text: AppStrings.secondaryService,
@@ -168,8 +256,15 @@ class _ServiceSelectionState extends State<ServiceSelection> {
     return '\$${amount.toStringAsFixed(2)}';
   }
 
+  String _secondaryServiceName() {
+    final service = _secondaryService;
+    if (service == null) return '';
+    return ServiceSelectionController.serviceLabel(service);
+  }
+
   Widget bookingSummaryWidget() {
     final hours = _selectedHours;
+    final secondaryName = _secondaryServiceName();
 
     return CustomContainer(
       borderColor: AppColors.orange,
@@ -182,12 +277,21 @@ class _ServiceSelectionState extends State<ServiceSelection> {
             fontSize: 16.sp,
           ),
           12.verticalSpace,
-          _summaryRow(AppStrings.visitCharges, _formatMoney(_visitCharges)),
-          8.verticalSpace,
-          _summaryRow(
-            '${AppStrings.hourlyRate} ($hours hrs × ${_formatMoney(_hourlyRate)})',
-            _formatMoney(_hourlyTotal),
+          ..._serviceChargeSection(
+            serviceName: _selectedServiceName(),
+            visitCharges: _primaryVisitCharges,
+            hourlyRate: _primaryHourlyRate,
+            hours: hours,
           ),
+          if (_hasSecondaryService) ...[
+            12.verticalSpace,
+            ..._serviceChargeSection(
+              serviceName: secondaryName,
+              visitCharges: _secondaryVisitCharges,
+              hourlyRate: _secondaryHourlyRate,
+              hours: hours,
+            ),
+          ],
           12.verticalSpace,
           const Divider(thickness: 1),
           12.verticalSpace,
@@ -206,6 +310,28 @@ class _ServiceSelectionState extends State<ServiceSelection> {
         ],
       ),
     );
+  }
+
+  List<Widget> _serviceChargeSection({
+    required String serviceName,
+    required double visitCharges,
+    required double hourlyRate,
+    required int hours,
+  }) {
+    return [
+      CustomText(
+        text: serviceName,
+        fontWeight: FontWeight.w600,
+        fontSize: 14.sp,
+      ),
+      8.verticalSpace,
+      _summaryRow(AppStrings.visitCharges, _formatMoney(visitCharges)),
+      8.verticalSpace,
+      _summaryRow(
+        '${AppStrings.hourlyRate} ($hours hrs × ${_formatMoney(hourlyRate)})',
+        _formatMoney(hourlyRate * hours),
+      ),
+    ];
   }
 
   Widget _summaryRow(
@@ -264,42 +390,51 @@ class _ServiceSelectionState extends State<ServiceSelection> {
     );
   }
 
-  Widget primaryServiceDropDown() {
-    return CustomDropDown2(
-      // width: 110.w, // 👈 Controls button width
-      dropDownWidth: 0.95.sw, // 👈 Controls dropdown menu width
-      dropDownData: serviceList,
-      borderColor: AppColors.greyBorder, borderRadius: 10.r,
-
-      hintText: AppStrings.selectService,
-      dropdownValue: primaryServiceValue,
-      dropdownListColor: AppColors.white,
-      hintTextColor: AppColors.black,
-      onChanged: (value) {
-        setState(() {
-          primaryServiceValue = value.toString();
-        });
-      },
-    );
-  }
-
   Widget secondaryServiceDropDown() {
-    return CustomDropDown2(
-      // width: 110.w, // 👈 Controls button width
-      dropDownWidth: 0.95.sw, // 👈 Controls dropdown menu width
-      dropDownData: serviceList,
-      borderColor: AppColors.greyBorder,
-      hintText: AppStrings.selectService,
-      dropdownValue: secondaryServiceValue,
-      borderRadius: 10.r,
-      dropdownListColor: AppColors.white,
-      hintTextColor: AppColors.black,
-      onChanged: (value) {
-        setState(() {
-          secondaryServiceValue = value.toString();
-        });
-      },
-    );
+    final controller = _selectionController;
+    if (controller == null) {
+      return CustomDropDown2(
+        dropDownWidth: 0.95.sw,
+        dropDownData: const [],
+        borderColor: AppColors.greyBorder,
+        hintText: AppStrings.selectService,
+        borderRadius: 10.r,
+        dropdownListColor: AppColors.white,
+        hintTextColor: AppColors.black,
+        onChanged: (_) {},
+      );
+    }
+
+    return Obx(() {
+      final serviceOptions = controller.secondaryServiceLabels;
+      final isLoading = controller.isLoadingProviderServices.value;
+      final options = [_noneSecondaryOption, ...serviceOptions];
+
+      return CustomDropDown2(
+        dropDownWidth: 0.95.sw,
+        dropDownData: options,
+        borderColor: AppColors.greyBorder,
+        hintText: isLoading
+            ? 'Loading services...'
+            : AppStrings.selectService,
+        dropdownValue: secondaryServiceValue != null &&
+                serviceOptions.contains(secondaryServiceValue)
+            ? secondaryServiceValue
+            : _noneSecondaryOption,
+        borderRadius: 10.r,
+        dropdownListColor: AppColors.white,
+        hintTextColor: AppColors.black,
+        onChanged: isLoading
+            ? (_) {}
+            : (value) {
+                setState(() {
+                  final selected = value.toString();
+                  secondaryServiceValue =
+                      selected == _noneSecondaryOption ? null : selected;
+                });
+              },
+      );
+    });
   }
 
   Widget btnWidget(BuildContext context) {
@@ -336,9 +471,13 @@ class _ServiceSelectionState extends State<ServiceSelection> {
 
     args.durationMinutes = duration;
 
+    final secondaryServiceId =
+        ServiceSelectionController.resolveServiceId(_secondaryService);
+
     final success = await _createBookingController.createBookingAndPay(
       args: args,
       durationMinutes: duration,
+      secondaryServiceId: secondaryServiceId,
     );
 
     if (!mounted) return;

@@ -339,9 +339,30 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         onTap1: () {
           AppNavigation.navigatorPop(context);
 
+          final detail = _controller?.detail.value;
+          final service = detail != null
+              ? <String, dynamic>{
+                  'id': widget.providerServiceId,
+                  'providerServiceId': widget.providerServiceId,
+                  'visitCharges': detail.visitCharges,
+                  'hourlyRate': detail.hourlyRate,
+                  'title': detail.title,
+                  'description': detail.description,
+                }
+              : null;
+
           if (widget.type == ServiceType.instant.name) {
             AppNavigation.navigateTo(
-                context, AppRoutes.serviceSelectionScreenRoute);
+              context,
+              AppRoutes.serviceSelectionScreenRoute,
+              arguments: ServiceRoutingArgument(
+                type: widget.type,
+                serviceId: widget.serviceId,
+                providerId: widget.providerId,
+                providerServiceId: widget.providerServiceId,
+                service: service,
+              ),
+            );
           } else {
             AppNavigation.navigateTo(
               context,

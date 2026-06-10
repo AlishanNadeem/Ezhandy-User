@@ -428,6 +428,7 @@ class AppStrings {
   static const String changePassword = 'Change Password';
   static const String update = "Update";
   static const String primaryService = "Section 1 - Primary Service";
+  static const String selectedService = "Selected Service";
   static const String secondaryService = "Section 2 - Secondary Service";
   static const String discussAndConfirmDetails =
       "You can discuss and confirm this with the service provider later. Charges will be added only if agreed.";

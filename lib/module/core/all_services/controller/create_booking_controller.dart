@@ -11,6 +11,7 @@ class CreateBookingController extends GetxController {
   Future<bool> createBookingAndPay({
     required ServiceRoutingArgument args,
     required int durationMinutes,
+    int? secondaryServiceId,
   }) async {
     if (isSubmitting.value) return false;
 
@@ -26,18 +27,32 @@ class CreateBookingController extends GetxController {
     isSubmitting.value = true;
     var success = false;
 
+    final bookings = <Map<String, dynamic>>[
+      _buildBookingItem(
+        serviceId: serviceId,
+        bookingDate: bookingDate,
+        timeSlot: timeSlot,
+        durationMinutes: durationMinutes,
+      ),
+    ];
+
+    if (secondaryServiceId != null) {
+      bookings.add(
+        _buildBookingItem(
+          serviceId: secondaryServiceId,
+          bookingDate: bookingDate,
+          timeSlot: timeSlot,
+          durationMinutes: durationMinutes,
+          bookingType: ApiBookingType.secondary,
+        ),
+      );
+    }
+
     try {
       final response = await DioClient().postRequest(
         endPoint: NetworkStrings.createBookingAndPayEndpoint,
         data: <String, dynamic>{
-          'bookings': [
-            _buildBookingItem(
-              serviceId: serviceId,
-              bookingDate: bookingDate,
-              timeSlot: timeSlot,
-              durationMinutes: durationMinutes,
-            ),
-          ],
+          'bookings': bookings,
           'paymentMethodId': 1,
           'currency': 'usd',
           'token': 'manual-payment-reference-123',
@@ -69,10 +84,11 @@ class CreateBookingController extends GetxController {
     required DateTime bookingDate,
     required TimeSlotEnum timeSlot,
     required int durationMinutes,
+    ApiBookingType bookingType = ApiBookingType.primary,
   }) {
     return <String, dynamic>{
       'bookingDate': _formatBookingDate(bookingDate),
-      'bookingType': ApiBookingType.primary.apiValue,
+      'bookingType': bookingType.apiValue,
       'duration': durationMinutes,
       'serviceId': serviceId,
       'timeSlot': timeSlot.apiValue,
