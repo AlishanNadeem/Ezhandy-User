@@ -1,5 +1,6 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
+import 'package:ezhandy_user/utils/local_search_helper.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,15 @@ class SingleServiceController extends GetxController {
 
   final RxList<dynamic> freelancersList = <dynamic>[].obs;
   final RxBool isLoading = false.obs;
+  final RxString searchQuery = ''.obs;
+
+  List<dynamic> get filteredFreelancersList => filterListByTitle<dynamic>(
+        items: freelancersList,
+        query: searchQuery.value,
+        titleOf: displayNameFromUserPayload,
+      );
+
+  void updateSearch(String value) => searchQuery.value = value;
 
   @override
   void onInit() {
@@ -30,6 +40,7 @@ class SingleServiceController extends GetxController {
     final response = await DioClient().getRequest(
       endPoint: NetworkStrings.freelancersByServiceId(serviceId!),
       isHeaderRequire: true,
+      isLoader: false,
       queryParameters: {'isQuick': isQuick},
     );
 

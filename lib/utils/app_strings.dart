@@ -353,6 +353,8 @@ class AppStrings {
   static const String instantBooking = "Instant Booking";
   static const String scheduleABooking = "Schedule a Booking";
   static const String earnWithUs = "Earn With Us";
+  static const String earnWithUsDescription =
+      "Share your referral code with friends and earn rewards when they join Ezhandy.";
   static const String clickHere = "Click here";
   static const String loginSignUp = "Login/ Sign Up";
   static const String inOrderToAccessThis =
@@ -450,6 +452,10 @@ class AppStrings {
 //   Work Document
   static const String beforeImage = "Before Image";
   static const String afterImage = "After Image";
+  static const String beforeWork = "Before Work";
+  static const String afterWork = "After Work";
+  static const String bookedBy = "Booked by";
+  static const String noPastWorkFound = "No past work found";
 
 //   Contact Us
   static const String pleaseLetUsKnowHowWeCanImproveYourExperience =
@@ -492,6 +498,7 @@ class AppStrings {
 //   Rating and Review
   static const String reviewAndRating = "Review And Rating";
   static const String reviews = "Reviews";
+  static const String noReviewsFound = "No reviews found";
 
 //   My Appointments
   static const String all = "All";
@@ -519,6 +526,7 @@ class AppStrings {
   static const String community = "Community";
   static const String booking = "Booking";
   static const String refund = "Refund";
+  static const String cancelAndRefund = "Cancel & Refund";
   static const String endWork = "End Work";
   static const String payFurtherAmount = "Pay Further Amount";
   static const String reportIssue = "Report Issue";

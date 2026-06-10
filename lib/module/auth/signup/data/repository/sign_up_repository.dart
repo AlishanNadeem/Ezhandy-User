@@ -72,6 +72,7 @@ class SignUpRepository extends ResponseListener {
       endPoint: NetworkStrings.signupEndpoint,
       data: rawData,
       responseListener: this,
+      isLoader: true,
     );
 
     DioClient().validateResponse(

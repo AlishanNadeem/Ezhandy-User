@@ -46,7 +46,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
     if (iso.isEmpty) return '';
     try {
       final dt = DateTime.parse(iso).toLocal();
-      return DateFormat('MMM d, y').format(dt);
+      return DateFormat('MMM d, y · h:mm a').format(dt);
     } catch (_) {
       return '';
     }
@@ -112,7 +112,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   10.verticalSpace,
                   Row(
                     children: [
-                      UserImageWidget(size: 20),
+                      UserImageWidget(size: 20, image: AuthController.i.appUser.value.data?.userModel?.profileImage ?? null),
                       10.horizontalSpace,
                       Flexible(
                         child: CustomContainer(
@@ -152,9 +152,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
         child: CustomText(
           text: 'No posts yet',
           color: AppColors.greyLight,
+          is_alignLeft: false,
         ),
       );
     }
+
+    final posts = _postsController.filteredPosts;
+    if (posts.isEmpty) {
+      return Center(
+        child: CustomText(
+          text: 'No posts found',
+          color: AppColors.greyLight,
+          is_alignLeft: false,
+        ),
+      );
+    }
+
     return RefreshIndicator(
       onRefresh: _postsController.fetchPosts,
       child: ListView.separated(
@@ -162,9 +175,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
         padding: EdgeInsets.only(
             top: AppPadding.padding20, bottom: AppPadding.padding25),
         shrinkWrap: true,
-        itemCount: _postsController.posts.length,
+        itemCount: posts.length,
         itemBuilder: (context, index) {
-          final post = _postsController.posts[index];
+          final post = posts[index];
           return postTile(post);
         },
         separatorBuilder: (context, index) {
@@ -180,6 +193,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       prefxicon: AssetPath.searchIcon,
       hint: AppStrings.searchAnything,
       inputFormatters: [LengthLimitingTextInputFormatter(35)],
+      onchange: _postsController.updateSearch,
     );
   }
 

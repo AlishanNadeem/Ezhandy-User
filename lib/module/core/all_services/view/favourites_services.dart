@@ -2,7 +2,7 @@ import 'package:ezhandy_user/module/core/all_services/controller/favourites_serv
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/enums.dart';
-import 'package:ezhandy_user/utils/network_strings.dart';
+import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
@@ -77,6 +77,10 @@ class _FavouritesServicesState extends State<FavouritesServices> {
               itemBuilder: (context, index) {
                 final row = list[index];
                 final service = row['service'];
+                final serviceType = row['serviceType'];
+                final serviceTypeMap = serviceType is Map
+                    ? Map<String, dynamic>.from(serviceType)
+                    : <String, dynamic>{};
                 final sMap = service is Map
                     ? Map<String, dynamic>.from(service)
                     : <String, dynamic>{};
@@ -89,7 +93,8 @@ class _FavouritesServicesState extends State<FavouritesServices> {
                     ? sMap['description'].toString()
                     : AppStrings.lorem5;
                 final amount = _cardAmount(sMap);
-                final imageUrl = _resolveMediaUrl(sMap['imageUrl']);
+                final imageUrl = resolveMediaUrl(sMap['imageUrl']);
+                final iconUrl = resolveMediaUrl(serviceTypeMap['iconImagePath']);
                 final user = sMap['user'];
                 final userMap =
                     user is Map ? Map<String, dynamic>.from(user) : null;
@@ -113,6 +118,7 @@ class _FavouritesServicesState extends State<FavouritesServices> {
                   isFav: true,
                   heartBusy: heartBusy,
                   imageUrl: imageUrl,
+                  iconUrl: iconUrl,
                   title: title,
                   description: desc,
                   ontapLike: deleteServiceId.isEmpty || heartBusy
@@ -149,11 +155,26 @@ class _FavouritesServicesState extends State<FavouritesServices> {
     return v.toString();
   }
 
-  String _resolveMediaUrl(dynamic path) {
-    final s = path?.toString().trim() ?? '';
-    if (s.isEmpty) return '';
-    if (s.startsWith('http://') || s.startsWith('https://')) return s;
-    return '${NetworkStrings.IMAGE_BASE_URL}$s';
+  Widget _serviceIcon(String iconUrl) {
+    print('🖼️ Favourite service iconUrl: $iconUrl');
+    if (iconUrl.isEmpty) {
+      return Image.asset(
+        AssetPath.cleaningIcon,
+        width: 30.w,
+        height: 30.h,
+      );
+    }
+    return Image.network(
+      iconUrl,
+      width: 30.w,
+      height: 30.h,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => Image.asset(
+        AssetPath.cleaningIcon,
+        width: 30.w,
+        height: 30.h,
+      ),
+    );
   }
 
   Widget singleContainer(
@@ -164,8 +185,12 @@ class _FavouritesServicesState extends State<FavouritesServices> {
       isFav,
       bool heartBusy = false,
       required String imageUrl,
+      required String iconUrl,
       required String title,
       required String description}) {
+
+    print('🖼️ Single container iconUrl: $iconUrl');
+
     final DecorationImage bgImage = imageUrl.isNotEmpty
         ? DecorationImage(
             fit: BoxFit.cover,
@@ -221,25 +246,28 @@ class _FavouritesServicesState extends State<FavouritesServices> {
               ],
             ),
             Spacer(),
-            detailsContainer(title: title, description: description),
+            detailsContainer(
+              iconUrl: iconUrl,
+              title: title,
+              description: description,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget detailsContainer(
-      {required String title, required String description}) {
+  Widget detailsContainer({
+    required String iconUrl,
+    required String title,
+    required String description,
+  }) {
     return Padding(
       padding: EdgeInsets.all(AppPadding.padding12),
       child: CustomContainer(
         child: Row(
           children: [
-            Image.asset(
-              AssetPath.cleaningIcon,
-              width: 30.w,
-              height: 30.h,
-            ),
+            _serviceIcon(iconUrl),
             10.horizontalSpace,
             Flexible(
               child: Column(

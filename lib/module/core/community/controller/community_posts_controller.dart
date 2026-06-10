@@ -1,6 +1,7 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/core/community/model/community_post_model.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
+import 'package:ezhandy_user/utils/local_search_helper.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +10,15 @@ class CommunityPostsController extends GetxController {
 
   final RxList<CommunityPost> posts = <CommunityPost>[].obs;
   final RxBool postsLoading = false.obs;
+  final RxString searchQuery = ''.obs;
+
+  List<CommunityPost> get filteredPosts => filterListByTitle<CommunityPost>(
+        items: posts,
+        query: searchQuery.value,
+        titleOf: (post) => post.user?.fullName ?? '',
+      );
+
+  void updateSearch(String value) => searchQuery.value = value;
 
   @override
   void onInit() {

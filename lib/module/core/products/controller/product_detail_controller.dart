@@ -6,14 +6,19 @@ class ProductDetailController extends GetxController {
   static ProductDetailController get i => Get.find();
 
   RxBool isLoading = false.obs;
-  Rx<Map<String, dynamic>> product = Rx<Map<String, dynamic>>({});
+  final Rxn<Map<String, dynamic>> product = Rxn<Map<String, dynamic>>();
 
   void getProductDetail({required String productId}) async {
+    final id = productId.trim();
+    if (id.isEmpty) return;
+
     isLoading.value = true;
+    product.value = null;
 
     final response = await DioClient().getRequest(
-      endPoint: "products/$productId",
+      endPoint: "products/$id",
       isHeaderRequire: true,
+      isLoader: false,
     );
 
     await DioClient().validateResponse(

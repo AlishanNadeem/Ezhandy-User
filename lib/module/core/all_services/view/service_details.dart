@@ -2,6 +2,7 @@ import 'package:ezhandy_user/module/core/all_services/controller/service_details
 
 import 'package:ezhandy_user/module/core/all_services/model/provider_service_detail_model.dart';
 
+import 'package:ezhandy_user/module/core/all_services/routing_arguments/past_work_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 
 import 'package:ezhandy_user/module/core/booking/model/active_booking_check_model.dart';
@@ -482,7 +483,14 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         const Spacer(),
         CustomContainer(
           onTap: () {
-            AppNavigation.navigateTo(context, AppRoutes.pastworkScreenRoute);
+            AppNavigation.navigateTo(
+              context,
+              AppRoutes.pastworkScreenRoute,
+              arguments: PastWorkRoutingArgument(
+                providerId: widget.providerId,
+                serviceId: widget.providerServiceId,
+              ),
+            );
           },
           bgColor: AppColors.orange,
           borderColor: AppColors.orange,

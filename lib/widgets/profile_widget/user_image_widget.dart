@@ -17,25 +17,36 @@ class UserImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = image?.trim() ?? '';
+    final hasNetworkImage = imageUrl.isNotEmpty;
+
     return GestureDetector(
         onTap: onAvatarTap ??
             () {
-              Utils.onTapViewImage(
+              if (hasNetworkImage) {
+                Utils.onTapViewImage(
                   context: context,
-                  image: AssetPath.userIcon,
-                  //mediaType: MediaPathType.network.name,
-                  mediaType: MediaPathType.asset.name);
+                  image: imageUrl,
+                  mediaType: MediaPathType.network.name,
+                );
+              } else {
+                Utils.onTapViewImage(
+                  context: context,
+                  image: AssetPath.avatarIcon,
+                  mediaType: MediaPathType.asset.name,
+                );
+              }
             },
         child: CircleAvatar(
           radius: size,
           backgroundColor: color ?? AppColors.white,
-          child: image == null || image!.trim().isEmpty
+          child: !hasNetworkImage
               ? CircleAvatar(
                   radius: size - 2,
                   backgroundImage: const AssetImage(AssetPath.avatarIcon))
               : ClipOval(
                   child: Image.network(
-                    image!,
+                    imageUrl,
                     width: size * 2,
                     height: size * 2,
                     fit: BoxFit.cover,

@@ -31,6 +31,7 @@ class BookingHistoryController extends GetxController {
     try {
       final response = await DioClient().getRequest(
         endPoint: NetworkStrings.userBookingsEndpoint,
+        isLoader: false,
         isHeaderRequire: true,
       );
 

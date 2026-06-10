@@ -114,6 +114,13 @@ class NetworkStrings {
   /// GET [bookings/detail/{id}] — booking detail by id (auth).
   static String bookingDetail(int id) => 'bookings/detail/$id';
 
+  /// GET [bookings/past-work/provider/{providerId}/service/{serviceId}] — provider past work (auth).
+  static String pastWorkByProviderService({
+    required String providerId,
+    required String serviceId,
+  }) =>
+      'bookings/past-work/provider/$providerId/service/$serviceId';
+
   /// PATCH [bookings/booking/status] — update booking status (auth).
   static const String bookingStatusEndpoint = 'bookings/booking/status';
 
@@ -129,6 +136,13 @@ class NetworkStrings {
 
   /// GET [referrals/my-referrals] — referral summary + referral rows (auth).
   static const String myReferralsEndpoint = 'referrals/my-referrals';
+
+  /// GET [notifications] — user notifications list (auth).
+  static const String notificationsEndpoint = 'notifications';
+
+  /// PATCH [notifications/{id}/read] — mark notification as read (auth).
+  static String notificationRead(String notificationId) =>
+      'notifications/$notificationId/read';
 
   /// POST [community/posts] — create community post (multipart: description, image) (auth).
   static const String communityPostsEndpoint = 'community/posts';

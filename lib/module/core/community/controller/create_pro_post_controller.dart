@@ -25,8 +25,9 @@ class CreateProPostController extends GetxController {
     categoriesLoading.value = true;
 
     final response = await DioClient().getRequest(
-      endPoint: NetworkStrings.categoriesEndpoint,
+      endPoint: NetworkStrings.serviceTypesEndpoint,
       isHeaderRequire: true,
+      isLoader: false,
     );
 
     await DioClient().validateResponse(
@@ -34,10 +35,10 @@ class CreateProPostController extends GetxController {
       responseListener: _CreateProPostListener(
         onSuccessCallback: (data) {
           categories.value = data?['data'] ?? [];
-          print('✅ Ask Pro categories loaded → $categories');
+          print('✅ Ask Pro service types loaded → $categories');
         },
         onFailureCallback: (data) {
-          print('❌ Ask Pro categories failed → $data');
+          print('❌ Ask Pro service types failed → $data');
         },
       ),
     );
@@ -51,31 +52,34 @@ class CreateProPostController extends GetxController {
     return i >= 0 ? normalized.substring(i + 1) : path;
   }
 
-  static bool isUuid(String value) {
-    return RegExp(
-      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
-    ).hasMatch(value);
+  static bool _isApiSuccess(dynamic data) {
+    if (data is! Map) return false;
+    final status = data['isSuccess'];
+    if (status == false || status == NetworkStrings.API_FAILURE_STATUS) {
+      return false;
+    }
+    return true;
   }
 
   /// Submits an Ask a Pro query. Returns whether the API reported success.
   Future<bool> submitQuery({
-    required String categoryId,
+    required String serviceTypeId,
     required String question,
     File? image,
     File? video,
   }) async {
     if (isLoading.value) return false;
 
-    if (!isUuid(categoryId)) {
-      print('❌ Ask Pro invalid categoryId (must be UUID) → $categoryId');
+    if (serviceTypeId.trim().isEmpty) {
+      print('❌ Ask Pro invalid serviceTypeId → empty');
       return false;
     }
 
+    var success = false;
     isLoading.value = true;
-    bool? outcome;
 
     final payload = {
-      'categoryId': categoryId,
+      'serviceTypeId': serviceTypeId,
       'question': question.trim(),
       'image': image?.path,
       'video': video?.path,
@@ -89,7 +93,7 @@ class CreateProPostController extends GetxController {
 
     try {
       final formData = dio.FormData.fromMap({
-        'categoryId': categoryId,
+        'serviceTypeId': serviceTypeId,
         'question': question.trim(),
         if (image != null)
           'image': await dio.MultipartFile.fromFile(
@@ -120,35 +124,39 @@ class CreateProPostController extends GetxController {
 
       if (response == null) {
         print('❌ Ask Pro query response → null (check Dio error logs above)');
-        return false;
+      } else {
+        print(
+          '📥 Ask Pro query response → '
+          'status=${response.statusCode}, data=${response.data}',
+        );
+
+        await DioClient().validateResponse(
+          response: response,
+          responseListener: _CreateProPostListener(
+            onSuccessCallback: (data) {
+              success = _isApiSuccess(data);
+              if (success) {
+                print('✅ Ask Pro query success → $data');
+              } else {
+                print('❌ Ask Pro query rejected → $data');
+              }
+            },
+            onFailureCallback: (data) {
+              print('❌ Ask Pro query failure → $data');
+              success = false;
+            },
+          ),
+        );
       }
-
-      print(
-        '📥 Ask Pro query response → '
-        'status=${response.statusCode}, data=${response.data}',
-      );
-
-      await DioClient().validateResponse(
-        response: response,
-        responseListener: _CreateProPostListener(
-          onSuccessCallback: (data) {
-            print('✅ Ask Pro query success → $data');
-            outcome = true;
-          },
-          onFailureCallback: (data) {
-            print('❌ Ask Pro query failure → $data');
-            outcome = false;
-          },
-        ),
-      );
     } catch (e, stack) {
       print('❌ Ask Pro query error → $e');
       print(stack);
+      success = false;
     } finally {
       isLoading.value = false;
     }
 
-    return outcome ?? false;
+    return success;
   }
 }
 

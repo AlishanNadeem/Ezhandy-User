@@ -58,7 +58,13 @@ class _MyPostsState extends State<MyPosts> {
         child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-            child: Obx(() => _buildBody(context))));
+            child: Column(
+              children: [
+                Expanded(
+                  child: Obx(() => _buildBody(context)),
+                ),
+              ],
+            )));
   }
 
   Widget _buildBody(BuildContext context) {
@@ -70,6 +76,7 @@ class _MyPostsState extends State<MyPosts> {
         child: CustomText(
           text: 'No posts yet',
           color: AppColors.greyLight,
+          is_alignLeft: false,
         ),
       );
     }
@@ -303,6 +310,13 @@ class _MyPostsState extends State<MyPosts> {
     }
   }
 
+  void _closeDialog() {
+    final ctx = Constants.navigatorKey.currentContext;
+    if (ctx != null) {
+      AppNavigation.navigateCloseDialog(ctx);
+    }
+  }
+
   void _confirmDeletePost(BuildContext context, CommunityPost post) {
     AppDialogs.showSuccessDialog(context,
         description: AppStrings.areYouSureWantToDeletePost,
@@ -310,22 +324,20 @@ class _MyPostsState extends State<MyPosts> {
         image: AssetPath.deletePopUpIcon,
         isDoneShow: false,
         btnTxt1: AppStrings.no,
-        onTap1: () {
-          AppNavigation.navigatorPop(context);
-        },
+        onTap1: _closeDialog,
         btnTxt2: AppStrings.yes,
         onTap2: () {
-          AppNavigation.navigatorPop(context);
+          _closeDialog();
           _controller.deletePost(post.id, onSuccess: () {
-            if (!context.mounted) return;
+            final dialogContext = Constants.navigatorKey.currentContext;
+            if (dialogContext == null || !dialogContext.mounted) return;
             AppDialogs.showSuccessDialog(
-              context,
+              dialogContext,
               description: "Post has been deleted successfully.",
               title: AppStrings.congratulation,
+              isDoneShow: true,
               btnTxt1: AppStrings.ok,
-              onTap1: () {
-                AppNavigation.navigatorPop(context);
-              },
+              onTap1: _closeDialog,
             );
           });
         });

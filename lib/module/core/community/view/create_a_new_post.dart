@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/community/controller/create_post_controller.dart';
+import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/constant.dart';
@@ -94,21 +96,13 @@ class _CreateANewPostState extends State<CreateANewPost> {
                           children: [
                             UserImageWidget(
                               size: 20,
+                              image: _myProfileImageUrl(),
                             ),
                             10.horizontalSpace,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomText(
-                                  text: "User Name",
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                CustomText(
-                                  text: "2 days",
-                                  fontSize: 10.sp,
-                                )
-                              ],
-                            )
+                            CustomText(
+                              text: _myDisplayName(),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ],
                         ),
                         20.verticalSpace,
@@ -152,6 +146,18 @@ class _CreateANewPostState extends State<CreateANewPost> {
                 25.verticalSpace
               ],
             )));
+  }
+
+  String _myDisplayName() {
+    return AuthController.i.appUser.value.data?.userModel?.fullName?.trim() ??
+        '';
+  }
+
+  String? _myProfileImageUrl() {
+    final url = resolveMediaUrl(
+      AuthController.i.appUser.value.data?.userModel?.profileImage,
+    );
+    return url.isEmpty ? null : url;
   }
 
   _setFile(File? file) {

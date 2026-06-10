@@ -61,7 +61,8 @@ class _ListOfServicesState extends State<ListOfServices> {
                   if (_listController.isLoading.value) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  if (_listController.servicesList.isEmpty) {
+                  final services = _listController.filteredServicesList;
+                  if (services.isEmpty) {
                     return Center(
                       child: CustomText(
                         text: "No services found",
@@ -72,9 +73,9 @@ class _ListOfServicesState extends State<ListOfServices> {
                   return ListView.separated(
                     padding: EdgeInsets.only(bottom: AppPadding.padding25),
                     shrinkWrap: true,
-                    itemCount: _listController.servicesList.length,
+                    itemCount: services.length,
                     itemBuilder: (context, index) {
-                      final service = _listController.servicesList[index];
+                      final service = services[index];
                       return singleContainer(
                         service: service,
                         onTap: () {
@@ -184,6 +185,7 @@ class _ListOfServicesState extends State<ListOfServices> {
       prefxicon: AssetPath.searchIcon,
       hint: AppStrings.searchAnything,
       inputFormatters: [LengthLimitingTextInputFormatter(35)],
+      onchange: _listController.updateSearch,
     );
   }
 

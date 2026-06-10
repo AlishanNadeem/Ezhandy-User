@@ -98,6 +98,18 @@ class _RatingScreenState extends State<RatingScreen> {
   }
 
   Widget reviewListWidget(List<ProviderRatingItem> reviews) {
+    if (reviews.isEmpty) {
+      return Expanded(
+        child: Center(
+          child: CustomText(
+            text: AppStrings.noReviewsFound,
+            color: AppColors.greyLight,
+            is_alignLeft: false,
+          ),
+        ),
+      );
+    }
+
     return Expanded(
       child: ListView.separated(
         shrinkWrap: true,

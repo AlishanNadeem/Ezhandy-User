@@ -25,7 +25,9 @@ class ForgotPasswordRepository extends ResponseListener {
     var response = await DioClient().postRequest(
         endPoint: NetworkStrings.forgotPassEndpoint,
         data: rawData,
-        responseListener: this);
+        isLoader: true,
+        responseListener: this
+    );
 
     DioClient().validateResponse(
         response: response, responseListener: this, message: true);

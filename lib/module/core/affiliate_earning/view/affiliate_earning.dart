@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
+import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:ezhandy_user/widgets/toast_dialogs_sheet/toast.dart';
@@ -161,6 +162,9 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                               lastMes: r['referredEmail']?.toString() ??
                                   AppStrings.lorem5,
                               earning: r['earning'],
+                              image: resolveMediaUrl(
+                                r['referredUserProfileImage'],
+                              ),
                             );
                           },
                           separatorBuilder: (context, index) {
@@ -222,6 +226,7 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
     required dynamic name,
     required dynamic lastMes,
     dynamic earning,
+    String? image,
   }) {
     return CustomContainer(
       isPadding: false,
@@ -233,7 +238,9 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            UserImageWidget(),
+            UserImageWidget(
+              image: image?.trim().isNotEmpty == true ? image : null,
+            ),
             5.horizontalSpace,
             Expanded(
               flex: 6,

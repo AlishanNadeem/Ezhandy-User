@@ -61,6 +61,7 @@ class MyPostsController extends GetxController {
       final response = await DioClient().deleteRequest(
         endPoint: NetworkStrings.communityPostById(id),
         isHeaderRequire: true,
+        isLoader: false,
       );
 
       await DioClient().validateResponse(

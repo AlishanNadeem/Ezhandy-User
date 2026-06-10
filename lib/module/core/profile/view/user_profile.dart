@@ -155,7 +155,7 @@ class _UserProfileState extends State<UserProfile> {
       // is_pickImage:
       //     args == AppStrings.CREATE_PROFILE ? true : false,
       // setFile: _setFile,
-      profileImageUrl: "${NetworkStrings.IMAGE_BASE_URL}${AuthController.i.appUser.value.data?.userModel?.profileImage ?? ''}",
+      profileImageUrl: "${AuthController.i.appUser.value.data?.userModel?.profileImage ?? ''}",
       // profileImage: _profileImage,
       assetPath:
       //     // args == AppStrings.CREATE_PROFILE

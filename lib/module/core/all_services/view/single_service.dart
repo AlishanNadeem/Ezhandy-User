@@ -83,7 +83,8 @@ class _SingleServiceState extends State<SingleService> {
                       ),
                     );
                   }
-                  if (_controller.freelancersList.isEmpty) {
+                  final freelancers = _controller.filteredFreelancersList;
+                  if (freelancers.isEmpty) {
                     return Center(
                       child: CustomText(
                         text: "No users found",
@@ -94,9 +95,9 @@ class _SingleServiceState extends State<SingleService> {
                   return ListView.separated(
                     padding: EdgeInsets.only(bottom: AppPadding.padding25),
                     shrinkWrap: true,
-                    itemCount: _controller.freelancersList.length,
+                    itemCount: freelancers.length,
                     itemBuilder: (context, index) {
-                      final freelancer = _controller.freelancersList[index];
+                      final freelancer = freelancers[index];
                       return singleWidget(
                         freelancer: freelancer,
                         ontap: () {
@@ -129,6 +130,7 @@ class _SingleServiceState extends State<SingleService> {
       prefxicon: AssetPath.searchIcon,
       hint: AppStrings.searchAnything,
       inputFormatters: [LengthLimitingTextInputFormatter(35)],
+      onchange: _controller.updateSearch,
     );
   }
 
