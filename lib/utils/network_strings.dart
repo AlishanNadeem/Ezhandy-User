@@ -86,6 +86,13 @@ class NetworkStrings {
   static const String createBookingDraftCheckoutEndpoint =
       'payment/create-booking-draft-checkout';
 
+  /// POST [payment/bookings/create-and-pay] — create booking(s) and pay (auth).
+  static const String createBookingAndPayEndpoint =
+      'payment/bookings/create-and-pay';
+
+  static const String bookingPaymentReturnUrl =
+      'https://yourapp.com/payment/success';
+
   static const String bookingCheckoutSuccessPath =
       '/booking/checkout/success';
   static const String bookingCheckoutCancelPath = '/booking/checkout/cancel';
