@@ -3,8 +3,10 @@ import 'package:ezhandy_user/module/core/all_services/controller/service_selecti
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
 import 'package:ezhandy_user/module/core/booking/controller/booking_history_controller.dart';
 import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
+import 'package:ezhandy_user/utils/api_enums.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
+import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
@@ -136,11 +138,26 @@ class _ServiceSelectionState extends State<ServiceSelection> {
     super.dispose();
   }
 
+  bool get _isInstantBooking =>
+      _bookingArgs?.type == ServiceType.instant.name;
+
+  void _applyInstantBookingDefaults() {
+    if (!_isInstantBooking) return;
+
+    final args = _bookingArgs;
+    if (args == null) return;
+
+    final now = DateTime.now();
+    args.selectedDate = DateTime(now.year, now.month, now.day);
+    args.selectedTimeSlot = TimeSlotEnum.morning;
+  }
+
   @override
   void initState() {
     super.initState();
     selectedHoursLabel = _hourOptions.first.key;
     selectedDurationMinutes = _hourOptions.first.value;
+    _applyInstantBookingDefaults();
   }
 
   String _selectedServiceName() {
@@ -455,16 +472,18 @@ class _ServiceSelectionState extends State<ServiceSelection> {
       return;
     }
 
+    _applyInstantBookingDefaults();
+
     final duration = selectedDurationMinutes;
     if (duration == null || duration <= 0) {
       AppDialogs.showToast(message: 'Please select hours.');
       return;
     }
-    if (args.selectedDate == null) {
+    if (!_isInstantBooking && args.selectedDate == null) {
       AppDialogs.showToast(message: 'Please select a booking date.');
       return;
     }
-    if (args.selectedTimeSlot == null) {
+    if (!_isInstantBooking && args.selectedTimeSlot == null) {
       AppDialogs.showToast(message: 'Please select a time slot.');
       return;
     }
