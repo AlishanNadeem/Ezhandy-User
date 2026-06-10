@@ -1187,7 +1187,6 @@ class AppStrings {
   static const String noFavouriteServicesFound = "No favourite services found";
   static const String noTransactionsFound = "No transactions found";
   static const String noBookingsFound = "No bookings found";
-  static const String noPastWorkFound = "No past work found";
   static const String subtotal = "Sub Total";
   static const String chinese = "Chinese";
   static const String italian = "Italian";
