@@ -1,9 +1,10 @@
 import 'package:ezhandy_user/module/core/all_services/controller/create_booking_controller.dart';
 import 'package:ezhandy_user/module/core/all_services/routing_arguments/service_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/booking/controller/booking_history_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
-import 'package:ezhandy_user/utils/checkout_browser.dart';
-import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
+import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
@@ -335,26 +336,41 @@ class _ServiceSelectionState extends State<ServiceSelection> {
 
     args.durationMinutes = duration;
 
-    final checkoutUrl = await _createBookingController.startBookingDraftCheckout(
+    final success = await _createBookingController.createBookingAndPay(
       args: args,
       durationMinutes: duration,
-      totalAmount: _total,
     );
 
     if (!mounted) return;
 
-    if (checkoutUrl == null || checkoutUrl.isEmpty) {
-      AppDialogs.showToast(message: 'Unable to start checkout.');
+    if (!success) {
+      AppDialogs.showToast(message: 'Unable to confirm booking.');
       return;
     }
 
-    CheckoutBrowser.open(
+    AppDialogs.showSuccessDialog(
       context,
-      checkoutUrl: checkoutUrl,
-      successUrl: NetworkStrings.bookingCheckoutSuccessUrl,
-      cancelUrl: NetworkStrings.bookingCheckoutCancelUrl,
-      successRoute: AppRoutes.bookingHistoryScreenRoute,
+      description: AppStrings.yourBookingHasBeenDone,
+      title: AppStrings.congratulation,
+      btnTxt1: AppStrings.ok,
+      onTap1: () => _onBookingSuccess(),
     );
+  }
+
+  void _onBookingSuccess() {
+    final navContext = Constants.navigatorKey.currentContext;
+    if (navContext == null) return;
+
+    AppNavigation.navigatorPopUntil(
+      navContext,
+      AppRoutes.mainMenuScreenRoute,
+    );
+    HomeController.i.selectedTab.value = 2;
+
+    const myBookingTag = 'my_booking';
+    if (Get.isRegistered<BookingHistoryController>(tag: myBookingTag)) {
+      Get.find<BookingHistoryController>(tag: myBookingTag).fetchUserBookings();
+    }
   }
 
   Text noteWidget() {

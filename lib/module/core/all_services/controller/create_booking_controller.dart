@@ -8,28 +8,27 @@ import 'package:get/get.dart';
 class CreateBookingController extends GetxController {
   final RxBool isSubmitting = false.obs;
 
-  Future<String?> startBookingDraftCheckout({
+  Future<bool> createBookingAndPay({
     required ServiceRoutingArgument args,
     required int durationMinutes,
-    required double totalAmount,
   }) async {
-    if (isSubmitting.value) return null;
+    if (isSubmitting.value) return false;
 
     final serviceId = _resolveServiceId(args);
     final bookingDate = args.selectedDate;
     final timeSlot = args.selectedTimeSlot;
 
-    if (serviceId == null) return null;
-    if (bookingDate == null) return null;
-    if (timeSlot == null) return null;
-    if (durationMinutes <= 0) return null;
+    if (serviceId == null) return false;
+    if (bookingDate == null) return false;
+    if (timeSlot == null) return false;
+    if (durationMinutes <= 0) return false;
 
     isSubmitting.value = true;
-    String? checkoutUrl;
+    var success = false;
 
     try {
       final response = await DioClient().postRequest(
-        endPoint: NetworkStrings.createBookingDraftCheckoutEndpoint,
+        endPoint: NetworkStrings.createBookingAndPayEndpoint,
         data: <String, dynamic>{
           'bookings': [
             _buildBookingItem(
@@ -37,12 +36,15 @@ class CreateBookingController extends GetxController {
               bookingDate: bookingDate,
               timeSlot: timeSlot,
               durationMinutes: durationMinutes,
-              totalAmount: totalAmount,
             ),
           ],
+          'paymentMethodId': 1,
           'currency': 'usd',
-          'successUrl': NetworkStrings.bookingCheckoutSuccessUrl,
-          'cancelUrl': NetworkStrings.bookingCheckoutCancelUrl,
+          'token': 'manual-payment-reference-123',
+          'stripePaymentMethodId': 'pm_manual_123',
+          'stripePaymentIntentId': 'pi_manual_123',
+          'returnUrl': NetworkStrings.bookingPaymentReturnUrl,
+          'platform': 2,
         },
         isHeaderRequire: true,
       );
@@ -50,10 +52,8 @@ class CreateBookingController extends GetxController {
       await DioClient().validateResponse(
         response: response,
         responseListener: CallbackResponseListener(
-          onSuccessCallback: (res) {
-            checkoutUrl = _extractCheckoutUrl(res);
-          },
-          onFailureCallback: (_) => checkoutUrl = null,
+          onSuccessCallback: (_) => success = true,
+          onFailureCallback: (_) => success = false,
         ),
         message: true,
       );
@@ -61,7 +61,7 @@ class CreateBookingController extends GetxController {
       isSubmitting.value = false;
     }
 
-    return checkoutUrl;
+    return success;
   }
 
   static Map<String, dynamic> _buildBookingItem({
@@ -69,7 +69,6 @@ class CreateBookingController extends GetxController {
     required DateTime bookingDate,
     required TimeSlotEnum timeSlot,
     required int durationMinutes,
-    required double totalAmount,
   }) {
     return <String, dynamic>{
       'bookingDate': _formatBookingDate(bookingDate),
@@ -77,31 +76,7 @@ class CreateBookingController extends GetxController {
       'duration': durationMinutes,
       'serviceId': serviceId,
       'timeSlot': timeSlot.apiValue,
-      'totalAmount': _formatTotalAmount(totalAmount),
     };
-  }
-
-  static String? _extractCheckoutUrl(dynamic response) {
-    dynamic payload = response;
-    if (payload is Map && payload['data'] != null) {
-      payload = payload['data'];
-    }
-    if (payload is Map && payload['data'] != null) {
-      payload = payload['data'];
-    }
-    if (payload is! Map) return null;
-
-    final map = payload is Map<String, dynamic>
-        ? payload
-        : Map<String, dynamic>.from(payload);
-
-    for (final key in ['url', 'checkoutUrl', 'sessionUrl']) {
-      final value = map[key];
-      if (value is String && value.trim().isNotEmpty) {
-        return value.trim();
-      }
-    }
-    return null;
   }
 
   static int? _resolveServiceId(ServiceRoutingArgument args) {
@@ -126,12 +101,5 @@ class CreateBookingController extends GetxController {
     final m = date.month.toString().padLeft(2, '0');
     final d = date.day.toString().padLeft(2, '0');
     return '$y-$m-$d';
-  }
-
-  static num _formatTotalAmount(double amount) {
-    if (amount == amount.roundToDouble()) {
-      return amount.round();
-    }
-    return double.parse(amount.toStringAsFixed(2));
   }
 }
