@@ -166,8 +166,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
     required MyChatItem chat,
     required VoidCallback ontap,
   }) {
+
+
     final time = _formatTimeAgo(chat.displayTime);
     final preview = chat.lastMessagePreview;
+    final previewText =
+        preview.isNotEmpty ? preview : AppStrings.startConversation;
 
     return CustomContainer(
       onTap: ontap,
@@ -213,17 +217,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     ],
                   ],
                 ),
-                if (preview.isNotEmpty) ...[
-                  4.verticalSpace,
-                  CustomText(
-                    text: preview,
-                    maxLines: 1,
-                    fontSize: 12.sp,
-                    color: chat.unreadCount > 0
-                        ? AppColors.black
-                        : AppColors.greyLight,
-                  ),
-                ],
+                4.verticalSpace,
+                CustomText(
+                  text: previewText,
+                  maxLines: 1,
+                  fontSize: 12.sp,
+                  color: preview.isNotEmpty
+                      ? (chat.unreadCount > 0
+                          ? AppColors.black
+                          : AppColors.greyLight)
+                      : AppColors.greyLight,
+                ),
               ],
             ),
           ),

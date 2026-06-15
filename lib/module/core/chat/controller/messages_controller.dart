@@ -1,13 +1,19 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/core/chat/model/my_chat_model.dart';
+import 'package:ezhandy_user/services/live_chat_socket_service.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:get/get.dart';
-
 class MessagesController extends GetxController {
+  MessagesController({this.chatType = 'private'});
+
+  final String chatType;
+
   final RxList<MyChatItem> chats = <MyChatItem>[].obs;
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
+
+  void Function(dynamic)? _messageReceivedHandler;
 
   List<MyChatItem> get filteredChats {
     final q = searchQuery.value.trim().toLowerCase();
@@ -19,14 +25,44 @@ class MessagesController extends GetxController {
     }).toList();
   }
 
+  bool _matchesChatType(String itemChatType) {
+    return itemChatType.trim().toLowerCase() == chatType.trim().toLowerCase();
+  }
+
   @override
   void onInit() {
     super.onInit();
     fetchMyChats();
+    _initSocket();
   }
 
-  Future<void> fetchMyChats() async {
-    isLoading.value = true;
+  @override
+  void onClose() {
+    if (_messageReceivedHandler != null) {
+      LiveChatSocketService.instance
+          .off('messageReceived', _messageReceivedHandler);
+    }
+    super.onClose();
+  }
+
+  Future<void> _initSocket() async {
+    try {
+      await LiveChatSocketService.instance.connect();
+      _messageReceivedHandler = (data) {
+        LiveChatSocketService.log('messageReceived (messages list): $data');
+        fetchMyChats(showLoader: false);
+      };
+      LiveChatSocketService.instance
+          .on('messageReceived', _messageReceivedHandler!);
+    } catch (e, st) {
+      LiveChatSocketService.log('messages init failed: $e\n$st');
+    }
+  }
+
+  Future<void> fetchMyChats({bool showLoader = true}) async {
+    if (showLoader) {
+      isLoading.value = true;
+    }
     try {
       final response = await DioClient().getRequest(
         endPoint: NetworkStrings.myChatsEndpoint,
@@ -48,6 +84,7 @@ class MessagesController extends GetxController {
                       ),
                     )
                     .where((c) => c.chatId.isNotEmpty)
+                    .where((c) => _matchesChatType(c.chatType))
                     .toList(),
               );
             } else {
@@ -58,7 +95,9 @@ class MessagesController extends GetxController {
         ),
       );
     } finally {
-      isLoading.value = false;
+      if (showLoader) {
+        isLoading.value = false;
+      }
     }
   }
 
