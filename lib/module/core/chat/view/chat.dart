@@ -27,6 +27,7 @@ class ChatScreen extends StatefulWidget {
   final bool isBooking;
   final bool isCalls;
   final String? chatId;
+  final String? otherUserId;
   final String? otherUserName;
   final String? otherUserImage;
 
@@ -34,6 +35,7 @@ class ChatScreen extends StatefulWidget {
     this.isBooking = false,
     this.isCalls = false,
     this.chatId,
+    this.otherUserId,
     this.otherUserName,
     this.otherUserImage,
     super.key,
@@ -44,6 +46,7 @@ class ChatScreen extends StatefulWidget {
       isBooking: args?.isBooking ?? false,
       isCalls: args?.isCalls ?? false,
       chatId: args?.chatId,
+      otherUserId: args?.otherUserId,
       otherUserName: args?.otherUserName,
       otherUserImage: args?.otherUserImage,
     );
@@ -67,6 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller = Get.put(
       ChatController(
         chatId: widget.chatId ?? '',
+        otherUserId: widget.otherUserId,
         otherUserName: widget.otherUserName,
         otherUserImage: widget.otherUserImage,
       ),
@@ -207,15 +211,14 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   String _displayName(ChatModel message) {
-    if (message.isSender) {
-      return message.senderName?.trim().isNotEmpty == true
-          ? message.senderName!
-          : (AuthController.i.appUser.value.data?.userModel?.fullName ??
-              AppStrings.dummyName);
+    if (message.senderName?.trim().isNotEmpty == true) {
+      return message.senderName!;
     }
-    return message.senderName?.trim().isNotEmpty == true
-        ? message.senderName!
-        : (_controller.otherUserName ?? AppStrings.dummyName);
+    if (message.isSender) {
+      return _controller.otherUserName ?? AppStrings.dummyName;
+    }
+    return AuthController.i.appUser.value.data?.userModel?.fullName ??
+        AppStrings.dummyName;
   }
 
   String _displayImage(ChatModel message) {
@@ -391,7 +394,7 @@ class _ChatScreenState extends State<ChatScreen> {
       count++;
     }
 
-    _controller.addLocalMessage(messageController.text);
+    _controller.sendMessage(messageController.text);
     messageController.clear();
   }
 

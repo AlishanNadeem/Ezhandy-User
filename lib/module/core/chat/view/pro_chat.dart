@@ -101,6 +101,7 @@ class _ProChatState extends State<ProChat> {
                               isBooking: false,
                               isCalls: true,
                               chatId: chat.chatId,
+                              otherUserId: chat.otherUser.id,
                               otherUserName: chat.displayName,
                               otherUserImage: chat.otherUser.profileImage,
                             ),

@@ -29,6 +29,9 @@ class ChatHistoryMessage {
     String? image;
     if (sender is Map) {
       name = sender['fullName']?.toString().trim();
+      if (name == null || name.isEmpty) {
+        name = sender['name']?.toString().trim();
+      }
       if (name != null && name.isEmpty) name = null;
       image = sender['profileImage']?.toString().trim();
       if (image != null && image.isEmpty) image = null;

@@ -81,6 +81,7 @@ class _BookingDetailsState extends State<BookingDetails> {
       arguments: ChatRoutingArgument(
         isBooking: true,
         chatId: chatId,
+        otherUserId: provider.id,
         otherUserName: provider.fullName,
         otherUserImage: provider.profileImage,
       ),

@@ -1,5 +1,6 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
-import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';import 'package:ezhandy_user/module/core/chat/model/chat_history_message_model.dart';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/chat/model/chat_history_message_model.dart';
 import 'package:ezhandy_user/module/core/chat/model/chat_model.dart';
 import 'package:ezhandy_user/services/live_chat_socket_service.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
@@ -9,11 +10,13 @@ import 'package:get/get.dart';
 class ChatController extends GetxController {
   ChatController({
     required this.chatId,
+    this.otherUserId,
     this.otherUserName,
     this.otherUserImage,
   });
 
   final String chatId;
+  final String? otherUserId;
   final String? otherUserName;
   final String? otherUserImage;
 
@@ -22,9 +25,16 @@ class ChatController extends GetxController {
 
   final Set<int> _messageIds = <int>{};
   void Function(dynamic)? _messageReceivedHandler;
+  String? _resolvedOtherUserId;
 
   String? get currentUserId =>
       AuthController.i.appUser.value.data?.userModel?.sub?.trim();
+
+  String? get receiverId {
+    final fromArgs = otherUserId?.trim();
+    if (fromArgs != null && fromArgs.isNotEmpty) return fromArgs;
+    return _resolvedOtherUserId;
+  }
 
   String get title =>
       otherUserName?.trim().isNotEmpty == true ? otherUserName!.trim() : 'Chat';
@@ -67,13 +77,16 @@ class ChatController extends GetxController {
 
     final item = ChatHistoryMessage.fromJson(payload);
     if (item.chatId.trim() != chatId.trim()) return;
+
+    final userId = currentUserId ?? '';
+    if (userId.isNotEmpty && item.senderId == userId) return;
+
     if (item.id > 0 && _messageIds.contains(item.id)) return;
 
     if (item.id > 0) {
       _messageIds.add(item.id);
     }
 
-    final userId = currentUserId ?? '';
     messages.add(
       ChatModel(
         text: item.content,
@@ -146,6 +159,7 @@ class ChatController extends GetxController {
               ..sort((a, b) => a.id.compareTo(b.id));
 
             final userId = currentUserId ?? '';
+            _resolveOtherUserId(history, userId);
             _messageIds
               ..clear()
               ..addAll(history.map((item) => item.id).where((id) => id > 0));
@@ -169,9 +183,37 @@ class ChatController extends GetxController {
     }
   }
 
-  void addLocalMessage(String text) {
+  void _resolveOtherUserId(List<ChatHistoryMessage> history, String userId) {
+    if (receiverId != null) return;
+    for (final item in history) {
+      if (item.senderId.isNotEmpty && item.senderId != userId) {
+        _resolvedOtherUserId = item.senderId;
+        return;
+      }
+    }
+  }
+
+  void sendMessage(String text) {
     final trimmed = text.trim();
     if (trimmed.isEmpty) return;
+
+    final senderId = currentUserId ?? '';
+    final toUserId = receiverId ?? '';
+    final id = chatId.trim();
+
+    if (senderId.isEmpty || toUserId.isEmpty || id.isEmpty) {
+      LiveChatSocketService.log(
+        'sendMessage skipped: senderId=$senderId receiverId=$toUserId chatId=$id',
+      );
+      return;
+    }
+
+    LiveChatSocketService.instance.sendMessage(
+      senderId: senderId,
+      receiverId: toUserId,
+      chatId: id,
+      content: trimmed,
+    );
 
     messages.add(
       ChatModel(
@@ -179,7 +221,8 @@ class ChatController extends GetxController {
         isSender: false,
         time: DateTime.now(),
         senderName: AuthController.i.appUser.value.data?.userModel?.fullName,
-        senderImage: AuthController.i.appUser.value.data?.userModel?.profileImage,
+        senderImage:
+            AuthController.i.appUser.value.data?.userModel?.profileImage,
       ),
     );
   }

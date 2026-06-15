@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'dart:developer' as developer;
 
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
@@ -123,6 +125,29 @@ class LiveChatSocketService {
 
     log('emit joinChat chatId=$id connected=$isConnected');
     _socket?.emit('joinChat', {'chatId': id});
+  }
+
+  void sendMessage({
+    required String senderId,
+    required String receiverId,
+    required String chatId,
+    required String content,
+    String messageType = 'text',
+  }) {
+    final payload = {
+      'senderId': senderId,
+      'receiverId': receiverId,
+      'chatId': chatId,
+      'clientMsgId': _generateClientMsgId(),
+      'content': content,
+      'messageType': messageType,
+    };
+    log('emit sendMessage: $payload');
+    _socket?.emit('sendMessage', payload);
+  }
+
+  String _generateClientMsgId() {
+    return 'temp-${DateTime.now().millisecondsSinceEpoch}-${Random().nextDouble()}';
   }
 
   void joinChatWhenConnected(String chatId) {
