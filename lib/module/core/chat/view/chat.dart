@@ -165,6 +165,26 @@ class _ChatScreenState extends State<ChatScreen> {
               );
             }),
           ),
+          Obx(() {
+            if (!_controller.isOtherUserTyping.value) {
+              return const SizedBox.shrink();
+            }
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: AppPadding.padding12,
+                vertical: 6.h,
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: CustomText(
+                  text:
+                      '${_controller.otherUserName ?? AppStrings.dummyName} is typing...',
+                  fontSize: 12.sp,
+                  color: AppColors.grey,
+                ),
+              ),
+            );
+          }),
           CustomContainer(
             borderColor: AppColors.transparent,
             radius: 0,
@@ -237,23 +257,24 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget actionWidget() {
-    if (widget.isBooking) {
-      return Padding(
-        padding: EdgeInsets.only(
-          right: AppPadding.padding12,
-          top: 5.h,
-          bottom: 5.h,
-        ),
-        child: CustomContainer(
-          onTap: () {},
-          bgColor: AppColors.orange,
-          child: CustomText(
-            text: AppStrings.booking,
-            color: AppColors.white,
-          ),
-        ),
-      );
-    } else if (widget.isCalls) {
+    // if (widget.isBooking) {
+    //   return Padding(
+    //     padding: EdgeInsets.only(
+    //       right: AppPadding.padding12,
+    //       top: 5.h,
+    //       bottom: 5.h,
+    //     ),
+    //     child: CustomContainer(
+    //       onTap: () {},
+    //       bgColor: AppColors.orange,
+    //       child: CustomText(
+    //         text: AppStrings.booking,
+    //         color: AppColors.white,
+    //       ),
+    //     ),
+    //   );
+    // } else
+    if (widget.isCalls) {
       return Padding(
         padding: EdgeInsets.only(
           right: AppPadding.padding12,
@@ -354,6 +375,7 @@ class _ChatScreenState extends State<ChatScreen> {
         LengthLimitingTextInputFormatter(Constants.descriptionMaxLength),
       ],
       controller: messageController,
+      onchange: _controller.onTypingChanged,
     );
   }
 

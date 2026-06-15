@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/chat/model/chat_history_message_model.dart';
@@ -22,10 +24,15 @@ class ChatController extends GetxController {
 
   final RxList<ChatModel> messages = <ChatModel>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool isOtherUserTyping = false.obs;
 
   final Set<int> _messageIds = <int>{};
   void Function(dynamic)? _messageReceivedHandler;
+  void Function(dynamic)? _userTypingHandler;
   String? _resolvedOtherUserId;
+  Timer? _typingTimer;
+  Timer? _otherUserTypingTimer;
+  bool _isTypingEmitted = false;
 
   String? get currentUserId =>
       AuthController.i.appUser.value.data?.userModel?.sub?.trim();
@@ -51,9 +58,14 @@ class ChatController extends GetxController {
 
   @override
   void onClose() {
+    _stopTyping();
+    _otherUserTypingTimer?.cancel();
     if (_messageReceivedHandler != null) {
       LiveChatSocketService.instance
           .off('messageReceived', _messageReceivedHandler);
+    }
+    if (_userTypingHandler != null) {
+      LiveChatSocketService.instance.off('userTyping', _userTypingHandler);
     }
     super.onClose();
   }
@@ -65,6 +77,8 @@ class ChatController extends GetxController {
       _messageReceivedHandler = _onMessageReceived;
       LiveChatSocketService.instance
           .on('messageReceived', _messageReceivedHandler!);
+      _userTypingHandler = _onUserTyping;
+      LiveChatSocketService.instance.on('userTyping', _userTypingHandler!);
     } catch (e, st) {
       LiveChatSocketService.log('chat init failed: $e\n$st');
     }
@@ -87,6 +101,9 @@ class ChatController extends GetxController {
       _messageIds.add(item.id);
     }
 
+    isOtherUserTyping.value = false;
+    _otherUserTypingTimer?.cancel();
+
     messages.add(
       ChatModel(
         text: item.content,
@@ -107,6 +124,30 @@ class ChatController extends GetxController {
       return Map<String, dynamic>.from(nested);
     }
     return Map<String, dynamic>.from(data);
+  }
+
+  void _onUserTyping(dynamic data) {
+    LiveChatSocketService.log('userTyping (chat): $data');
+    final payload = _parseMessagePayload(data);
+    if (payload == null) return;
+
+    final userId = payload['userId']?.toString().trim() ?? '';
+    final isTyping = payload['isTyping'] == true;
+    final current = currentUserId ?? '';
+
+    if (userId.isEmpty || userId == current) return;
+
+    final other = receiverId ?? '';
+    if (other.isNotEmpty && userId != other) return;
+
+    isOtherUserTyping.value = isTyping;
+    _otherUserTypingTimer?.cancel();
+
+    if (isTyping) {
+      _otherUserTypingTimer = Timer(const Duration(seconds: 3), () {
+        isOtherUserTyping.value = false;
+      });
+    }
   }
 
   Future<void> markChatAsRead() async {
@@ -193,9 +234,41 @@ class ChatController extends GetxController {
     }
   }
 
+  void onTypingChanged(String text) {
+    final id = chatId.trim();
+    if (id.isEmpty) return;
+
+    if (text.trim().isEmpty) {
+      _stopTyping();
+      return;
+    }
+
+    if (!_isTypingEmitted) {
+      LiveChatSocketService.instance.emitTyping(chatId: id, isTyping: true);
+      _isTypingEmitted = true;
+    }
+
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(seconds: 2), _stopTyping);
+  }
+
+  void _stopTyping() {
+    _typingTimer?.cancel();
+    _typingTimer = null;
+    if (!_isTypingEmitted) return;
+
+    final id = chatId.trim();
+    if (id.isEmpty) return;
+
+    LiveChatSocketService.instance.emitTyping(chatId: id, isTyping: false);
+    _isTypingEmitted = false;
+  }
+
   void sendMessage(String text) {
     final trimmed = text.trim();
     if (trimmed.isEmpty) return;
+
+    _stopTyping();
 
     final senderId = currentUserId ?? '';
     final toUserId = receiverId ?? '';

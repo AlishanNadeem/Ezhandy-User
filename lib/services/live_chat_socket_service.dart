@@ -146,6 +146,15 @@ class LiveChatSocketService {
     _socket?.emit('sendMessage', payload);
   }
 
+  void emitTyping({required String chatId, required bool isTyping}) {
+    final id = chatId.trim();
+    if (id.isEmpty) return;
+
+    final payload = {'chatId': id, 'isTyping': isTyping};
+    log('emit typing: $payload');
+    _socket?.emit('typing', payload);
+  }
+
   String _generateClientMsgId() {
     return 'temp-${DateTime.now().millisecondsSinceEpoch}-${Random().nextDouble()}';
   }

@@ -21,6 +21,7 @@ class AffiliateEarningController extends GetxController {
     final response = await DioClient().getRequest(
       endPoint: NetworkStrings.myReferralsEndpoint,
       isHeaderRequire: true,
+      isLoader: false,
     );
 
     await DioClient().validateResponse(

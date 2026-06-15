@@ -52,152 +52,160 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
         appBarheight: 50,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      20.verticalSpace,
-                      CustomText(
-                          text: AppStrings.yourReferralCode,
-                          is_alignLeft: false,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold),
-                      10.verticalSpace,
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
-                        child: Obx(() {
-                          final apiCode = _controller
-                              .referralData.value?['referralCode']
-                              ?.toString()
-                              .trim();
-                          final authCode = AuthController.i
-                                  .appUser
-                                  .value
-                                  .data
-                                  ?.userModel
-                                  ?.referralCode
-                                  ?.trim() ??
-                              '';
-                          final code = (apiCode != null && apiCode.isNotEmpty)
-                              ? apiCode
-                              : authCode;
-                          final display = code.isNotEmpty ? code : '—';
-                          return CustomContainer(
-                            borderColor: AppColors.orange,
-                            isPadding: false,
-                            radius: 35.r,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+          child: Obx(() {
+            if (_controller.isLoading.value) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.orange),
+              );
+            }
+
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        20.verticalSpace,
+                        CustomText(
+                            text: AppStrings.yourReferralCode,
+                            is_alignLeft: false,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold),
+                        10.verticalSpace,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 50),
+                          child: Obx(() {
+                            final apiCode = _controller
+                                .referralData.value?['referralCode']
+                                ?.toString()
+                                .trim();
+                            final authCode = AuthController.i
+                                    .appUser
+                                    .value
+                                    .data
+                                    ?.userModel
+                                    ?.referralCode
+                                    ?.trim() ??
+                                '';
+                            final code = (apiCode != null && apiCode.isNotEmpty)
+                                ? apiCode
+                                : authCode;
+                            final display = code.isNotEmpty ? code : '—';
+                            return CustomContainer(
+                              borderColor: AppColors.orange,
+                              isPadding: false,
+                              radius: 35.r,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    CustomText(
+                                        text: display,
+                                        color: AppColors.orange,
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w600),
+                                    20.horizontalSpace,
+                                    CustomButton(
+                                      borderRadius: 35.r,
+                                      width: 80.w,
+                                      text: "Copy",
+                                      onclick: code.isEmpty
+                                          ? null
+                                          : () async {
+                                              await Clipboard.setData(
+                                                ClipboardData(text: code),
+                                              );
+                                              ToastMessage(
+                                                toastmsg:
+                                                    'Referral code copied to clipboard',
+                                              );
+                                            },
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        20.verticalSpace,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 90.w),
+                          child: Obx(() {
+                            final raw =
+                                _controller.referralData.value?['totalEarned'];
+                            final amountLabel = _earningLabel(raw);
+                            return CustomContainer(
+                              borderColor: AppColors.orange,
+                              child: Column(
                                 children: [
                                   CustomText(
-                                      text: display,
-                                      color: AppColors.orange,
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.w600),
-                                  20.horizontalSpace,
-                                  CustomButton(
-                                    borderRadius: 35.r,
-                                    width: 80.w,
-                                    text: "Copy",
-                                    onclick: code.isEmpty
-                                        ? null
-                                        : () async {
-                                            await Clipboard.setData(
-                                              ClipboardData(text: code),
-                                            );
-                                            ToastMessage(
-                                              toastmsg:
-                                                  'Referral code copied to clipboard',
-                                            );
-                                          },
+                                    text: amountLabel,
+                                    color: AppColors.orange,
+                                    is_alignLeft: false,
+                                  ),
+                                  CustomText(
+                                    text: AppStrings.totalEarnings,
+                                    is_alignLeft: false,
                                   )
                                 ],
                               ),
-                            ),
-                          );
-                        }),
-                      ),
-                      20.verticalSpace,
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 90.w),
-                        child: Obx(() {
-                          final raw =
-                              _controller.referralData.value?['totalEarned'];
-                          final amountLabel = _earningLabel(raw);
-                          return CustomContainer(
-                            borderColor: AppColors.orange,
-                            child: Column(
-                              children: [
-                                CustomText(
-                                  text: amountLabel,
-                                  color: AppColors.orange,
-                                  is_alignLeft: false,
-                                ),
-                                CustomText(
-                                  text: AppStrings.totalEarnings,
-                                  is_alignLeft: false,
-                                )
-                              ],
-                            ),
-                          );
-                        }),
-                      ),
-                      20.verticalSpace,
-                      Obx(() {
-                        final list = _controller.referrals;
-                        return ListView.separated(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: list.length,
-                          itemBuilder: (context, index) {
-                            final r = list[index];
-                            return singleWidget(
-                              name: r['referredUserName']?.toString() ??
-                                  AppStrings.dummyName,
-                              lastMes: r['referredEmail']?.toString() ??
-                                  AppStrings.lorem5,
-                              earning: r['earning'],
-                              image: resolveMediaUrl(
-                                r['referredUserProfileImage'],
-                              ),
                             );
-                          },
-                          separatorBuilder: (context, index) {
-                            return 20.verticalSpace;
-                          },
-                        );
-                      }),
-                      25.verticalSpace,
-                    ],
+                          }),
+                        ),
+                        20.verticalSpace,
+                        Obx(() {
+                          final list = _controller.referrals;
+                          return ListView.separated(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: list.length,
+                            itemBuilder: (context, index) {
+                              final r = list[index];
+                              return singleWidget(
+                                name: r['referredUserName']?.toString() ??
+                                    AppStrings.dummyName,
+                                lastMes: r['referredEmail']?.toString() ??
+                                    AppStrings.lorem5,
+                                earning: r['earning'],
+                                image: resolveMediaUrl(
+                                  r['referredUserProfileImage'],
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return 20.verticalSpace;
+                            },
+                          );
+                        }),
+                        25.verticalSpace,
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              CustomButton(
-                text: AppStrings.withdraw,
-                onclick: () {
-                  AppDialogs.showSuccessDialog(context,
-                      description: AppStrings.amountToBankAccount,
-                      title: AppStrings.withdraw + "!",
-                      image: AssetPath.bankIcon,
-                      isDoneShow: false,
-                      btnTxt1: AppStrings.cancel,
-                      onTap1: () {
-                        AppNavigation.navigatorPop(context);
-                      },
-                      btnTxt2: AppStrings.confirm,
-                      onTap2: () {
-                        AppNavigation.navigatorPop(context);
-                      });
-                },
-              ),
-              25.verticalSpace
-            ],
-          ),
+                CustomButton(
+                  text: AppStrings.withdraw,
+                  onclick: () {
+                    AppDialogs.showSuccessDialog(context,
+                        description: AppStrings.amountToBankAccount,
+                        title: AppStrings.withdraw + "!",
+                        image: AssetPath.bankIcon,
+                        isDoneShow: false,
+                        btnTxt1: AppStrings.cancel,
+                        onTap1: () {
+                          AppNavigation.navigatorPop(context);
+                        },
+                        btnTxt2: AppStrings.confirm,
+                        onTap2: () {
+                          AppNavigation.navigatorPop(context);
+                        });
+                  },
+                ),
+                25.verticalSpace
+              ],
+            );
+          }),
         ));
   }
 
