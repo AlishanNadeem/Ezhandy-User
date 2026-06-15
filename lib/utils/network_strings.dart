@@ -15,6 +15,8 @@ class NetworkStrings {
       //live
       "http://168.231.74.154:6252";
 
+  static const String SOCKET_BASE_URL = IMAGE_BASE_URL;
+
   static const String ACCEPT = 'application/json';
   static const int SUCCESS_CODE = 200;
   static const int NOT_FOUND_CODE = 400;
@@ -169,11 +171,19 @@ class NetworkStrings {
   static const String askProQueryEndpoint = 'ask-pro/query';
 
   /// GET [live-chat/my-chats] — current user's chat list (auth).
+  /// Filter by `chatType` client-side (`private` / `ask_pro`).
   static const String myChatsEndpoint = 'live-chat/my-chats';
+
+  /// POST [live-chat/find-or-create] — find or create private chat (auth).
+  static const String liveChatFindOrCreateEndpoint =
+      'live-chat/find-or-create';
 
   /// GET [live-chat/{chatId}/history/chat] — chat message history (auth).
   static String chatHistory(String chatId) =>
       'live-chat/$chatId/history/chat';
+
+  /// PATCH [live-chat/{chatId}/read] — mark chat as read (auth).
+  static String chatRead(String chatId) => 'live-chat/$chatId/read';
 
   /// GET [categories] — category list with UUID ids (auth).
   static const String categoriesEndpoint = 'categories';
