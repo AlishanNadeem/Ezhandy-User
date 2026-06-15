@@ -1,7 +1,5 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
-import 'dart:developer';
-import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
-import 'package:ezhandy_user/module/core/chat/model/chat_history_message_model.dart';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';import 'package:ezhandy_user/module/core/chat/model/chat_history_message_model.dart';
 import 'package:ezhandy_user/module/core/chat/model/chat_model.dart';
 import 'package:ezhandy_user/services/live_chat_socket_service.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
@@ -82,6 +80,7 @@ class ChatController extends GetxController {
         isSender: userId.isEmpty || item.senderId != userId,
         time: item.createdAt ?? DateTime.now(),
         senderName: item.senderName,
+        senderImage: item.senderImage,
       ),
     );
     markChatAsRead();
@@ -157,6 +156,7 @@ class ChatController extends GetxController {
                   isSender: userId.isEmpty || item.senderId != userId,
                   time: item.createdAt ?? DateTime.now(),
                   senderName: item.senderName,
+                  senderImage: item.senderImage,
                 ),
               ),
             );
@@ -179,6 +179,7 @@ class ChatController extends GetxController {
         isSender: false,
         time: DateTime.now(),
         senderName: AuthController.i.appUser.value.data?.userModel?.fullName,
+        senderImage: AuthController.i.appUser.value.data?.userModel?.profileImage,
       ),
     );
   }

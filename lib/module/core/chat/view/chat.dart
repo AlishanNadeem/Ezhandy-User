@@ -152,6 +152,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         name: _displayName(current),
                         text: current.text,
                         isSender: current.isSender,
+                        image: _displayImage(current),
                       ),
                     ],
                   );
@@ -215,6 +216,17 @@ class _ChatScreenState extends State<ChatScreen> {
     return message.senderName?.trim().isNotEmpty == true
         ? message.senderName!
         : (_controller.otherUserName ?? AppStrings.dummyName);
+  }
+
+  String _displayImage(ChatModel message) {
+    if (message.isSender) {
+      return message.senderImage?.trim().isNotEmpty == true
+          ? message.senderImage!
+          : (_controller.otherUserImage ?? '');
+    }
+    return message.senderImage?.trim().isNotEmpty == true
+        ? message.senderImage!
+        : (AuthController.i.appUser.value.data?.userModel?.profileImage ?? '');
   }
 
   String _formatMessageTime(DateTime dateTime) {

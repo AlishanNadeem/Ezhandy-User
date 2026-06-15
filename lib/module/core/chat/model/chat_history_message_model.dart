@@ -8,6 +8,7 @@ class ChatHistoryMessage {
   final String senderId;
   final String chatId;
   final String? senderName;
+  final String? senderImage;
   final DateTime? createdAt;
 
   ChatHistoryMessage({
@@ -18,15 +19,19 @@ class ChatHistoryMessage {
     required this.senderId,
     required this.chatId,
     this.senderName,
+    this.senderImage,
     this.createdAt,
   });
 
   factory ChatHistoryMessage.fromJson(Map<String, dynamic> json) {
     final sender = json['sender'];
     String? name;
+    String? image;
     if (sender is Map) {
       name = sender['fullName']?.toString().trim();
       if (name != null && name.isEmpty) name = null;
+      image = sender['profileImage']?.toString().trim();
+      if (image != null && image.isEmpty) image = null;
     }
 
     return ChatHistoryMessage(
@@ -37,6 +42,7 @@ class ChatHistoryMessage {
       senderId: json['senderId']?.toString() ?? '',
       chatId: json['chatId']?.toString() ?? '',
       senderName: name,
+      senderImage: image,
       createdAt: MyChatItem.parseDateTime(json['createdAt']),
     );
   }
