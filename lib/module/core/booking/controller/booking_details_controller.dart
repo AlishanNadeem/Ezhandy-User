@@ -19,6 +19,7 @@ class BookingDetailsController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isCancelling = false.obs;
   final RxBool isEndingWork = false.obs;
+  final RxBool isOpeningChat = false.obs;
   final Rxn<BookingDetail> detail = Rxn<BookingDetail>();
   final RxString statusOverride = ''.obs;
 
@@ -131,9 +132,64 @@ class BookingDetailsController extends GetxController {
     );
   }
 
-  bool get showChatAction =>
-      showActionButtons &&
-      (isInRoute || isStarted || isCompletedUnPaid);
+  bool get showChatAction => !isPending && !isRejected && !isCancelled;
+
+  String? get providerId => detail.value?.provider?.id.trim();
+
+  Future<String?> findOrCreateChatWithProvider() async {
+    final otherUserId = providerId ?? '';
+    if (otherUserId.isEmpty) return null;
+    if (isOpeningChat.value) return null;
+
+    isOpeningChat.value = true;
+    String? chatId;
+
+    try {
+      final response = await DioClient().postRequest(
+        endPoint: NetworkStrings.liveChatFindOrCreateEndpoint,
+        data: <String, dynamic>{'otherUserId': otherUserId},
+        isHeaderRequire: true,
+      );
+
+      await DioClient().validateResponse(
+        response: response,
+        responseListener: CallbackResponseListener(
+          onSuccessCallback: (res) => chatId = _extractChatId(res),
+          onFailureCallback: (_) => chatId = null,
+        ),
+        message: true,
+      );
+    } finally {
+      isOpeningChat.value = false;
+    }
+
+    return chatId;
+  }
+
+  static String? _extractChatId(dynamic response) {
+    dynamic payload = response is Map ? response['data'] : null;
+    if (payload is Map && payload['data'] != null) {
+      payload = payload['data'];
+    }
+    if (payload is! Map) return null;
+
+    final map = Map<String, dynamic>.from(payload);
+    for (final key in ['chatId', 'id']) {
+      final value = map[key]?.toString().trim();
+      if (value != null && value.isNotEmpty) return value;
+    }
+
+    final chat = map['chat'];
+    if (chat is Map) {
+      final chatMap = Map<String, dynamic>.from(chat);
+      for (final key in ['chatId', 'id']) {
+        final value = chatMap[key]?.toString().trim();
+        if (value != null && value.isNotEmpty) return value;
+      }
+    }
+
+    return null;
+  }
 
   @override
   void onInit() {

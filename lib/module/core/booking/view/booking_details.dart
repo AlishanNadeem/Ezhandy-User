@@ -57,6 +57,36 @@ class _BookingDetailsState extends State<BookingDetails> {
     super.dispose();
   }
 
+  Future<void> _onChatTap(
+    BuildContext context,
+    BookingDetail? detail,
+  ) async {
+    final provider = detail?.provider;
+    if (provider == null || provider.id.trim().isEmpty) {
+      AppDialogs.showToast(message: 'Provider details are not available.');
+      return;
+    }
+
+    final chatId = await _controller.findOrCreateChatWithProvider();
+    if (!context.mounted) return;
+
+    if (chatId == null || chatId.isEmpty) {
+      AppDialogs.showToast(message: 'Unable to open chat.');
+      return;
+    }
+
+    AppNavigation.navigateTo(
+      context,
+      AppRoutes.chatScreenRoute,
+      arguments: ChatRoutingArgument(
+        isBooking: true,
+        chatId: chatId,
+        otherUserName: provider.fullName,
+        otherUserImage: provider.profileImage,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -72,16 +102,14 @@ class _BookingDetailsState extends State<BookingDetails> {
               ? Padding(
                   padding: const EdgeInsets.only(right: AppPadding.padding12),
                   child: GestureDetector(
-                      onTap: () {
-                        AppNavigation.navigateTo(
-                            context, AppRoutes.chatScreenRoute,
-                            arguments:
-                                ChatRoutingArgument(isBooking: false));
-                      },
+                      onTap: c.isOpeningChat.value
+                          ? null
+                          : () => _onChatTap(context, detail),
                       child: Image.asset(
                         AssetPath.messageIcon,
                         width: 30.w,
-                        height: 30.h,
+                        height: 30.w,
+                        fit: BoxFit.contain,
                       )))
               : null,
           child: _controller.isLoading.value
