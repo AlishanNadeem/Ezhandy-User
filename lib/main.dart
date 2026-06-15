@@ -49,12 +49,14 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
-  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-  //     // Set the color of the enter key
-
-  //     // systemNavigationBarColor:
-  //     //     AppColors.gradient_3, // Change this color to whatever you want
-  //     ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       
     runApp(MyApp());
@@ -111,9 +113,16 @@ class MyApp extends StatelessWidget {
                 // primaryColor: Colors.blue, // Set your primary color here
                 // scaffoldBackgroundColor: Colors.white,
                 scaffoldBackgroundColor: AppColors.black,
-                fontFamily: AppStrings.montserrat,
+                fontFamily: AppStrings.quicksand,
                 primarySwatch: customColor,
                 unselectedWidgetColor: AppColors.transparent,
+                appBarTheme: const AppBarTheme(
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness: Brightness.dark,
+                    statusBarBrightness: Brightness.light,
+                  ),
+                ),
                 colorScheme: ColorScheme.fromSwatch()
                     .copyWith(primary: AppColors.orange)),
             navigatorObservers: [
@@ -123,12 +132,22 @@ class MyApp extends StatelessWidget {
             navigatorKey: Constants.navigatorKey,
             builder: (context, child) {
               child = botToastBuilder(context, child);
-              return ScrollConfiguration(
+              return AnnotatedRegion<SystemUiOverlayStyle>(
+                value: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.light,
+                  systemNavigationBarIconBrightness: Brightness.dark,
+                ),
+                child: ScrollConfiguration(
                   behavior: MyScrollBehavior(),
                   child: MediaQuery(
-                      data: MediaQuery.of(context)
-                          .copyWith(textScaler: TextScaler.linear(1.0)),
-                      child: child));
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: TextScaler.linear(1.0)),
+                    child: child,
+                  ),
+                ),
+              );
             },
           );
         });

@@ -1,7 +1,8 @@
 class AppStrings {
   static const appTitle = 'Burn Over';
   //==================Font Family======================
-  static const String montserrat = 'Montserrat';
+  static const String quicksand = 'Quicksand';
+  static const String montserrat = quicksand;
 //===================Formate of Date======================
   static const String MMM_DD_YYYY_FORMAT = 'MMM dd, yyyy';
   static const String MMMM_DD_YYYY_FORMAT = 'MMMM dd, yyyy';

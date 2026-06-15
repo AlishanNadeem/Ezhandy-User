@@ -48,7 +48,7 @@ class CustomText extends StatelessWidget {
         text ?? "",
         style: TextStyle(
             fontFeatures: fontFeatures,
-            fontFamily: fontFamily ?? AppStrings.montserrat,
+            fontFamily: fontFamily ?? AppStrings.quicksand,
             height: height
             // ?? 1.5
             ,

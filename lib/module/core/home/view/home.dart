@@ -131,7 +131,7 @@ class _HomeState extends State<Home> {
               CustomText(
                   text:
                       "${Utils.capitalizeWords(AuthController.i.appUser.value.data?.userModel?.fullName ?? "dummy")}",
-                  fontFamily: AppStrings.montserrat,
+                  fontFamily: AppStrings.quicksand,
                   // color: AppColors.blueDark,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold),
