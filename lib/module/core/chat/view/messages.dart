@@ -2,6 +2,7 @@ import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/chat/controller/messages_controller.dart';
 import 'package:ezhandy_user/module/core/chat/model/my_chat_model.dart';
 import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/module/core/main_menu/main_menu_user.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -29,11 +30,29 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  final MessagesController _controller = Get.put(MessagesController());
+  static const _messagesTabIndex = 1;
+
+  late final MessagesController _controller;
+  late final Worker _tabWorker;
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _controller = Get.put(MessagesController(autoFetchOnInit: false));
+    _tabWorker = ever<int>(HomeController.i.selectedTab, (tab) {
+      if (tab == _messagesTabIndex) {
+        _controller.fetchMyChats();
+      }
+    });
+    if (HomeController.i.selectedTab.value == _messagesTabIndex) {
+      _controller.fetchMyChats();
+    }
+  }
+
+  @override
   void dispose() {
+    _tabWorker.dispose();
     _searchController.dispose();
     if (Get.isRegistered<MessagesController>()) {
       Get.delete<MessagesController>();
@@ -55,7 +74,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
             text: 'Pro Chats',
             color: AppColors.black,
             onclick: () {
-              AppNavigation.navigateTo(context, AppRoutes.proChatScreenRoute);
+              Navigator.pushNamed(context, AppRoutes.proChatScreenRoute)
+                  .then((_) {
+                if (mounted) _controller.fetchMyChats();
+              });
             },
           ),
           Expanded(
@@ -89,7 +111,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     return singleWidget(
                       chat: chat,
                       ontap: () {
-                        AppNavigation.navigateTo(
+                        Navigator.pushNamed(
                           context,
                           AppRoutes.chatScreenRoute,
                           arguments: ChatRoutingArgument(
@@ -99,7 +121,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                             otherUserName: chat.displayName,
                             otherUserImage: chat.otherUser.profileImage,
                           ),
-                        );
+                        ).then((_) {
+                          if (mounted) _controller.fetchMyChats();
+                        });
                       },
                     );
                   },

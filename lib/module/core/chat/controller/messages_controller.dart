@@ -5,9 +5,10 @@ import 'package:ezhandy_user/utils/listeners.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:get/get.dart';
 class MessagesController extends GetxController {
-  MessagesController({this.chatType = 'private'});
+  MessagesController({this.chatType = 'private', this.autoFetchOnInit = true});
 
   final String chatType;
+  final bool autoFetchOnInit;
 
   final RxList<MyChatItem> chats = <MyChatItem>[].obs;
   final RxBool isLoading = false.obs;
@@ -32,7 +33,9 @@ class MessagesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchMyChats();
+    if (autoFetchOnInit) {
+      fetchMyChats();
+    }
     _initSocket();
   }
 
