@@ -74,6 +74,7 @@ dependencies:
   webview_flutter: 4.4.4
   webview_flutter_android: ^3.16.9
   webview_flutter_wkwebview: 3.23.0
+  socket_io_client: ^3.1.6
 
 dev_dependencies:
   flutter_test:
