@@ -17,7 +17,6 @@ import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/app_logo.dart';
 import 'package:ezhandy_user/widgets/profile_widget/profile_picture_widget.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
-import 'package:ezhandy_user/widgets/text_widgets/rich_text_widget.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,68 +55,85 @@ class _SignUpFormState extends State<SignUpForm> {
       padding: const EdgeInsets.symmetric(
         horizontal: AppPadding.padding16,
       ),
-      child: Column(
-        children: [
-          // Non-scrollable content (e.g., logo)
-          AppLogo(scale: 5.sp),
-          15.verticalSpace,
-          createAccountTextWidget(),
-          5.verticalSpace,
-          CustomText(
-              is_alignLeft: false, text: AppStrings.createYouAccountText),
-          25.verticalSpace,
-          // Scrollable content starts here
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: signUpKey,
-                child: Column(
-                  children: [
-                    CustomText(text: AppStrings.fullName + "*"),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            AppLogo(scale: 5.sp),
+            15.verticalSpace,
+            createAccountTextWidget(),
+            5.verticalSpace,
+            CustomText(
+                is_alignLeft: false, text: AppStrings.createYouAccountText),
+            25.verticalSpace,
+            Form(
+              key: signUpKey,
+              child: Column(
+                children: [
+                  CustomText(text: AppStrings.fullName + "*"),
+                  10.verticalSpace,
+                  _fullNameTextField(),
+                  SizedBox(height: 0.02.sh),
+                  CustomText(text: AppStrings.emailAddress + "*"),
+                  10.verticalSpace,
+                  _emailTextField(),
+                  SizedBox(height: 0.02.sh),
+                  CustomText(
+                      text: AppStrings.phoneNumber + AppStrings.optional),
+                  10.verticalSpace,
+                  _phoneNumberTextField(),
+                  SizedBox(height: 0.02.sh),
+                  CustomText(text: AppStrings.password + "*"),
+                  10.verticalSpace,
+                  _passwordTextField(),
+                  SizedBox(height: 0.02.sh),
+                  CustomText(text: AppStrings.confirmPassword + "*"),
+                  10.verticalSpace,
+                  _confirmPasswordTextField(),
+                  SizedBox(height: 0.02.sh),
+                  CustomText(text: AppStrings.referralCode),
+                  10.verticalSpace,
+                  _sportTextField(),
+                  SizedBox(height: 0.02.sh),
+                  CustomText(text: AppStrings.uploadProfileImage),
+                  10.verticalSpace,
+                  _uploadTextField(),
+                  if (_profileImage != null) ...[
                     10.verticalSpace,
-                    _fullNameTextField(),
-                    SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.emailAddress + "*"),
-                    10.verticalSpace,
-                    _emailTextField(),
-                    SizedBox(height: 0.02.sh),
-                    CustomText(
-                        text: AppStrings.phoneNumber + AppStrings.optional),
-                    10.verticalSpace,
-                    _phoneNumberTextField(),
-                    SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.password + "*"),
-                    10.verticalSpace,
-                    _passwordTextField(),
-                    SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.confirmPassword + "*"),
-                    10.verticalSpace,
-                    _confirmPasswordTextField(),
-                    SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.referralCode),
-                    10.verticalSpace,
-                    _sportTextField(),
-                    // SizedBox(height: 0.02.sh),
-                    // CustomText(text: AppStrings.status + "*"),
-                    // 10.verticalSpace,
-                    // _statusTextField(),
-                    SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.uploadProfileImage ),
-                    10.verticalSpace,
-                    _uploadTextField(),
-                    SizedBox(height: 0.02.sh),
-                    _signUpButton(context: context),
-                    SizedBox(height: 0.02.sh),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15.r),
+                        child: Image.file(
+                          _profileImage!,
+                          height: 100.h,
+                          width: 150.w,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    8.verticalSpace,
+                    GestureDetector(
+                      onTap: _removeImage,
+                      child: CustomText(
+                        text: 'Remove image',
+                        color: AppColors.orange,
+                        fontWeight: FontWeight.bold,
+                        textDecoration: TextDecoration.underline,
+                      ),
+                    ),
                   ],
-                ),
+                  SizedBox(height: 0.02.sh),
+                  _signUpButton(context: context),
+                  SizedBox(height: 0.02.sh),
+                ],
               ),
             ),
-          ),
-          Visibility(
-              visible: !widget.keyboardVisible,
-              child: alreadyHaveAnAccountWidget()),
-          Visibility(visible: !widget.keyboardVisible, child: 25.verticalSpace)
-        ],
+            Visibility(
+                visible: !widget.keyboardVisible,
+                child: alreadyHaveAnAccountWidget()),
+            Visibility(visible: !widget.keyboardVisible, child: 25.verticalSpace)
+          ],
+        ),
       ),
     );
   }
@@ -133,7 +149,14 @@ class _SignUpFormState extends State<SignUpForm> {
   _setFile(File? file) {
     setState(() {
       _profileImage = file;
-      uploadController.text = file?.path ?? "";
+      uploadController.text = file != null ? 'Change image' : '';
+    });
+  }
+
+  void _removeImage() {
+    setState(() {
+      _profileImage = null;
+      uploadController.clear();
     });
   }
 
@@ -201,16 +224,28 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   Widget alreadyHaveAnAccountWidget() {
-    return RichTextWidget(
-        text: AppStrings.alreadyHaveAnAccount,
-        subText: AppStrings.logIn,
-        onSubTextPress: () {
-          FocusScope.of(context).unfocus();
-          AppNavigation.navigatorPop(context);
-
-          // AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
-          // Get.toNamed(Paths.SIGNUP_SCREEN_ROUTE);
-        });
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CustomText(
+          text: AppStrings.alreadyHaveAnAccount,
+          is_alignLeft: false,
+        ),
+        GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            AppNavigation.navigatorPop(context);
+          },
+          child: CustomText(
+            text: AppStrings.logIn,
+            color: AppColors.orange,
+            fontWeight: FontWeight.bold,
+            textDecoration: TextDecoration.underline,
+            is_alignLeft: false,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _uploadTextField() {
