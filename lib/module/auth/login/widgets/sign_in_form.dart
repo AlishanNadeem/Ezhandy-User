@@ -69,62 +69,54 @@ class _SignInFormState extends State<SignInForm> {
       padding: const EdgeInsets.symmetric(
         horizontal: AppPadding.padding16,
       ),
-      child: Column(
-        children: [
-          // Non-scrollable content (e.g., logo)
-          AppLogo(scale: 3.5.sp),
-          15.verticalSpace,
-          signInTextWidget(),
-          5.verticalSpace,
-          CustomText(
-            text: AppStrings.accountDetails,
-            is_alignLeft: false,
-          ),
-
-          25.verticalSpace,
-          // Scrollable content starts here
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: signInKey,
-                child: Column(
-                  children: [
-                    CustomText(text: AppStrings.email + "*"),
-                    10.verticalSpace,
-                    _emailTextField(),
-                    SizedBox(height: 0.02.sh),
-                    CustomText(text: AppStrings.password + "*"),
-                    10.verticalSpace,
-                    _passwordTextField(),
-                    SizedBox(height: 0.02.sh),
-                    _rememberMeForgetPasswordRow(context: context),
-                    SizedBox(height: 0.04.sh),
-                    _signInButton(context: context),
-                    // SizedBox(height: 0.04.sh),
-                    // orWidget(),
-                    // SizedBox(height: 0.04.sh),
-                    // otherMethodsWidget(),
-                    SizedBox(height: 0.02.sh),
-                    CustomButton(
-                      onclick: () {
-                        AuthController.i.isLoginSignUp.value = false;
-                        AppNavigation.navigateToRemovingAll(
-                            context, AppRoutes.mainMenuScreenRoute);
-                      },
-                      width: 100.w,
-                      text: AppStrings.skip,
-                      color: AppColors.black,
-                    ),
-                  ],
-                ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            AppLogo(scale: 3.5.sp),
+            15.verticalSpace,
+            signInTextWidget(),
+            5.verticalSpace,
+            CustomText(
+              text: AppStrings.accountDetails,
+              is_alignLeft: false,
+            ),
+            25.verticalSpace,
+            Form(
+              key: signInKey,
+              child: Column(
+                children: [
+                  CustomText(text: AppStrings.email + "*"),
+                  10.verticalSpace,
+                  _emailTextField(),
+                  SizedBox(height: 0.02.sh),
+                  CustomText(text: AppStrings.password + "*"),
+                  10.verticalSpace,
+                  _passwordTextField(),
+                  SizedBox(height: 0.02.sh),
+                  _rememberMeForgetPasswordRow(context: context),
+                  SizedBox(height: 0.04.sh),
+                  _signInButton(context: context),
+                  SizedBox(height: 0.02.sh),
+                  CustomButton(
+                    onclick: () {
+                      AuthController.i.isLoginSignUp.value = false;
+                      AppNavigation.navigateToRemovingAll(
+                          context, AppRoutes.mainMenuScreenRoute);
+                    },
+                    width: 100.w,
+                    text: AppStrings.skip,
+                    color: AppColors.black,
+                  ),
+                ],
               ),
             ),
-          ),
-          Visibility(
-              visible: !widget.keyboardVisible,
-              child: dontHaveAnAccountWidget()),
-          Visibility(visible: !widget.keyboardVisible, child: 25.verticalSpace)
-        ],
+            Visibility(
+                visible: !widget.keyboardVisible,
+                child: dontHaveAnAccountWidget()),
+            Visibility(
+                visible: !widget.keyboardVisible, child: 25.verticalSpace)
+          ],
+        ),
       ),
     );
   }
