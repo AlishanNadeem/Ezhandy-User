@@ -168,11 +168,10 @@ class _ProductDetailState extends State<ProductDetail> {
                   image: AssetPath.emailIcon,
                   title: product['owner']?['email']?.toString() ?? '',
                 ),
-              if ((product['owner']?['phone']?.toString().trim() ?? '')
-                  .isNotEmpty)
+              if (_ownerPhoneNumber(product).isNotEmpty)
                 detailsRow(
                   image: AssetPath.callIcon,
-                  title: product['owner']?['phone']?.toString() ?? '',
+                  title: _ownerPhoneNumber(product),
                 ),
               10.verticalSpace,
             ],
@@ -180,6 +179,13 @@ class _ProductDetailState extends State<ProductDetail> {
         ),
       ),
     );
+  }
+
+  String _ownerPhoneNumber(Map<String, dynamic> product) {
+    final owner = product['owner'];
+    if (owner is! Map) return '';
+
+    return owner['mobileNumber']?.toString().trim() ?? '';
   }
 
   // ── Details Row ──
