@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
@@ -102,9 +101,8 @@ class _SplashSliderScreenState extends State<SplashSliderScreen> {
                 12.horizontalSpace,
                 GestureDetector(
                   onTap: () {
-                    AuthController.i.isLoginSignUp.value = false;
                     AppNavigation.navigateToRemovingAll(
-                        context, AppRoutes.mainMenuScreenRoute);
+                        context, AppRoutes.loginScreenRoute);
                   },
                   child: CustomText(
                     text: AppStrings.skip,
