@@ -267,7 +267,10 @@ class AppRouter {
           case AppRoutes.addEditProductScreenRoute:
             AddEditProductRoutingArgument productArgument =
                 routeSettings.arguments as AddEditProductRoutingArgument;
-            return AddEditProduct(type: productArgument.type ?? "");
+            return AddEditProduct(
+              type: productArgument.type ?? "",
+              product: productArgument.product,
+            );
           case AppRoutes.productDetailScreenRoute:
             return ProductDetail();
           case AppRoutes.addToCartScreenRoute:

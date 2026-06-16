@@ -22,12 +22,15 @@ import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/module/core/products/controller/market_place_controller.dart';
 import 'package:ezhandy_user/module/core/products/controller/product_controller.dart';
 
 class AddEditProduct extends StatefulWidget {
-  String type;
-  AddEditProduct({required this.type, super.key});
+  final String type;
+  final Map<String, dynamic>? product;
+
+  AddEditProduct({required this.type, this.product, super.key});
 
   @override
   State<AddEditProduct> createState() => _AddEditProductState();
@@ -47,73 +50,81 @@ class _AddEditProductState extends State<AddEditProduct> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController messageController = TextEditingController();
   bool keyboardVisible = false;
-  List documentList = [];
+  List<File> documentList = [];
+  String? existingImageUrl;
+  String? editingProductId;
   String? categoryValue;
-  var categoryList = [
-    "Adhesives",
-    "Allen keys",
-    "Angle grinders",
-    "Chalk lines",
-    "Chisels & hand planes",
-    "Circular saws",
-    "Circuit testers",
-    "Crimping tools",
-    "Drill bit sets & blade replacements",
-    "Drills",
-    "Drop cloths & painter’s tape",
-    "Ear protection",
-    "Electrical tape",
-    "Extension ladders",
-    "Faucet & basin wrenches",
-    "Fish tape",
-    "Hand saws",
-    "Hard hats",
-    "Hammers",
-    "Heat guns",
-    "Impact drivers",
-    "Jigsaws",
-    "Knee pads",
-    "Levels",
-    "Measuring & marking tools",
-    "Nail guns & staplers",
-    "Nail sets & hammers",
-    "Paint brushes",
-    "Paint sprayers",
-    "Pipe cutters",
-    "Pipe wrenches",
-    "Pliers",
-    "Power drills",
-    "Putty knives & scrapers",
-    "Reciprocating saws",
-    "Rollers & roller trays",
-    "Rotary tools",
-    "Safety goggles",
-    "Sanders",
-    "Sandpaper & sanding blocks",
-    "Saws",
-    "Screws, nails, bolts, anchors",
-    "Screwdrivers",
-    "Step ladders",
-    "Stud finders",
-    "Tape measures & rulers",
-    "Teflon tape & sealant tools",
-    "Tool belts & pouches",
-    "Toolboxes & storage cases",
-    "Utility knives & blades",
-    "Voltage testers & multimeters",
-    "Wire cutters & strippers",
-    "Work gloves",
-    "Workbenches"
-  ];
+
+  @override
   void initState() {
-
-     _productController = Get.put(ProductController());
-
-    if (AddEditType.edit.name == widget.type) {
-      setController();
-    }
-    // TODO: implement initState
     super.initState();
+    _productController = Get.put(ProductController());
+
+    if (AddEditType.edit.name == widget.type && widget.product != null) {
+      _populateFromProduct(widget.product!);
+    }
+
+    ever<List<dynamic>>(_productController.categoryList, (_) {
+      _syncCategorySelection();
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _syncCategorySelection();
+    });
+  }
+
+  void _syncCategorySelection() {
+    if (_productController.categoryList.isEmpty || !mounted) return;
+
+    final resolvedName = _resolveCategoryDropdownValue(
+      _productController.categoryList
+          .map((e) => e['name']?.toString() ?? '')
+          .where((name) => name.isNotEmpty)
+          .toList(),
+    );
+
+    if (resolvedName == null) return;
+
+    String? resolvedId = _productController.selectedCategoryId;
+    for (final category in _productController.categoryList) {
+      if (category['name']?.toString() == resolvedName) {
+        resolvedId = category['id']?.toString();
+        break;
+      }
+    }
+
+    if (categoryValue == resolvedName &&
+        _productController.selectedCategoryId == resolvedId) {
+      return;
+    }
+
+    setState(() {
+      categoryValue = resolvedName;
+      _productController.selectedCategoryId = resolvedId;
+    });
+  }
+
+  String? _resolveCategoryDropdownValue(List<String> categoryNames) {
+    if (categoryNames.isEmpty) return null;
+
+    if (categoryValue != null &&
+        categoryNames.contains(categoryValue)) {
+      return categoryValue;
+    }
+
+    final selectedId = _productController.selectedCategoryId;
+    if (selectedId != null && selectedId.isNotEmpty) {
+      for (final category in _productController.categoryList) {
+        if (category['id']?.toString() == selectedId) {
+          final name = category['name']?.toString();
+          if (name != null && categoryNames.contains(name)) {
+            return name;
+          }
+        }
+      }
+    }
+
+    return null;
   }
 
   @override
@@ -197,11 +208,54 @@ class _AddEditProductState extends State<AddEditProduct> {
   }
 
   _setCameraDocumentFile(File? file) {
+    if (file == null) return;
     setState(() {
-      // _profileImage = file;
       documentList.add(file);
     });
-    print(documentList.toString());
+  }
+
+  void _populateFromProduct(Map<String, dynamic> product) {
+    editingProductId = product['id']?.toString();
+    productNameController.text = product['title']?.toString() ?? '';
+    descriptionController.text = product['description']?.toString() ?? '';
+    priceController.text = product['price']?.toString() ?? '';
+
+    final category = product['category'];
+    if (category is Map) {
+      categoryValue = category['name']?.toString();
+      _productController.selectedCategoryId = category['id']?.toString();
+    } else if (category is String && category.trim().isNotEmpty) {
+      categoryValue = category.trim();
+    } else if (product['categoryId'] != null) {
+      _productController.selectedCategoryId = product['categoryId']?.toString();
+    } else if (product['categoryName'] != null) {
+      categoryValue = product['categoryName']?.toString();
+    }
+
+    final owner = product['owner'];
+    if (owner is Map) {
+      nameController.text = owner['fullName']?.toString() ?? '';
+      emailController.text = owner['email']?.toString() ?? '';
+
+      final phone = owner['phone']?.toString() ?? '';
+      if (phone.isNotEmpty) {
+        final digits = phone.replaceAll(RegExp(r'\D'), '');
+        phoneController.text = digits.isNotEmpty
+            ? Constants.maskTextInputFormatterPhoneUSWithCode.maskText(digits)
+            : phone;
+      }
+
+      addressController.text = owner['address']?.toString() ?? '';
+    }
+
+    if (addressController.text.isEmpty) {
+      addressController.text = product['address']?.toString() ?? '';
+    }
+
+    final imagePath = product['mainImagePath']?.toString();
+    if (imagePath != null && imagePath.isNotEmpty) {
+      existingImageUrl = resolveMediaUrl(imagePath);
+    }
   }
 
   Widget _emailTextField() {
@@ -262,38 +316,56 @@ class _AddEditProductState extends State<AddEditProduct> {
   }
 
   Widget documentWidget() {
-    return Container(
+    final imageCount =
+        documentList.length + (existingImageUrl != null ? 1 : 0);
+
+    return SizedBox(
       height: 117.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
-          return index == documentList.length
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4.h),
-                  child: uploadWidget(documentList.length),
-                )
-              : _imageCard(
-                  image: documentList[index].path,
-                  onRemoveTapped: () {
-                    setState(() {
-                      documentList.removeAt(index);
-                    });
-                  },
-                );
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            width: 5,
+          if (index == imageCount) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.h),
+              child: uploadWidget(imageCount),
+            );
+          }
+
+          if (existingImageUrl != null && index == 0) {
+            return _imageCard(
+              image: existingImageUrl!,
+              isNetwork: true,
+              onRemoveTapped: () {
+                setState(() {
+                  existingImageUrl = null;
+                });
+              },
+            );
+          }
+
+          final fileIndex = existingImageUrl != null ? index - 1 : index;
+          return _imageCard(
+            image: documentList[fileIndex].path,
+            onRemoveTapped: () {
+              setState(() {
+                documentList.removeAt(fileIndex);
+              });
+            },
           );
         },
-        itemCount: documentList.length + 1,
+        separatorBuilder: (context, index) {
+          return const SizedBox(width: 5);
+        },
+        itemCount: imageCount + 1,
       ),
     );
   }
 
-  Widget _imageCard({required String image, Function()? onRemoveTapped}) {
-    print(image);
-    print(image.split('.').last.toString() + " Pdf Print");
+  Widget _imageCard({
+    required String image,
+    bool isNetwork = false,
+    Function()? onRemoveTapped,
+  }) {
     return Stack(
       children: [
         GestureDetector(
@@ -301,8 +373,9 @@ class _AddEditProductState extends State<AddEditProduct> {
             Utils.onTapViewImage(
               context: context,
               image: image,
-              //mediaType: MediaPathType.network.name,
-              mediaType: MediaPathType.file.name,
+              mediaType: isNetwork
+                  ? MediaPathType.network.name
+                  : MediaPathType.file.name,
             );
           },
           child: Container(
@@ -313,7 +386,10 @@ class _AddEditProductState extends State<AddEditProduct> {
                 border: Border.all(color: AppColors.orange),
                 borderRadius: BorderRadius.circular(10.sp),
                 image: DecorationImage(
-                    image: FileImage(File(image)), fit: BoxFit.cover)),
+                    image: isNetwork
+                        ? NetworkImage(image)
+                        : FileImage(File(image)),
+                    fit: BoxFit.cover)),
           ),
         ),
         Positioned(
@@ -343,7 +419,6 @@ class _AddEditProductState extends State<AddEditProduct> {
 
   Widget categoryDropDown() {
   return Obx(() {
-    // Loading state
     if (_productController.categoriesLoading.value) {
       return SizedBox(
         height: 50.h,
@@ -351,10 +426,11 @@ class _AddEditProductState extends State<AddEditProduct> {
       );
     }
 
-    // Build list of category names for dropdown
-    List<String> categoryNames = _productController.categoryList
+    final categoryNames = _productController.categoryList
         .map((e) => e['name'].toString())
         .toList();
+
+    final dropdownValue = _resolveCategoryDropdownValue(categoryNames);
 
     return CustomDropDown2(
       dropDownWidth: .93.sw,
@@ -362,19 +438,20 @@ class _AddEditProductState extends State<AddEditProduct> {
       dropDownHeight: 500.h,
       borderRadius: 10.r,
       hintText: AppStrings.selectCategory,
-      dropdownValue: categoryValue,
+      dropdownValue: dropdownValue,
       dropdownListColor: AppColors.white,
       borderColor: AppColors.greyBorder,
       hintTextColor: AppColors.black,
       onChanged: (value) {
         setState(() {
           categoryValue = value.toString();
-          // ✅ Find and save the selected category id
-          final selected = _productController.categoryList
-              .firstWhere((e) => e['name'] == value, orElse: () => null);
+          final selected = _productController.categoryList.firstWhere(
+            (e) => e['name']?.toString() == value,
+            orElse: () => null,
+          );
           if (selected != null) {
-            _productController.selectedCategoryId = selected['id'];
-            print("✅ Selected Category ID: ${_productController.selectedCategoryId}");
+            _productController.selectedCategoryId =
+                selected['id']?.toString();
           }
         });
       },
@@ -526,16 +603,32 @@ Widget buttonWidget(context) {
         formKey.currentState!.save();
         FocusScope.of(context).unfocus();
 
-        print("🚀 Calling createProduct...");
+        final image =
+            documentList.isNotEmpty ? documentList.first : null;
+
+        if (AddEditType.edit.name == widget.type) {
+          if (editingProductId == null || editingProductId!.isEmpty) {
+            print("❌ No product id for update");
+            return;
+          }
+
+          _productController.updateProduct(
+            productId: editingProductId!,
+            title: productNameController.text,
+            description: descriptionController.text,
+            price: priceController.text,
+            image: image,
+            onSuccess: _showProductUpdatedSuccessDialog,
+          );
+          return;
+        }
 
         _productController.createProduct(
           title: productNameController.text,
           description: descriptionController.text,
           price: priceController.text,
-          image: documentList.isNotEmpty ? documentList[0] : null,
-          onSuccess: AddEditType.add.name == widget.type
-              ? () => _showProductAddedSuccessDialog()
-              : null,
+          image: image,
+          onSuccess: _showProductAddedSuccessDialog,
         );
       },
     );
@@ -552,27 +645,32 @@ Widget buttonWidget(context) {
       btnTxt1: AppStrings.ok,
       onTap1: () {
         AppNavigation.navigatorPop(context);
-        if (Get.isRegistered<MarketPlaceController>()) {
-          final c = Get.find<MarketPlaceController>();
-          c.getMyProducts();
-          c.getProducts();
-        }
-        AppNavigation.navigatorPop(context);
+        _refreshMarketplaceAndPop();
       },
     );
   }
 
-  void setController() {
-    categoryValue = "Angle grinders";
-    productNameController.text = "Mope Pro";
-    nameController.text = "John Doe";
-    phoneController.text =
-        Constants.maskTextInputFormatterPhoneUSWithCode.maskText('1234567890');
+  void _showProductUpdatedSuccessDialog() {
+    if (!mounted) return;
+    AppDialogs.showSuccessDialog(
+      context,
+      description: AppStrings.productHasBeenUpdatedSuccessfully,
+      title: AppStrings.congratulation,
+      isDoneShow: true,
+      btnTxt1: AppStrings.ok,
+      onTap1: () {
+        AppNavigation.navigatorPop(context);
+        _refreshMarketplaceAndPop();
+      },
+    );
+  }
 
-    addressController.text = "123 Main Street, New York, USA";
-    emailController.text = "john.doe@gmail.com";
-    priceController.text = "1499";
-    descriptionController.text = "Brand new Mope Pro with Pro chip.";
-    messageController.text = "Please contact me for more details.";
+  void _refreshMarketplaceAndPop() {
+    if (Get.isRegistered<MarketPlaceController>()) {
+      final c = Get.find<MarketPlaceController>();
+      c.getMyProducts();
+      c.getProducts();
+    }
+    AppNavigation.navigatorPop(context);
   }
 }

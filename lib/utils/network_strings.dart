@@ -575,6 +575,9 @@ class NetworkStrings {
   // static const String myWishlistEndpoint = "wishlist";
   static const String productsEndpoint = 'products';
 
+  /// GET/PATCH [products/{productId}] — product detail and update.
+  static String productById(String productId) => 'products/$productId';
+
   /// GET [products/owner/{ownerId}] — products for the logged-in user.
   static String productsByOwner(String ownerId) => 'products/owner/$ownerId';
   // static const String addProductEndpoint = "add_update_product";

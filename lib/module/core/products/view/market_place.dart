@@ -477,6 +477,7 @@ class _MarketPlaceState extends State<MarketPlace>
                             AppRoutes.addEditProductScreenRoute,
                             arguments: AddEditProductRoutingArgument(
                               type: AddEditType.edit.name,
+                              product: Map<String, dynamic>.from(product),
                             ),
                           );
                         },

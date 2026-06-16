@@ -97,6 +97,67 @@ class ProductController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<void> updateProduct({
+    required String productId,
+    required String title,
+    required String description,
+    required String price,
+    File? image,
+    VoidCallback? onSuccess,
+  }) async {
+    final id = productId.trim();
+    if (id.isEmpty) {
+      print("❌ No product id for update");
+      return;
+    }
+
+    if (selectedCategoryId == null) {
+      print("❌ No category selected");
+      return;
+    }
+
+    isLoading.value = true;
+
+    final formData = dio.FormData.fromMap({
+      "title": title,
+      "description": description,
+      "price": double.tryParse(price) ?? 0.0,
+      "isActive": true,
+      "categoryId": selectedCategoryId,
+      if (image != null)
+        "image": await dio.MultipartFile.fromFile(
+          image.path,
+          filename: image.path.split('/').last,
+        ),
+    });
+
+    print(
+        "📦 UPDATE PRODUCT BODY: id=$id, title=$title, price=$price, categoryId=$selectedCategoryId");
+
+    try {
+      final response = await DioClient().patchRequest(
+        endPoint: NetworkStrings.productById(id),
+        data: formData,
+        isHeaderRequire: true,
+      );
+
+      await DioClient().validateResponse(
+        response: response,
+        responseListener: _Listener(
+          onSuccessCallback: (response) {
+            print("✅ Product Updated: $response");
+            onSuccess?.call();
+          },
+          onFailureCallback: (response) {
+            print("❌ Product Update Failed: $response");
+          },
+        ),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 } // ← END of ProductController
 
 // ← OUTSIDE the class
