@@ -18,7 +18,6 @@ import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/app_logo.dart';
 import 'package:ezhandy_user/widgets/switch/animated_switch.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
-import 'package:ezhandy_user/widgets/text_widgets/rich_text_widget.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:ezhandy_user/widgets/toast_dialogs_sheet/toast.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +111,12 @@ class _SignInFormState extends State<SignInForm> {
             ),
             Visibility(
                 visible: !widget.keyboardVisible,
-                child: dontHaveAnAccountWidget()),
+                child: Column(
+                  children: [
+                    12.verticalSpace,
+                    dontHaveAnAccountWidget(),
+                  ],
+                )),
             Visibility(
                 visible: !widget.keyboardVisible, child: 25.verticalSpace)
           ],
@@ -184,14 +188,29 @@ class _SignInFormState extends State<SignInForm> {
   }
 
   Widget dontHaveAnAccountWidget() {
-    return RichTextWidget(
-        text: AppStrings.dontHaveAnAccount,
-        subText: AppStrings.signUp,
-        onSubTextPress: () {
-          FocusScope.of(context).unfocus();
-          AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
-          // Get.toNamed(Paths.SIGNUP_SCREEN_ROUTE);
-        });
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CustomText(
+          text: AppStrings.dontHaveAnAccount,
+          is_alignLeft: false,
+        ),
+        6.horizontalSpace,
+        GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            AppNavigation.navigateTo(context, AppRoutes.signupScreenRoute);
+          },
+          child: CustomText(
+            text: AppStrings.signUp,
+            color: AppColors.orange,
+            fontWeight: FontWeight.bold,
+            textDecoration: TextDecoration.underline,
+            is_alignLeft: false,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _rememberMeForgetPasswordRow({BuildContext? context}) {
