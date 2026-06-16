@@ -218,9 +218,24 @@ class _CustomDropDown2State extends State<CustomDropDown2> {
   @override
   Widget build(BuildContext context) {
     return FormField<String>(
+      key: ValueKey(widget.dropdownValue),
+      initialValue: widget.dropdownValue,
       validator: widget.validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       builder: (FormFieldState<String> state) {
+        final selectedValue = state.value ?? widget.dropdownValue;
+        final isValidSelection = selectedValue != null &&
+            widget.dropDownData != null &&
+            widget.dropDownData!.contains(selectedValue);
+
+        if (isValidSelection && state.value != selectedValue) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && state.value != selectedValue) {
+              state.didChange(selectedValue);
+            }
+          });
+        }
+
         _errorText = state.errorText;
 
         return Column(
@@ -230,7 +245,7 @@ class _CustomDropDown2State extends State<CustomDropDown2> {
             SizedBox(
               width: widget.width ?? double.infinity,
               child: DropdownButtonFormField2<String>(
-                value: widget.dropdownValue,
+                value: isValidSelection ? selectedValue : null,
                 style: TextStyle(
                   color: widget.color ?? AppColors.black,
                   fontSize: widget.fontSize!.sp,
