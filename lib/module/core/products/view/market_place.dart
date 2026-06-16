@@ -205,6 +205,7 @@ class _MarketPlaceState extends State<MarketPlace>
     return Column(
       children: [
         searchTextField(onSearch: _marketPlaceController.updateProductsSearch),
+        _appliedFiltersRow(),
         10.verticalSpace,
         CustomText(text: AppStrings.products, fontWeight: FontWeight.bold),
         10.verticalSpace,
@@ -330,6 +331,7 @@ class _MarketPlaceState extends State<MarketPlace>
     return Column(
       children: [
         searchTextField(onSearch: _marketPlaceController.updateMyProductsSearch),
+        _appliedFiltersRow(),
         10.verticalSpace,
         CustomText(text: AppStrings.myProducts, fontWeight: FontWeight.bold),
         10.verticalSpace,
@@ -499,18 +501,6 @@ class _MarketPlaceState extends State<MarketPlace>
     );
   }
 
-  // Widget filterWidget(BuildContext context) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       AppBottomSheet.showExploreFilterSheet(context: context);
-  //     },
-  //     child: Image.asset(
-  //       AssetPath.filterIcon,
-  //       scale: 3.sp,
-  //     ),
-  //   );
-  // }
-
   Widget searchTextField({required void Function(String) onSearch}) {
     return Row(
       children: [
@@ -547,6 +537,97 @@ class _MarketPlaceState extends State<MarketPlace>
                   height: 25.h,
                 )))
       ],
+    );
+  }
+
+  Widget _appliedFiltersRow() {
+    return Obx(() {
+      if (!_marketPlaceController.hasActiveFilters) {
+        return const SizedBox.shrink();
+      }
+
+      final chips = <Widget>[];
+
+      if (_marketPlaceController.filterCategoryName.value.isNotEmpty) {
+        chips.add(
+          _appliedFilterChip(
+            label:
+                '${AppStrings.category}: ${_marketPlaceController.filterCategoryName.value}',
+            onRemove: _marketPlaceController.clearCategoryFilter,
+          ),
+        );
+      }
+
+      if (_marketPlaceController.filterMinPrice.value.isNotEmpty) {
+        chips.add(
+          _appliedFilterChip(
+            label: '${AppStrings.min}: \$${_marketPlaceController.filterMinPrice.value}',
+            onRemove: _marketPlaceController.clearMinPriceFilter,
+          ),
+        );
+      }
+
+      if (_marketPlaceController.filterMaxPrice.value.isNotEmpty) {
+        chips.add(
+          _appliedFilterChip(
+            label: '${AppStrings.max}: \$${_marketPlaceController.filterMaxPrice.value}',
+            onRemove: _marketPlaceController.clearMaxPriceFilter,
+          ),
+        );
+      }
+
+      return Padding(
+        padding: EdgeInsets.only(top: 10.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              text: 'Applied Filters',
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            6.verticalSpace,
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: chips,
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _appliedFilterChip({
+    required String label,
+    required VoidCallback onRemove,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: AppColors.orange.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: AppColors.orange),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomText(
+            text: label,
+            fontSize: 12.sp,
+            color: AppColors.orange,
+          ),
+          6.horizontalSpace,
+          GestureDetector(
+            onTap: onRemove,
+            child: Icon(
+              Icons.close,
+              size: 14.sp,
+              color: AppColors.orange,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:ezhandy_user/module/core/products/controller/market_place_controller.dart';
+import 'package:ezhandy_user/module/core/products/controller/product_controller.dart';
 import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +11,7 @@ import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:ezhandy_user/widgets/toast_dialogs_sheet/custom_bottom_sheet.dart';
-
+import 'package:get/get.dart';
 // ignore: must_be_immutable
 class FilterBottomSheet extends StatefulWidget {
   FilterBottomSheet({super.key});
@@ -19,63 +21,62 @@ class FilterBottomSheet extends StatefulWidget {
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
+  late ProductController _productController;
+  late MarketPlaceController _marketPlaceController;
+  final TextEditingController minPriceController = TextEditingController();
+  final TextEditingController maxPriceController = TextEditingController();
   String? categoryValue;
-  var categoryList = [
-    "Adhesives",
-    "Allen keys",
-    "Angle grinders",
-    "Chalk lines",
-    "Chisels & hand planes",
-    "Circular saws",
-    "Circuit testers",
-    "Crimping tools",
-    "Drill bit sets & blade replacements",
-    "Drills",
-    "Drop cloths & painter’s tape",
-    "Ear protection",
-    "Electrical tape",
-    "Extension ladders",
-    "Faucet & basin wrenches",
-    "Fish tape",
-    "Hand saws",
-    "Hard hats",
-    "Hammers",
-    "Heat guns",
-    "Impact drivers",
-    "Jigsaws",
-    "Knee pads",
-    "Levels",
-    "Measuring & marking tools",
-    "Nail guns & staplers",
-    "Nail sets & hammers",
-    "Paint brushes",
-    "Paint sprayers",
-    "Pipe cutters",
-    "Pipe wrenches",
-    "Pliers",
-    "Power drills",
-    "Putty knives & scrapers",
-    "Reciprocating saws",
-    "Rollers & roller trays",
-    "Rotary tools",
-    "Safety goggles",
-    "Sanders",
-    "Sandpaper & sanding blocks",
-    "Saws",
-    "Screws, nails, bolts, anchors",
-    "Screwdrivers",
-    "Step ladders",
-    "Stud finders",
-    "Tape measures & rulers",
-    "Teflon tape & sealant tools",
-    "Tool belts & pouches",
-    "Toolboxes & storage cases",
-    "Utility knives & blades",
-    "Voltage testers & multimeters",
-    "Wire cutters & strippers",
-    "Work gloves",
-    "Workbenches"
-  ];
+  String? selectedCategoryId;
+
+  @override
+  void initState() {
+    super.initState();
+    _marketPlaceController = Get.find<MarketPlaceController>();
+    if (Get.isRegistered<ProductController>()) {
+      _productController = Get.find<ProductController>();
+      if (_productController.categoryList.isEmpty) {
+        _productController.getCategories();
+      }
+    } else {
+      _productController = Get.put(ProductController());
+    }
+
+    categoryValue = _marketPlaceController.filterCategoryName.value.isEmpty
+        ? null
+        : _marketPlaceController.filterCategoryName.value;
+    selectedCategoryId = _marketPlaceController.filterCategoryId.value.isEmpty
+        ? null
+        : _marketPlaceController.filterCategoryId.value;
+    minPriceController.text = _marketPlaceController.filterMinPrice.value;
+    maxPriceController.text = _marketPlaceController.filterMaxPrice.value;
+  }
+
+  @override
+  void dispose() {
+    minPriceController.dispose();
+    maxPriceController.dispose();
+    super.dispose();
+  }
+
+  void _resetFilters() {
+    setState(() {
+      categoryValue = null;
+      selectedCategoryId = null;
+      minPriceController.clear();
+      maxPriceController.clear();
+    });
+    _marketPlaceController.clearFilters();
+  }
+
+  void _applyFilters() {
+    _marketPlaceController.applyFilters(
+      categoryId: selectedCategoryId,
+      categoryName: categoryValue,
+      minPrice: minPriceController.text,
+      maxPrice: maxPriceController.text,
+    );
+    AppNavigation.navigatorPop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,29 +130,47 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Widget categoryDropDown() {
-    return CustomDropDown2(
-      dropDownHeight: 220.h,
-      // width: 95.w, // 👈 Controls button width
-      dropDownWidth: .93.sw, // 👈 Controls dropdown menu width
-      dropDownData: categoryList,
-      borderRadius: 10.r,
-      hintText: AppStrings.selectCategory,
-      dropdownValue: categoryValue,
-      dropdownListColor: AppColors.white,
-      borderColor: AppColors.greyBorder,
-      hintTextColor: AppColors.black,
-      onChanged: (value) {
-        setState(() {
-          categoryValue = value.toString();
-        });
-      },
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return AppStrings.selectCategory;
-        }
-        return null;
-      },
-    );
+    return Obx(() {
+      if (_productController.categoriesLoading.value) {
+        return SizedBox(
+          height: 50.h,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      final categoryNames = _productController.categoryList
+          .map((e) => e['name'].toString())
+          .toList();
+
+      return CustomDropDown2(
+        dropDownHeight: 500.h,
+        dropDownWidth: .93.sw,
+        dropDownData: categoryNames,
+        borderRadius: 10.r,
+        hintText: AppStrings.selectCategory,
+        dropdownValue: categoryValue,
+        dropdownListColor: AppColors.white,
+        borderColor: AppColors.greyBorder,
+        hintTextColor: AppColors.black,
+        onChanged: (value) {
+          setState(() {
+            categoryValue = value.toString();
+            final selected = _productController.categoryList.firstWhere(
+              (e) => e['name'] == value,
+              orElse: () => null,
+            );
+            selectedCategoryId =
+                selected != null ? selected['id']?.toString() : null;
+          });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return AppStrings.selectCategory;
+          }
+          return null;
+        },
+      );
+    });
   }
 
   Widget minTextField() {
@@ -167,6 +186,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       // prefxicon: AssetPath.searchIcon,
 
       hint: AppStrings.min,
+      controller: minPriceController,
       keyboardType: TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [
         LengthLimitingTextInputFormatter(6),
@@ -188,6 +208,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       // prefxicon: AssetPath.searchIcon,
 
       hint: AppStrings.max,
+      controller: maxPriceController,
       keyboardType: TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [
         LengthLimitingTextInputFormatter(6),
@@ -202,45 +223,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       children: [
         Expanded(
           child: CustomButton(
-            // /boxShadow: AppShadows.shadow2,
             onclick: () {
-              // setState(() {
-              //   requestSent = !requestSent;
-              // });
-              // validateGender(genderValue);
-              // validateCountry(countryValue);
-              // // validateCity(cityValue);
-              // // validateState(stateValue);
-              // if (FormKey.currentState!.validate()) {
+              _resetFilters();
               AppNavigation.navigatorPop(context);
-              // HomeController.i.selectedTab.value = 1;
-              // }
             },
             text: "Reset",
             color: AppColors.black,
           ),
         ),
-     10.horizontalSpace,
+        10.horizontalSpace,
         Expanded(
           child: CustomButton(
-            // /boxShadow: AppShadows.shadow2,
-            onclick: () {
-              // setState(() {
-              //   requestSent = !requestSent;
-              // });
-              // validateGender(genderValue);
-              // validateCountry(countryValue);
-              // // validateCity(cityValue);
-              // // validateState(stateValue);
-              // if (FormKey.currentState!.validate()) {
-              AppNavigation.navigatorPop(context);
-              // HomeController.i.selectedTab.value = 1;
-              // }
-            },
+            onclick: _applyFilters,
             text: AppStrings.apply,
           ),
         ),
-     
       ],
     );
   }
