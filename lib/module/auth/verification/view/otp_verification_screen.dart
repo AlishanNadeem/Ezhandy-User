@@ -2,9 +2,9 @@
 
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ezhandy_user/module/auth/verification/widget/otp_verification_form.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
+import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 
 class OTPVerification extends StatefulWidget {
@@ -37,7 +37,7 @@ class _OTPVerificationState extends State<OTPVerification> {
         // is_registration: true,
         leading: AssetPath.backIcon,
         onclickLead: () {
-          Get.back();
+          AppNavigation.navigatorPop(context);
           isTimeComplete = true;
         },
         // title: AppStrings.otp,
