@@ -77,12 +77,12 @@ class _FavouritesServicesState extends State<FavouritesServices> {
               itemBuilder: (context, index) {
                 final row = list[index];
                 final service = row['service'];
-                final serviceType = row['serviceType'];
-                final serviceTypeMap = serviceType is Map
-                    ? Map<String, dynamic>.from(serviceType)
-                    : <String, dynamic>{};
                 final sMap = service is Map
                     ? Map<String, dynamic>.from(service)
+                    : <String, dynamic>{};
+                final nestedServiceType = sMap['serviceType'];
+                final serviceTypeMap = nestedServiceType is Map
+                    ? Map<String, dynamic>.from(nestedServiceType)
                     : <String, dynamic>{};
                 final title =
                     sMap['title']?.toString().trim().isNotEmpty == true
@@ -93,14 +93,17 @@ class _FavouritesServicesState extends State<FavouritesServices> {
                     ? sMap['description'].toString()
                     : AppStrings.lorem5;
                 final amount = _cardAmount(sMap);
-                final imageUrl = resolveMediaUrl(sMap['imageUrl']);
-                final iconUrl = resolveMediaUrl(serviceTypeMap['iconImagePath']);
+                final imageUrl =
+                    resolveMediaUrl(serviceTypeMap['imagePath']);
+                final iconUrl =
+                    resolveMediaUrl(serviceTypeMap['iconImagePath']);
                 final user = sMap['user'];
                 final userMap =
                     user is Map ? Map<String, dynamic>.from(user) : null;
                 final providerId = userMap?['id']?.toString() ??
                     sMap['userId']?.toString();
-                final stId = sMap['serviceTypeId'];
+                final stId =
+                    serviceTypeMap['id'] ?? sMap['serviceTypeId'];
                 final serviceTypeId = stId is int
                     ? stId
                     : int.tryParse(stId?.toString() ?? '');
@@ -156,7 +159,6 @@ class _FavouritesServicesState extends State<FavouritesServices> {
   }
 
   Widget _serviceIcon(String iconUrl) {
-    print('🖼️ Favourite service iconUrl: $iconUrl');
     if (iconUrl.isEmpty) {
       return Image.asset(
         AssetPath.cleaningIcon,
@@ -188,8 +190,6 @@ class _FavouritesServicesState extends State<FavouritesServices> {
       required String iconUrl,
       required String title,
       required String description}) {
-
-    print('🖼️ Single container iconUrl: $iconUrl');
 
     final DecorationImage bgImage = imageUrl.isNotEmpty
         ? DecorationImage(
