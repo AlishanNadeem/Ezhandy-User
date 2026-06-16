@@ -42,10 +42,10 @@ class _AddEditProductState extends State<AddEditProduct> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   TextEditingController productNameController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  // TextEditingController nameController = TextEditingController();
+  // TextEditingController phoneController = TextEditingController();
+  // TextEditingController addressController = TextEditingController();
+  // TextEditingController emailController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController messageController = TextEditingController();
@@ -172,27 +172,28 @@ class _AddEditProductState extends State<AddEditProduct> {
                       10.verticalSpace,
                       documentWidget(),
                       20.verticalSpace,
-                      CustomText(
-                          text: "Seller Info:",
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.sp),
-                      10.verticalSpace,
-                      CustomText(text: "Seller Name" + "*"),
-                      10.verticalSpace,
-                      _nameTextField(),
-                      20.verticalSpace,
-                      CustomText(text: AppStrings.phoneNumber + "*"),
-                      10.verticalSpace,
-                      _phoneNumberTextField(),
-                      20.verticalSpace,
-                      CustomText(text: AppStrings.email + "*"),
-                      10.verticalSpace,
-                      _emailTextField(),
-                      20.verticalSpace,
-                      CustomText(text: AppStrings.address + "*"),
-                      10.verticalSpace,
-                      _addressField(),
-                      20.verticalSpace,
+                      // Seller info — disabled for now
+                      // CustomText(
+                      //     text: "Seller Info:",
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: 16.sp),
+                      // 10.verticalSpace,
+                      // CustomText(text: "Seller Name" + "*"),
+                      // 10.verticalSpace,
+                      // _nameTextField(),
+                      // 20.verticalSpace,
+                      // CustomText(text: AppStrings.phoneNumber + "*"),
+                      // 10.verticalSpace,
+                      // _phoneNumberTextField(),
+                      // 20.verticalSpace,
+                      // CustomText(text: AppStrings.email + "*"),
+                      // 10.verticalSpace,
+                      // _emailTextField(),
+                      // 20.verticalSpace,
+                      // CustomText(text: AppStrings.address + "*"),
+                      // 10.verticalSpace,
+                      // _addressField(),
+                      // 20.verticalSpace,
 
                       //----------------Get Code Button----------------
                     ]),
@@ -232,25 +233,25 @@ class _AddEditProductState extends State<AddEditProduct> {
       categoryValue = product['categoryName']?.toString();
     }
 
-    final owner = product['owner'];
-    if (owner is Map) {
-      nameController.text = owner['fullName']?.toString() ?? '';
-      emailController.text = owner['email']?.toString() ?? '';
-
-      final phone = owner['phone']?.toString() ?? '';
-      if (phone.isNotEmpty) {
-        final digits = phone.replaceAll(RegExp(r'\D'), '');
-        phoneController.text = digits.isNotEmpty
-            ? Constants.maskTextInputFormatterPhoneUSWithCode.maskText(digits)
-            : phone;
-      }
-
-      addressController.text = owner['address']?.toString() ?? '';
-    }
-
-    if (addressController.text.isEmpty) {
-      addressController.text = product['address']?.toString() ?? '';
-    }
+    // final owner = product['owner'];
+    // if (owner is Map) {
+    //   nameController.text = owner['fullName']?.toString() ?? '';
+    //   emailController.text = owner['email']?.toString() ?? '';
+    //
+    //   final phone = owner['phone']?.toString() ?? '';
+    //   if (phone.isNotEmpty) {
+    //     final digits = phone.replaceAll(RegExp(r'\D'), '');
+    //     phoneController.text = digits.isNotEmpty
+    //         ? Constants.maskTextInputFormatterPhoneUSWithCode.maskText(digits)
+    //         : phone;
+    //   }
+    //
+    //   addressController.text = owner['address']?.toString() ?? '';
+    // }
+    //
+    // if (addressController.text.isEmpty) {
+    //   addressController.text = product['address']?.toString() ?? '';
+    // }
 
     final imagePath = product['mainImagePath']?.toString();
     if (imagePath != null && imagePath.isNotEmpty) {
@@ -258,21 +259,21 @@ class _AddEditProductState extends State<AddEditProduct> {
     }
   }
 
-  Widget _emailTextField() {
-    return CustomTextField(
-      hint: AppStrings.enterEmailAddress,
-      divider: false,
-      label: false,
-
-      keyboardType: TextInputType.emailAddress,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(Constants.emailMaxLength)
-      ],
-      controller: emailController,
-      validator: (value) => value?.validateEmail,
-      // error_text: error_email,
-    );
-  }
+  // Widget _emailTextField() {
+  //   return CustomTextField(
+  //     hint: AppStrings.enterEmailAddress,
+  //     divider: false,
+  //     label: false,
+  //
+  //     keyboardType: TextInputType.emailAddress,
+  //     inputFormatters: [
+  //       LengthLimitingTextInputFormatter(Constants.emailMaxLength)
+  //     ],
+  //     controller: emailController,
+  //     validator: (value) => value?.validateEmail,
+  //     // error_text: error_email,
+  //   );
+  // }
 
   Widget uploadWidget(length) {
     return AddMore(
@@ -465,19 +466,19 @@ class _AddEditProductState extends State<AddEditProduct> {
   });
 }
 
-  Widget _phoneNumberTextField() {
-    return CustomTextField(
-      hint: AppStrings.enterPhoneNumber,
-      divider: false,
-      // prefxicon: AssetPath.callIcon,
-      label: false,
-      keyboardType: TextInputType.number,
-      inputFormatters: [Constants.maskTextInputFormatterPhoneUSWithCode],
-      controller: phoneController,
-      // validator: (value) => value?.validateEmpty(AppStrings.phon),
-      // error_text: error_email,
-    );
-  }
+  // Widget _phoneNumberTextField() {
+  //   return CustomTextField(
+  //     hint: AppStrings.enterPhoneNumber,
+  //     divider: false,
+  //     // prefxicon: AssetPath.callIcon,
+  //     label: false,
+  //     keyboardType: TextInputType.number,
+  //     inputFormatters: [Constants.maskTextInputFormatterPhoneUSWithCode],
+  //     controller: phoneController,
+  //     // validator: (value) => value?.validateEmpty(AppStrings.phon),
+  //     // error_text: error_email,
+  //   );
+  // }
 
   Widget _productNameTextField() {
     return CustomTextField(
@@ -497,41 +498,41 @@ class _AddEditProductState extends State<AddEditProduct> {
     );
   }
 
-  Widget _nameTextField() {
-    return CustomTextField(
-      hint: "Enter Seller Name",
-      divider: false,
-      // prefxicon: AssetPath.profileCircleIcon,
-      label: false,
-      // readOnly: true,
-      // onTap: () {},
-      // keyboardType: TextInputType.emailAddress,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(Constants.nameMaxLength)
-      ],
-      controller: nameController,
-      validator: (value) => value?.validateEmpty("Seller Name"),
-      // error_text: error_email,
-    );
-  }
+  // Widget _nameTextField() {
+  //   return CustomTextField(
+  //     hint: "Enter Seller Name",
+  //     divider: false,
+  //     // prefxicon: AssetPath.profileCircleIcon,
+  //     label: false,
+  //     // readOnly: true,
+  //     // onTap: () {},
+  //     // keyboardType: TextInputType.emailAddress,
+  //     inputFormatters: [
+  //       LengthLimitingTextInputFormatter(Constants.nameMaxLength)
+  //     ],
+  //     controller: nameController,
+  //     validator: (value) => value?.validateEmpty("Seller Name"),
+  //     // error_text: error_email,
+  //   );
+  // }
 
-  Widget _addressField() {
-    return CustomTextField(
-      hint: AppStrings.enterAddress,
-      divider: false,
-      // prefxicon: AssetPath.convertIcon,
-      label: false,
-      borderRadius: 10.r,
-      lines: 5,
-      // keyboardType: TextInputType.emailAddress,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(Constants.descriptionMaxLength)
-      ],
-      controller: addressController,
-      validator: (value) => value?.validateEmpty(AppStrings.address),
-      // error_text: error_email,
-    );
-  }
+  // Widget _addressField() {
+  //   return CustomTextField(
+  //     hint: AppStrings.enterAddress,
+  //     divider: false,
+  //     // prefxicon: AssetPath.convertIcon,
+  //     label: false,
+  //     borderRadius: 10.r,
+  //     lines: 5,
+  //     // keyboardType: TextInputType.emailAddress,
+  //     inputFormatters: [
+  //       LengthLimitingTextInputFormatter(Constants.descriptionMaxLength)
+  //     ],
+  //     controller: addressController,
+  //     validator: (value) => value?.validateEmpty(AppStrings.address),
+  //     // error_text: error_email,
+  //   );
+  // }
 
   Widget _descriptionField() {
     return CustomTextField(
