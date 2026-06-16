@@ -1,5 +1,7 @@
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,6 +17,18 @@ class ProviderLocationMap extends StatelessWidget {
   final String? latitude;
   final String? longitude;
   final double? height;
+
+  static final Set<Factory<OneSequenceGestureRecognizer>> _gestureRecognizers = {
+    Factory<PanGestureRecognizer>(() => PanGestureRecognizer()),
+    Factory<ScaleGestureRecognizer>(() => ScaleGestureRecognizer()),
+    Factory<TapGestureRecognizer>(() => TapGestureRecognizer()),
+    Factory<VerticalDragGestureRecognizer>(
+      () => VerticalDragGestureRecognizer(),
+    ),
+    Factory<HorizontalDragGestureRecognizer>(
+      () => HorizontalDragGestureRecognizer(),
+    ),
+  };
 
   static double? _parseCoordinate(String? value) {
     if (value == null || value.trim().isEmpty) return null;
@@ -50,6 +64,7 @@ class ProviderLocationMap extends StatelessWidget {
       height: mapHeight,
       width: double.infinity,
       child: GoogleMap(
+        gestureRecognizers: _gestureRecognizers,
         initialCameraPosition: CameraPosition(
           target: position,
           zoom: 14,
@@ -60,7 +75,7 @@ class ProviderLocationMap extends StatelessWidget {
             position: position,
           ),
         },
-        zoomControlsEnabled: false,
+        zoomControlsEnabled: true,
         myLocationButtonEnabled: false,
         mapToolbarEnabled: false,
       ),
