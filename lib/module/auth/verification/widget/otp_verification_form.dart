@@ -15,7 +15,6 @@ import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/utils/validator_extensions.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/keyboard/custom_keyboard_action_widget.dart';
-import 'package:ezhandy_user/widgets/text_widgets/rich_text_widget.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:ezhandy_user/widgets/toast_dialogs_sheet/toast.dart';
 import 'package:ezhandy_user/utils/enums.dart';
@@ -284,54 +283,42 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
 
 
   Widget didntReceiveCodeWidget() {
-    return Container(
-      // padding: EdgeInsets.only(bottom: 50, top: 15),
-      alignment: Alignment.center,
-      width: 1.sw,
-      child: RichTextWidget(
+    final canResend = AuthController.i.isTimeComplete.value;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CustomText(
           text: AppStrings.didnotReceiveCode,
-          subText: AppStrings.resend,
-          subTextColor: AuthController.i.isTimeComplete.value
-              ? AppColors.orange
-              : AppColors.greyBorder,
-          onSubTextPress: () {
+          is_alignLeft: false,
+        ),
+        6.horizontalSpace,
+        GestureDetector(
+          onTap: () {
+            if (!canResend) return;
             FocusScope.of(context).unfocus();
-            FocusScope.of(context).unfocus();
-            if (AuthController.i.isTimeComplete.value) {
-              setState(() {
-                AuthController.i.isTimeComplete.value = false;
-              });
-              pinController.clear();
-              // widget.phone_verication == 'phone'
-              //     ? SocialAuthGetX().resendPhoneCode(
-              //         context: context,
-              //         iso_code: widget.iso_code,
-              //         country_code: widget.country_code,
-              //         phoneNumber: widget.phone_number.toString(),
-              //         getVerificationId: (String? value) {
-              //           setState(() {
-              //             widget.user_id = value;
-              //           });
-              //         },
-              //         setProgressBar: () => showLoader(),
-              //         cancelProgressBar: () => stopLoader())
-              //     : AuthController.i.resendCode(id:  widget.user_id.toString());
+            setState(() {
+              AuthController.i.isTimeComplete.value = false;
+            });
+            pinController.clear();
 
-              if (widget.type == OtpType.forget.name) {
-                AuthController.i.forgotPassword(context,
-                    email: widget.emailAndPhone, isResendCode: true);
-              } else {
-                AuthController.i.resendCode(
-                  email: widget.emailAndPhone,
-                );
-              }
-
-              // _countDownController.start();
-              // setState(() {
-              //   widget.isTimeComplete = false;
-              // });
+            if (widget.type == OtpType.forget.name) {
+              AuthController.i.forgotPassword(context,
+                  email: widget.emailAndPhone, isResendCode: true);
+            } else {
+              AuthController.i.resendCode(
+                email: widget.emailAndPhone,
+              );
             }
-          }),
+          },
+          child: CustomText(
+            text: AppStrings.resend,
+            color: canResend ? AppColors.orange : AppColors.greyBorder,
+            fontWeight: FontWeight.bold,
+            textDecoration: TextDecoration.underline,
+            is_alignLeft: false,
+          ),
+        ),
+      ],
     );
   }
 }

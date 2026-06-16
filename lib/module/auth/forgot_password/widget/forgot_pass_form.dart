@@ -85,7 +85,7 @@ class ForgotPassForm extends StatelessWidget {
     return CustomTextField(
       label: false,
       divider: false,
-      hint: AppStrings.infoEnail,
+      hint: AppStrings.enterYourEmailAddress,
       prefxicon: AssetPath.emailIcon,
       inputFormatters: [LengthLimitingTextInputFormatter(35)],
       keyboardType: TextInputType.emailAddress,
@@ -108,24 +108,13 @@ class ForgotPassForm extends StatelessWidget {
     return CustomButton(
         text: AppStrings.continuee,
         onclick: () {
-          // final isValid = forgotFormKey.currentState!.validate();
-          // if (!isValid) {
-          //   return;
-          // }
+          final isValid = forgotFormKey.currentState!.validate();
+          if (!isValid) {
+            return;
+          }
           forgotFormKey.currentState!.save();
-           AuthController.i.forgotPassword(context,
-              email: emailController.text, isResendCode: false);
-
-      
-          // AppNavigation.navigateTo(
-          //     context, AppRoutes.otpVerificationScreenRoute,
-          //     arguments: OtpVerificationRoutingArgument(
-          //         type: OtpType.forget.name,
-          //         emailAndPhone: emailController.text,
-          //         text: emailController.text));
-          // // AuthController.i
-          // //     .forgotPass(email: forgotPassRepo.email_controller.text);
-          // ToastMessage(toastmsg: AppStrings.otpSendedToYourEmail);
+          AuthController.i.forgotPassword(context,
+              email: emailController.text.trim(), isResendCode: false);
           FocusScope.of(context).unfocus();
         });
   }

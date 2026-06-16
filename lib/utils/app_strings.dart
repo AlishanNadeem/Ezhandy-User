@@ -283,7 +283,7 @@ class AppStrings {
       resetYourPasswordInJustAFewClicksAndRegainAccessInstantly =
       "Reset your password in just a few clicks and regain access instantly";
   static const String continu = "Continue";
-  // static const String enterYourEmailAddress = "Enter Your Email Address";
+  static const String enterYourEmailAddress = "Enter your email address";
   static const String infoEnail = "info@example.com";
 
   /// OTP Verification
@@ -294,7 +294,7 @@ class AppStrings {
       'Please check your phone for verification code. Your code is 4 digit in length';
   static const String otpCodeForgetMessage =
       'Enter the OTP sent to your registered number to verify your identity';
-  static const String didnotReceiveCode = "Didn't received th e code? ";
+  static const String didnotReceiveCode = "Didn't receive the code?";
   static const resend = "Resend";
   static const String verificationCode = "Verification Code";
   static const String submitCode = "Submit Code";
