@@ -20,6 +20,7 @@ import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/row/two_text_row.dart';
+import 'package:ezhandy_user/widgets/google_map/provider_location_map.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class BookingDetails extends StatefulWidget {
@@ -352,13 +353,10 @@ class _BookingDetailsState extends State<BookingDetails> {
                                           ),
                                         ),
                                         Divider(color: AppColors.blueDark),
-                                        SizedBox(
-                                          height: 200.h,
-                                          width: double.infinity,
-                                          child: Image.asset(
-                                            AssetPath.map,
-                                            fit: BoxFit.cover,
-                                          ),
+                                        ProviderLocationMap(
+                                          latitude: detail?.provider?.latitude,
+                                          longitude:
+                                              detail?.provider?.longitude,
                                         ),
                                       ],
                                     ),
