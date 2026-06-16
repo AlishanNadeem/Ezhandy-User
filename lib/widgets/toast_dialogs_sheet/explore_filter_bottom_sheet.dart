@@ -2,18 +2,13 @@ import 'package:ezhandy_user/widgets/dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
-import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
-import 'package:ezhandy_user/utils/asset_path.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:ezhandy_user/widgets/toast_dialogs_sheet/custom_bottom_sheet.dart';
-// import 'package:syncfusion_flutter_sliders/sliders.dart';
-import 'package:csc_picker/csc_picker.dart';
 
 // ignore: must_be_immutable
 class FilterBottomSheet extends StatefulWidget {
@@ -24,14 +19,6 @@ class FilterBottomSheet extends StatefulWidget {
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  String? countryValue;
-  String? stateValue;
-  String? cityValue;
-
-  String? errorCity = '';
-  String? errorCountry = '';
-  String? errorState = '';
-
   String? categoryValue;
   var categoryList = [
     "Adhesives",
@@ -117,8 +104,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             ),
             10.verticalSpace,
             categoryDropDown(),
-            10.verticalSpace,
-            cscPickerField(),
             10.verticalSpace,
             CustomText(
                 text: AppStrings.priceRange,
@@ -257,111 +242,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         ),
      
       ],
-    );
-  }
-
-  Widget cscPickerField() {
-    return CSCPicker(
-layout: Layout.vertical,
-      isCountryShow:false,
-      ///Enable disable state dropdown [OPTIONAL PARAMETER]
-      showStates: true,
-
-      /// Enable disable city drop down [OPTIONAL PARAMETER]
-      showCities: true,
-
-      ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
-      flagState: CountryFlag.DISABLE,
-
-      ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
-      dropdownDecoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8.r)),
-          color: AppColors.transparent,
-          border: Border.all(color: AppColors.greyBorder, width: 1)),
-
-      ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
-      disabledDropdownDecoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8.r)),
-          color: AppColors.transparent,
-          border: Border.all(color: AppColors.greyBorder, width: 1)),
-
-      ///placeholders for dropdown search field
-      countrySearchPlaceholder: "Country",
-      stateSearchPlaceholder: "State",
-      citySearchPlaceholder: "City",
-
-      ///labels for dropdown
-      countryDropdownLabel: "Country",
-      stateDropdownLabel: "Select State",
-      cityDropdownLabel: "Select City",
-
-      ///Default Country
-      ///defaultCountry: CscCountry.India,
-      // /Default Country
-      defaultCountry: CscCountry.United_States,
-
-      ///Disable country dropdown (Note: use it with default country)
-      disableCountry: true,
-
-      ///Country Filter [OPTIONAL PARAMETER]
-      // countryFilter: [
-      //   CscCountry.India,
-      //   CscCountry.United_States,
-      //   CscCountry.Canada
-      // ],
-
-      ///Disable country dropdown (Note: use it with default country)
-      //disableCountry: true,
-
-      ///selected item style [OPTIONAL PARAMETER]
-      selectedItemStyle: TextStyle(
-        color: AppColors.black,
-        fontSize: 14,
-      ),
-      iconColor: AppColors.transparent,
-
-      ///DropdownDialog Heading style [OPTIONAL PARAMETER]
-      dropdownHeadingStyle: TextStyle(
-          color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),
-
-      ///DropdownDialog Item style [OPTIONAL PARAMETER]
-      dropdownItemStyle: TextStyle(
-        color: Colors.black,
-        fontSize: 14,
-      ),
-
-      ///Dialog box radius [OPTIONAL PARAMETER]
-      dropdownDialogRadius: 10.0,
-
-      ///Search bar radius [OPTIONAL PARAMETER]
-      searchBarRadius: 10.0,
-      error_text_country: errorCountry,
-      // error_text_city: errorCity,
-      error_text_state: errorState,
-
-      ///triggers once country selected in dropdown
-      onCountryChanged: (value) {
-        setState(() {
-          ///store value in country variable
-          countryValue = value;
-        });
-      },
-
-      ///triggers once state selected in dropdown
-      onStateChanged: (value) {
-        setState(() {
-          ///store value in state variable
-          stateValue = value;
-        });
-      },
-
-      ///triggers once city selected in dropdown
-      onCityChanged: (value) {
-        setState(() {
-          ///store value in city variable
-          cityValue = value;
-        });
-      },
     );
   }
 }
