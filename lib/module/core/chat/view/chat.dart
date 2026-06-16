@@ -138,8 +138,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
               return ListView.separated(
                 controller: _scrollController,
-                padding:
-                    EdgeInsets.symmetric(horizontal: AppPadding.padding12),
+                padding: EdgeInsets.only(
+                  left: AppPadding.padding12,
+                  right: AppPadding.padding12,
+                  bottom: AppPadding.padding16,
+                ),
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
                   final current = messages[index];
@@ -157,6 +160,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         text: current.text,
                         isSender: current.isSender,
                         image: _displayImage(current),
+                        filePath: current.filePath,
                       ),
                     ],
                   );
@@ -195,14 +199,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   : const EdgeInsets.only(bottom: AppPadding.padding25),
               child: Row(
                 children: [
-                  GestureDetector(
-                    child: Image.asset(
-                      AssetPath.emojiIcon,
-                      width: 27.w,
-                      height: 27.h,
-                    ),
-                  ),
-                  10.horizontalSpace,
+                  // GestureDetector(
+                  //   child: Image.asset(
+                  //     AssetPath.emojiIcon,
+                  //     width: 27.w,
+                  //     height: 27.h,
+                  //   ),
+                  // ),
+                  // 10.horizontalSpace,
                   Expanded(child: _messageTextField()),
                   10.horizontalSpace,
                   GestureDetector(
@@ -212,15 +216,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       height: 30.h,
                     ),
                   ),
-                  10.horizontalSpace,
-                  GestureDetector(
-                    child: Image.asset(
-                      AssetPath.mikeIcon,
-                      width: 27.w,
-                      height: 27.h,
-                    ),
-                  ),
-                  10.horizontalSpace,
+                  // 10.horizontalSpace,
+                  // GestureDetector(
+                  //   child: Image.asset(
+                  //     AssetPath.mikeIcon,
+                  //     width: 27.w,
+                  //     height: 27.h,
+                  //   ),
+                  // ),
+                  // 10.horizontalSpace,
                 ],
               ),
             ),

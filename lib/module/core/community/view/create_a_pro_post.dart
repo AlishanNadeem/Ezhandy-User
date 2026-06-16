@@ -8,7 +8,7 @@ import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/enums.dart';
-import 'package:ezhandy_user/utils/network_strings.dart';
+import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/utils/validator_extensions.dart';
@@ -130,6 +130,7 @@ class _CreateAProPostState extends State<CreateAProPost> {
                       child: Column(children: [
                         20.verticalSpace,
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             UserImageWidget(
                               size: 20,
@@ -269,10 +270,10 @@ class _CreateAProPostState extends State<CreateAProPost> {
   }
 
   String? _myProfileImageUrl() {
-    final profileImage =
-        AuthController.i.appUser.value.data?.userModel?.profileImage?.trim();
-    if (profileImage == null || profileImage.isEmpty) return null;
-    return '${NetworkStrings.IMAGE_BASE_URL}$profileImage';
+    final url = resolveMediaUrl(
+      AuthController.i.appUser.value.data?.userModel?.profileImage,
+    );
+    return url.isEmpty ? null : url;
   }
 
   _setThumbnail(File? path) {

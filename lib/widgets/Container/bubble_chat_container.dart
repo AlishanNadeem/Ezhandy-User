@@ -1,5 +1,7 @@
 import 'package:ezhandy_user/utils/app_padding.dart';
-import 'package:ezhandy_user/utils/app_strings.dart';
+import 'package:ezhandy_user/utils/enums.dart';
+import 'package:ezhandy_user/utils/media_url_helper.dart';
+import 'package:ezhandy_user/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
@@ -10,6 +12,7 @@ class ChatBubble extends StatelessWidget {
   final String text, name, time;
   final bool isSender;
   final String? image;
+  final String? filePath;
 
   const ChatBubble({
     required this.text,
@@ -17,6 +20,7 @@ class ChatBubble extends StatelessWidget {
     required this.name,
     required this.isSender,
     this.image,
+    this.filePath,
     Key? key,
   }) : super(key: key);
 
@@ -51,11 +55,17 @@ class ChatBubble extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
                   ),
-                  4.verticalSpace,
-                  CustomText(
-                    text: text,
-                    color: AppColors.grey,
-                  ),
+                  if (_hasFilePath) ...[
+                    8.verticalSpace,
+                    _buildMessageImage(context),
+                  ],
+                  if (text.trim().isNotEmpty) ...[
+                    4.verticalSpace,
+                    CustomText(
+                      text: text,
+                      color: AppColors.grey,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -69,6 +79,45 @@ class ChatBubble extends StatelessWidget {
           child: CustomText(text: time,align:isSender? Alignment.bottomRight:Alignment.bottomLeft,),
         ),
       ],
+    );
+  }
+
+  bool get _hasFilePath => filePath?.trim().isNotEmpty == true;
+
+  Widget _buildMessageImage(BuildContext context) {
+    final path = resolveMediaUrl(filePath);
+    if (path.isEmpty) return _brokenImagePlaceholder();
+
+    return GestureDetector(
+      onTap: () {
+        Utils.onTapViewImage(
+          context: context,
+          image: path,
+          mediaType: MediaPathType.network.name,
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.r),
+        child: Image.network(
+          path,
+          width: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _brokenImagePlaceholder(),
+        ),
+      ),
+    );
+  }
+
+  Widget _brokenImagePlaceholder() {
+    return Container(
+      width: double.infinity,
+      height: 120.h,
+      color: AppColors.greybg,
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.broken_image_outlined,
+        color: AppColors.greyLight,
+      ),
     );
   }
 }

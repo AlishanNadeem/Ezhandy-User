@@ -67,6 +67,7 @@ class _ListOfServicesState extends State<ListOfServices> {
                       child: CustomText(
                         text: "No services found",
                         color: AppColors.greyLight,
+                        is_alignLeft: false,
                       ),
                     );
                   }

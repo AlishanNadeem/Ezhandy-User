@@ -4,6 +4,7 @@ class ChatModel {
   final DateTime time;
   final String? senderName;
   final String? senderImage;
+  final String? filePath;
 
   ChatModel({
     required this.text,
@@ -11,5 +12,6 @@ class ChatModel {
     required this.time,
     this.senderName,
     this.senderImage,
+    this.filePath,
   });
 }

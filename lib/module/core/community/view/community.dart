@@ -60,129 +60,156 @@ class _CommunityScreenState extends State<CommunityScreen> {
           10.verticalSpace,
           appbarWidget(),
           20.verticalSpace,
-
-          Row(
-            children: [
-              Expanded(
-                  child: CustomButton(
-                text: AppStrings.AskAPro,
-                onclick: () {
-                  AppDialogs.showSuccessDialog(context,
-                      description:
-                          "Get expert help instantly. Make a payment to ask a Pro.",
-                      title: "\$4.99/ 5 text messages",
-                      image: AssetPath.proUserIcon,
-                      isDoneShow: false,
-                      btnTxt1: AppStrings.continuee,
-                      onTap1: () {
-                        AppNavigation.navigateCloseDialog(context);
-                        AskProCheckoutRepository().startCheckout(context);
-                      },
-                      btnTxt2: AppStrings.cancel,
-                      onTap2: () {
-                        AppNavigation.navigatorPop(context);
-                      });
-                },
-              )),
-              10.horizontalSpace,
-              Expanded(
-                  child: CustomButton(
-                onclick: () {
-                  AppNavigation.navigateTo(
-                      context, AppRoutes.myPostsScreenRoute);
-                },
-                text: AppStrings.myPosts,
-                color: AppColors.black,
-              )),
-            ],
+          _actionButtonsRow(),
+          Expanded(
+            child: Obx(() => _buildScrollableBody()),
           ),
-          20.verticalSpace,
-          CustomContainer(
-              onTap: () {
-                AppNavigation.navigateTo(
-                    context, AppRoutes.createANewPostScreenRoute,
-                    arguments:
-                        AddEditPostRoutingArgument(type: AddEditType.add.name));
-              },
-              child: Column(
-                children: [
-                  CustomText(
-                      text: AppStrings.createANewPost,
-                      fontWeight: FontWeight.bold),
-                  10.verticalSpace,
-                  Row(
-                    children: [
-                      UserImageWidget(size: 20, image: AuthController.i.appUser.value.data?.userModel?.profileImage ?? null),
-                      10.horizontalSpace,
-                      Flexible(
-                        child: CustomContainer(
-                            bgColor: AppColors.greybg,
-                            borderColor: AppColors.transparent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                CustomText(
-                                  text: AppStrings.saySomeThing + "...",
-                                  color: AppColors.greyLight,
-                                ),
-                                Icon(Icons.image_outlined)
-                              ],
-                            )),
-                      )
-                    ],
-                  )
-                ],
-              )),
-          20.verticalSpace,
-          searchTextField(),
-          Expanded(child: Obx(() => _buildFeed())),
         ],
       ),
     );
   }
 
-  Widget _buildFeed() {
+  Widget _actionButtonsRow() {
+    return Row(
+      children: [
+        Expanded(
+            child: CustomButton(
+          text: AppStrings.AskAPro,
+          onclick: () {
+            AppDialogs.showSuccessDialog(context,
+                description:
+                    "Get expert help instantly. Make a payment to ask a Pro.",
+                title: "\$4.99/ 5 text messages",
+                image: AssetPath.proUserIcon,
+                isDoneShow: false,
+                btnTxt1: AppStrings.continuee,
+                onTap1: () {
+                  AppNavigation.navigateCloseDialog(context);
+                  AskProCheckoutRepository().startCheckout(context);
+                },
+                btnTxt2: AppStrings.cancel,
+                onTap2: () {
+                  AppNavigation.navigatorPop(context);
+                });
+          },
+        )),
+        10.horizontalSpace,
+        Expanded(
+            child: CustomButton(
+          onclick: () {
+            AppNavigation.navigateTo(context, AppRoutes.myPostsScreenRoute);
+          },
+          text: AppStrings.myPosts,
+          color: AppColors.black,
+        )),
+      ],
+    );
+  }
+
+  Widget _buildScrollableBody() {
+    return RefreshIndicator(
+      onRefresh: _postsController.fetchPosts,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.only(bottom: AppPadding.padding25),
+        child: Column(
+          children: [
+            20.verticalSpace,
+            CustomContainer(
+                onTap: () {
+                  AppNavigation.navigateTo(
+                      context, AppRoutes.createANewPostScreenRoute,
+                      arguments: AddEditPostRoutingArgument(
+                          type: AddEditType.add.name));
+                },
+                child: Column(
+                  children: [
+                    CustomText(
+                        text: AppStrings.createANewPost,
+                        fontWeight: FontWeight.bold),
+                    10.verticalSpace,
+                    Row(
+                      children: [
+                        UserImageWidget(
+                            size: 20,
+                            image: AuthController.i.appUser.value.data
+                                    ?.userModel?.profileImage ??
+                                null),
+                        10.horizontalSpace,
+                        Flexible(
+                          child: CustomContainer(
+                              bgColor: AppColors.greybg,
+                              borderColor: AppColors.transparent,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CustomText(
+                                    text: AppStrings.saySomeThing + "...",
+                                    color: AppColors.greyLight,
+                                  ),
+                                  Icon(Icons.image_outlined)
+                                ],
+                              )),
+                        )
+                      ],
+                    )
+                  ],
+                )),
+            20.verticalSpace,
+            searchTextField(),
+            _buildPostsSection(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPostsSection() {
     if (_postsController.postsLoading.value &&
         _postsController.posts.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return Padding(
+        padding: EdgeInsets.only(top: AppPadding.padding20),
+        child: const Center(child: CircularProgressIndicator()),
+      );
     }
     if (!_postsController.postsLoading.value &&
         _postsController.posts.isEmpty) {
-      return Center(
-        child: CustomText(
-          text: 'No posts yet',
-          color: AppColors.greyLight,
-          is_alignLeft: false,
+      return Padding(
+        padding: EdgeInsets.only(top: AppPadding.padding20),
+        child: Center(
+          child: CustomText(
+            text: 'No posts yet',
+            color: AppColors.greyLight,
+            is_alignLeft: false,
+          ),
         ),
       );
     }
 
     final posts = _postsController.filteredPosts;
     if (posts.isEmpty) {
-      return Center(
-        child: CustomText(
-          text: 'No posts found',
-          color: AppColors.greyLight,
-          is_alignLeft: false,
+      return Padding(
+        padding: EdgeInsets.only(top: AppPadding.padding20),
+        child: Center(
+          child: CustomText(
+            text: 'No posts found',
+            color: AppColors.greyLight,
+            is_alignLeft: false,
+          ),
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _postsController.fetchPosts,
-      child: ListView.separated(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.only(
-            top: AppPadding.padding20, bottom: AppPadding.padding25),
-        shrinkWrap: true,
-        itemCount: posts.length,
-        itemBuilder: (context, index) {
-          final post = posts[index];
-          return postTile(post);
-        },
-        separatorBuilder: (context, index) {
-          return 10.verticalSpace;
-        },
+    return Padding(
+      padding: EdgeInsets.only(top: AppPadding.padding20),
+      child: Column(
+        children: [
+          for (var i = 0; i < posts.length; i++) ...[
+            if (i > 0) 10.verticalSpace,
+            postTile(posts[i]),
+          ],
+        ],
       ),
     );
   }

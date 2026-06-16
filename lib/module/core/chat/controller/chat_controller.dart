@@ -111,6 +111,7 @@ class ChatController extends GetxController {
         time: item.createdAt ?? DateTime.now(),
         senderName: item.senderName,
         senderImage: item.senderImage,
+        filePath: item.filePath,
       ),
     );
     markChatAsRead();
@@ -212,6 +213,7 @@ class ChatController extends GetxController {
                   time: item.createdAt ?? DateTime.now(),
                   senderName: item.senderName,
                   senderImage: item.senderImage,
+                  filePath: item.filePath,
                 ),
               ),
             );

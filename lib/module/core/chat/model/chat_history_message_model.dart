@@ -9,6 +9,7 @@ class ChatHistoryMessage {
   final String chatId;
   final String? senderName;
   final String? senderImage;
+  final String? filePath;
   final DateTime? createdAt;
 
   ChatHistoryMessage({
@@ -20,6 +21,7 @@ class ChatHistoryMessage {
     required this.chatId,
     this.senderName,
     this.senderImage,
+    this.filePath,
     this.createdAt,
   });
 
@@ -46,8 +48,15 @@ class ChatHistoryMessage {
       chatId: json['chatId']?.toString() ?? '',
       senderName: name,
       senderImage: image,
+      filePath: _nullableString(json['filePath'] ?? json['file_path']),
       createdAt: MyChatItem.parseDateTime(json['createdAt']),
     );
+  }
+
+  static String? _nullableString(dynamic value) {
+    final text = value?.toString().trim();
+    if (text == null || text.isEmpty) return null;
+    return text;
   }
 
   static int _int(dynamic value) {
