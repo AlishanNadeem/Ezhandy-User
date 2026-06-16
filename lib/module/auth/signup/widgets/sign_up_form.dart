@@ -230,7 +230,9 @@ class _SignUpFormState extends State<SignUpForm> {
         CustomText(
           text: AppStrings.alreadyHaveAnAccount,
           is_alignLeft: false,
+          fontWeight: FontWeight.w600,
         ),
+        6.horizontalSpace,
         GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -239,7 +241,7 @@ class _SignUpFormState extends State<SignUpForm> {
           child: CustomText(
             text: AppStrings.logIn,
             color: AppColors.orange,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             textDecoration: TextDecoration.underline,
             is_alignLeft: false,
           ),
