@@ -215,6 +215,7 @@ class _CommunityCommentsDialogState extends State<CommunityCommentsDialog> {
                             text: 'No comments yet',
                             color: AppColors.greyLight,
                             fontSize: 12.sp,
+                            is_alignLeft: false,
                           ),
                         )
                       : ListView.separated(

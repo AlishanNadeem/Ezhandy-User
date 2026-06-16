@@ -1,3 +1,4 @@
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,6 +29,27 @@ class _ContactUsState extends State<ContactUs> {
   TextEditingController emailController = TextEditingController();
   TextEditingController subjectController = TextEditingController();
   TextEditingController messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _prefillUserFields();
+  }
+
+  void _prefillUserFields() {
+    final user = AuthController.i.appUser.value.data?.userModel;
+    userNameController.text = user?.fullName?.trim() ?? '';
+    emailController.text = user?.email?.trim() ?? '';
+  }
+
+  @override
+  void dispose() {
+    userNameController.dispose();
+    emailController.dispose();
+    subjectController.dispose();
+    messageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
