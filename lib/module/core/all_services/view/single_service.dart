@@ -89,6 +89,7 @@ class _SingleServiceState extends State<SingleService> {
                       child: CustomText(
                         text: "No users found",
                         color: AppColors.greyLight,
+                        is_alignLeft: false,
                       ),
                     );
                   }
