@@ -53,11 +53,11 @@ class _HomeState extends State<Home> {
               child: Column(
                 children: [
                   adWidget(),
-                  10.verticalSpace,
+                  20.verticalSpace,
                   ourServicesSeeAllRow(context),
-                  30.verticalSpace,
+                  20.verticalSpace,
                   servicesRowWidget(),
-                  30.verticalSpace,
+                  20.verticalSpace,
                   CustomText(
                       text: AppStrings.select, fontWeight: FontWeight.bold),
                   20.verticalSpace,
@@ -280,20 +280,21 @@ if (_homeController.servicesList.isEmpty) {
 
     // Show data
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: _homeController.servicesList.take(5).map((service) {
-        return imageTextWidget(
-          ontap: () {
-            !AuthController.i.isLoginSignUp.value
-                ? signinSignUpPopup()
-                : AppNavigation.navigateTo(
-                    context, AppRoutes.servicesScreenRoute,
-                    arguments: ServiceRoutingArgument(
-                        serviceName: service['name'],
-                        type: ServiceType.instant.name));
-          },
-          text: service['name'] ?? '',
-          image: _serviceIconUrl(service),
+        return Expanded(
+          child: imageTextWidget(
+            ontap: () {
+              !AuthController.i.isLoginSignUp.value
+                  ? signinSignUpPopup()
+                  : AppNavigation.navigateTo(
+                      context, AppRoutes.servicesScreenRoute,
+                      arguments: ServiceRoutingArgument(
+                          serviceName: service['name'],
+                          type: ServiceType.instant.name));
+            },
+            text: service['name'] ?? '',
+            image: _serviceIconUrl(service),
+          ),
         );
       }).toList(),
     );
@@ -315,23 +316,23 @@ if (_homeController.servicesList.isEmpty) {
     return GestureDetector(
       onTap: ontap,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CircleAvatar(
             radius: 30.r,
             backgroundImage: NetworkImage(
               image,
             ),
-            // child: Image.network(
-            //   image,
-            //   width: 30.w,
-            //   height: 30.h,
-            //   fit: BoxFit.cover,
-            // ),
           ),
           10.verticalSpace,
-          CustomText(
-            text: text,
-            fontWeight: FontWeight.bold,
+          SizedBox(
+            width: double.infinity,
+            child: CustomText(
+              text: text,
+              fontWeight: FontWeight.bold,
+              is_alignLeft: false,
+              maxLines: 1,
+            ),
           )
         ],
       ),
