@@ -170,6 +170,7 @@ class BookingDetail {
   final String? statusReason;
   final String? reportMessage;
   final String? reportType;
+  final String? location;
   final bool isPaid;
   final String? paymentId;
   final String createdAt;
@@ -194,6 +195,7 @@ class BookingDetail {
     this.statusReason,
     this.reportMessage,
     this.reportType,
+    this.location,
     required this.isPaid,
     this.paymentId,
     required this.createdAt,
@@ -226,6 +228,7 @@ class BookingDetail {
       statusReason: json['statusReason']?.toString(),
       reportMessage: json['message']?.toString(),
       reportType: json['reportType']?.toString(),
+      location: json['location']?.toString(),
       isPaid: json['isPaid'] == true,
       paymentId: json['paymentId']?.toString(),
       createdAt: json['createdAt']?.toString() ?? '',

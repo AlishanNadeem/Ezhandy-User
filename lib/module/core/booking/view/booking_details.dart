@@ -507,6 +507,10 @@ class _BookingDetailsState extends State<BookingDetails> {
           TwoTextRow(
               firstText: "${AppStrings.serviceTime}:",
               secondText: _formatTimeSlots(detail?.timeSlots)),
+          if (_controller.isStarted || _controller.isCompleted)
+            TwoTextRow(
+                firstText: "${AppStrings.starttime}:",
+                secondText: _formatCreatedTime(detail?.createdAt)),
           if (detail?.totalAmount != null)
             TwoTextRow(
                 firstText: "${AppStrings.charges}:",
@@ -530,10 +534,9 @@ class _BookingDetailsState extends State<BookingDetails> {
           TwoTextRow(
               firstText: "${AppStrings.phoneNumber}:",
               secondText: provider?.mobileNumber ?? '—'),
-          if (_controller.isStarted || _controller.isCompleted)
-            TwoTextRow(
-                firstText: "${AppStrings.starttime}:",
-                secondText: _formatCreatedTime(detail?.createdAt)),
+          TwoTextRow(
+              firstText: "${AppStrings.address}:",
+              secondText: _formatOptionalText(detail?.location)),
           10.verticalSpace,
         ],
       ),
@@ -641,6 +644,11 @@ class _BookingDetailsState extends State<BookingDetails> {
                   btnTxt2: AppStrings.cancel,
                   onTap2: () => AppNavigation.navigatorPop(context));
             }));
+  }
+
+  String _formatOptionalText(String? value) {
+    if (value == null || value.trim().isEmpty) return '—';
+    return value.trim();
   }
 
   String _formatDate(String? value) {
