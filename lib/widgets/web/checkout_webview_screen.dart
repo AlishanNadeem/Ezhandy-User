@@ -131,6 +131,8 @@ class _CheckoutWebViewScreenState extends State<CheckoutWebViewScreen> {
     if (_handledRedirect) return;
     _handledRedirect = true;
 
+    widget.args.onSuccess?.call();
+
     final successRoute = widget.args.successRoute;
     AppNavigation.navigatorPop(context);
 

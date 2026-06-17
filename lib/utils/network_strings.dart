@@ -167,6 +167,18 @@ class NetworkStrings {
   static String get askProCheckoutCancelUrl =>
       '$IMAGE_BASE_URL$askProCheckoutCancelPath';
 
+  /// POST [user/stripe/onboard] — Stripe Connect onboarding link (auth).
+  static const String stripeOnboardEndpoint = 'user/stripe/onboard';
+
+  static const String stripeOnboardSuccessPath = '/stripe/onboard/success';
+  static const String stripeOnboardCancelPath = '/stripe/onboard/cancel';
+
+  static String get stripeOnboardSuccessUrl =>
+      '$IMAGE_BASE_URL$stripeOnboardSuccessPath';
+
+  static String get stripeOnboardCancelUrl =>
+      '$IMAGE_BASE_URL$stripeOnboardCancelPath';
+
   /// POST [ask-pro/query] — submit Ask a Pro question (multipart) (auth).
   static const String askProQueryEndpoint = 'ask-pro/query';
 

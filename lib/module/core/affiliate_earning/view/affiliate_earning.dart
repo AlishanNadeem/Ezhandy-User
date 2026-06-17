@@ -1,5 +1,6 @@
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/affiliate_earning/controller/affiliate_earning_controller.dart';
+import 'package:ezhandy_user/module/core/affiliate_earning/data/repository/stripe_onboard_repository.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
@@ -232,7 +233,9 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
     );
   }
 
-  void _onSetupStripeAccount(BuildContext context) {}
+  void _onSetupStripeAccount(BuildContext context) {
+    StripeOnboardRepository().startOnboarding(context);
+  }
 
   /// Matches previous placeholder style; uses API [totalEarned] when present.
   String _earningLabel(dynamic v) {
