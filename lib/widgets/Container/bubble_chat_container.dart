@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/utils/media_url_helper.dart';
@@ -85,25 +87,43 @@ class ChatBubble extends StatelessWidget {
   bool get _hasFilePath => filePath?.trim().isNotEmpty == true;
 
   Widget _buildMessageImage(BuildContext context) {
-    final path = resolveMediaUrl(filePath);
-    if (path.isEmpty) return _brokenImagePlaceholder();
+    final raw = filePath?.trim() ?? '';
+    if (raw.isEmpty) return _brokenImagePlaceholder();
+
+    final isNetwork =
+        raw.startsWith('http://') || raw.startsWith('https://');
+    final localFile = !isNetwork ? File(raw) : null;
+    final isLocal = localFile != null && localFile.existsSync();
+    final networkPath = isNetwork ? raw : resolveMediaUrl(raw);
+
+    if (!isNetwork && !isLocal && networkPath.isEmpty) {
+      return _brokenImagePlaceholder();
+    }
 
     return GestureDetector(
       onTap: () {
         Utils.onTapViewImage(
           context: context,
-          image: path,
-          mediaType: MediaPathType.network.name,
+          image: isLocal ? raw : networkPath,
+          mediaType: isLocal
+              ? MediaPathType.file.name
+              : MediaPathType.network.name,
         );
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.r),
-        child: Image.network(
-          path,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _brokenImagePlaceholder(),
-        ),
+        child: isLocal
+            ? Image.file(
+                localFile!,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              )
+            : Image.network(
+                networkPath,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _brokenImagePlaceholder(),
+              ),
       ),
     );
   }

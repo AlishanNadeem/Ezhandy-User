@@ -439,7 +439,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _sendMessage() {
-    if (messageController.text.trim().isEmpty) return;
+    final text = messageController.text.trim();
+    final image = _selectedImage;
+
+    if (text.isEmpty && image == null) return;
 
     if (widget.isCalls) {
       if (count >= 5) {
@@ -475,7 +478,16 @@ class _ChatScreenState extends State<ChatScreen> {
       count++;
     }
 
-    _controller.sendMessage(messageController.text);
+    if (image != null) {
+      _controller.sendImageFile(image, caption: text);
+      setState(() {
+        _selectedImage = null;
+      });
+      messageController.clear();
+      return;
+    }
+
+    _controller.sendMessage(text);
     messageController.clear();
   }
 

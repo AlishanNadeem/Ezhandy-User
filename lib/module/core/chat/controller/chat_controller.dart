@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'dart:io';
+
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/chat/model/chat_history_message_model.dart';
@@ -300,5 +302,62 @@ class ChatController extends GetxController {
             AuthController.i.appUser.value.data?.userModel?.profileImage,
       ),
     );
+  }
+
+  Future<void> sendImageFile(File image, {String caption = ''}) async {
+    _stopTyping();
+
+    final toUserId = receiverId ?? '';
+    final id = chatId.trim();
+
+    if (toUserId.isEmpty || id.isEmpty) {
+      LiveChatSocketService.log(
+        'uploadFile skipped: receiverId=$toUserId chatId=$id',
+      );
+      return;
+    }
+
+    final fileName = image.path.split(Platform.pathSeparator).last;
+    final mimeType = _mimeTypeFromPath(fileName);
+    final bytes = await image.readAsBytes();
+
+    LiveChatSocketService.instance.uploadFile(
+      receiverId: toUserId,
+      chatId: id,
+      fileBytes: bytes,
+      fileName: fileName,
+      mimeType: mimeType,
+    );
+
+    messages.add(
+      ChatModel(
+        text: caption,
+        isSender: false,
+        time: DateTime.now(),
+        senderName: AuthController.i.appUser.value.data?.userModel?.fullName,
+        senderImage:
+            AuthController.i.appUser.value.data?.userModel?.profileImage,
+        filePath: image.path,
+      ),
+    );
+  }
+
+  String _mimeTypeFromPath(String fileName) {
+    final ext = fileName.split('.').last.toLowerCase();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      case 'heic':
+        return 'image/heic';
+      default:
+        return 'application/octet-stream';
+    }
   }
 }

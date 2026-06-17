@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'dart:developer' as developer;
 
@@ -146,6 +147,33 @@ class LiveChatSocketService {
     _socket?.emit('sendMessage', payload);
   }
 
+  void uploadFile({
+    required String receiverId,
+    required String chatId,
+    required Uint8List fileBytes,
+    required String fileName,
+    required String mimeType,
+  }) {
+    if (!isConnected) {
+      log('uploadFile skipped: socket not connected');
+      return;
+    }
+
+    final payload = {
+      'receiverId': receiverId,
+      'chatId': chatId,
+      'clientMsgId': _generateImageClientMsgId(),
+      'fileName': fileName,
+      'mimeType': mimeType,
+      'data': fileBytes,
+    };
+    log(
+      'emit uploadFile: receiverId=$receiverId chatId=$chatId '
+      'fileName=$fileName mimeType=$mimeType bytes=${fileBytes.length}',
+    );
+    _socket?.emit('uploadFile', payload);
+  }
+
   void emitTyping({required String chatId, required bool isTyping}) {
     final id = chatId.trim();
     if (id.isEmpty) return;
@@ -157,6 +185,10 @@ class LiveChatSocketService {
 
   String _generateClientMsgId() {
     return 'temp-${DateTime.now().millisecondsSinceEpoch}-${Random().nextDouble()}';
+  }
+
+  String _generateImageClientMsgId() {
+    return 'temp-img-${DateTime.now().millisecondsSinceEpoch}-${Random().nextDouble()}';
   }
 
   void joinChatWhenConnected(String chatId) {
