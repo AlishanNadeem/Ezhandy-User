@@ -55,6 +55,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       // _myOrderTap,
       _contactUsTap,
       _privacyPolicyTap,
+      _termsAndConditionsTap,
       _refundPolicyTap,
       _signOutTap,
       _deleteAccountTap,
@@ -322,6 +323,14 @@ class _DrawerScreenState extends State<DrawerScreen> {
     AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
         arguments: ContentRoutingArgument(
             title: AppStrings.privacyPolicy, type: WebContentType.pp.name));
+  }
+
+  void _termsAndConditionsTap() {
+    AppNavigation.navigatorPop(context);
+
+    AppNavigation.navigateTo(context, AppRoutes.contentScreenRoute,
+        arguments: ContentRoutingArgument(
+            title: AppStrings.termsAndConditions, type: 'terms'));
   }
 
   void _aboutUsTap() {    AppNavigation.navigatorPop(context);

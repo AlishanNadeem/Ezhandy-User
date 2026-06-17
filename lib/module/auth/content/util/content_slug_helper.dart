@@ -4,6 +4,7 @@ class ContentSlugHelper {
   static String fromType(String? type) {
     switch (type) {
       case 'tc':
+      case 'terms':
         return 'terms';
       case 'pp':
         return 'privacy';

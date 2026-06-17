@@ -65,6 +65,7 @@ class AppStrings {
     // myOrders,
     contactUs,
     privacyPolicy,
+    termsAndConditions,
     refundPolicy,
     logout,
     deleteAccount,

@@ -185,6 +185,7 @@ class AssetPath {
     // marketPlaceIcon,
     contactUsIcon,
     privacyIcon,
+    aboutIcon,
     convertIcon,
     logoutIcon,
     deleteAccountIcon,
