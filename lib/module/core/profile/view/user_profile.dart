@@ -120,16 +120,7 @@ class _UserProfileState extends State<UserProfile> {
                       btnTxt2: AppStrings.yes,
                       onTap2: () {
                         AppNavigation.navigatorPop(context);
-                        AppDialogs.showSuccessDialog(
-                          context,
-                          description: AppStrings.accountDeleteSuccessfully,
-                          title: AppStrings.congratulation,
-                          btnTxt1: AppStrings.ok,
-                          onTap1: () {
-                            AppNavigation.navigateToRemovingAll(
-                                context, AppRoutes.loginScreenRoute);
-                          },
-                        );
+                        AuthController.i.deleteAccount(context);
                       });
                 },
                 child: CustomText(

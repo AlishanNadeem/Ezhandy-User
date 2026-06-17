@@ -41,7 +41,7 @@ class NetworkStrings {
   static const String changePasswordEndpoint = "change-password";
   static const String editProfileEndpoint = "user/provider";
   static const String logoutEndpoint = "logout";
-  static const String deleteAccountEndpoint = "user";
+  static const String deleteAccountEndpoint = "user/me";
   static const String serviceTypesEndpoint = "service-type/types";
 
   /// GET [user/freelancers/{serviceTypeId}?isQuick=] — freelancers for a service type id.

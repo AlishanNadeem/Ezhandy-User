@@ -1,59 +1,57 @@
-import 'dart:developer';
-import 'dart:convert' as convert;
-
+import 'package:ezhandy_user/dio_client/dio_client.dart';
+import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
+import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
+import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
-import 'package:ezhandy_user/utils/asset_path.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:ezhandy_user/dio_client/dio_client.dart';
-import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
-import 'package:ezhandy_user/module/auth/controller/social_login_controller.dart';
-import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/utils/shared_preference.dart';
-import 'package:ezhandy_user/utils/listeners.dart';
+import 'package:flutter/material.dart';
 
 class DeleteAccountRepository extends ResponseListener {
-  BuildContext? Context;
-  void deleteAccountRepo(context) async {
-    Context = context;
-    // print(await FirebaseMessagingService().getToken(),);
-    // Map<String, dynamic> rawData = {
-    //   "reason": reason,
-    // };
-    var response = await DioClient().deleteRequest(
-        endPoint: NetworkStrings.deleteAccountEndpoint,
-        // data: rawData,
-        responseListener: this,
-        isHeaderRequire: true);
+  BuildContext? context;
+
+  void deleteAccountRepo(BuildContext currentContext) async {
+    context = currentContext;
+
+    final response = await DioClient().deleteRequest(
+      endPoint: NetworkStrings.deleteAccountEndpoint,
+      responseListener: this,
+      isHeaderRequire: true,
+    );
 
     DioClient().validateResponse(
-        response: response, responseListener: this, message: true);
+      response: response,
+      responseListener: this,
+      message: true,
+    );
   }
 
   @override
-  void onSuccess({response}) {
-    // SocialAuthGetX().firebaseUserSignOut();
-    SharedPreference().clear();
-    // AuthController.i.horseList.clear();
-    HomeController.i.selectedTab.value = 0;
-    // HomeController.i.clearAllData();
+  void onSuccess({response}) async {
+    await _logoutCompletely();
 
-    AppDialogs.showSuccessDialog(
-      Context,
-      description: AppStrings.accountDeleteSuccessfully,
-      title: AppStrings.congratulation,
-      btnTxt1: AppStrings.ok,
-      onTap1: () {
-        AppNavigation.navigateToRemovingAll(
-            Constants.navigatorKey.currentContext, AppRoutes.loginScreenRoute);
-      },
-    );
+    AppDialogs.showToast(message: AppStrings.accountDeleteSuccessfully);
+
+    final navContext = context ?? Constants.navigatorKey.currentContext;
+    if (navContext != null) {
+      AppNavigation.navigateToRemovingAll(
+        navContext,
+        AppRoutes.loginScreenRoute,
+      );
+    }
+  }
+
+  Future<void> _logoutCompletely() async {
+    final prefs = SharedPreference();
+    await prefs.sharedPreference;
+    prefs.clear();
+
+    AuthController.i.appUser.value = AppUser();
+    HomeController.i.selectedTab.value = 0;
   }
 }
-                                                                                                       
