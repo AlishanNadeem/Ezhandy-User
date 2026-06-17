@@ -17,6 +17,8 @@ class LiveChatSocketService {
   bool _initialized = false;
   bool _userOnlineRegistered = false;
   final List<String> _pendingChatJoins = <String>[];
+  final Map<String, List<void Function(dynamic)>> _handlers =
+      <String, List<void Function(dynamic)>>{};
 
   bool get isConnected => _socket?.connected == true;
 
@@ -67,7 +69,7 @@ class LiveChatSocketService {
     });
     _socket!.onConnectError((data) => log('connect error: $data'));
     _socket!.onError((data) => log('error: $data'));
-    _socket!.onAny((event, data) => log('event [$event]: $data'));
+    _socket!.onAny(_dispatchSocketEvent);
 
     _socket!.connect();
     _initialized = true;
@@ -108,6 +110,20 @@ class LiveChatSocketService {
     _pendingChatJoins.clear();
     for (final chatId in pending) {
       joinChat(chatId);
+    }
+  }
+
+  void _dispatchSocketEvent(String event, dynamic data) {
+    log('event [$event]: $data');
+    final handlers = _handlers[event];
+    if (handlers == null || handlers.isEmpty) return;
+
+    for (final handler in List<void Function(dynamic)>.from(handlers)) {
+      try {
+        handler(data);
+      } catch (e, st) {
+        log('handler error for $event: $e\n$st');
+      }
     }
   }
 
@@ -205,15 +221,22 @@ class LiveChatSocketService {
   }
 
   void on(String event, void Function(dynamic data) handler) {
-    log('listener registered for $event');
-    _socket?.on(event, handler);
+    final listeners = _handlers.putIfAbsent(event, () => <void Function(dynamic)>[]);
+    listeners.add(handler);
+    log('listener registered for $event (count=${listeners.length})');
   }
 
   void off(String event, [void Function(dynamic data)? handler]) {
+    final listeners = _handlers[event];
+    if (listeners == null) return;
+
     if (handler != null) {
-      _socket?.off(event, handler);
+      listeners.remove(handler);
+      if (listeners.isEmpty) {
+        _handlers.remove(event);
+      }
     } else {
-      _socket?.off(event);
+      _handlers.remove(event);
     }
   }
 }

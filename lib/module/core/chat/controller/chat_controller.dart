@@ -14,12 +14,14 @@ import 'package:get/get.dart';
 class ChatController extends GetxController {
   ChatController({
     required this.chatId,
+    this.chatType,
     this.otherUserId,
     this.otherUserName,
     this.otherUserImage,
   });
 
   final String chatId;
+  final String? chatType;
   final String? otherUserId;
   final String? otherUserName;
   final String? otherUserImage;
@@ -27,10 +29,16 @@ class ChatController extends GetxController {
   final RxList<ChatModel> messages = <ChatModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isOtherUserTyping = false.obs;
+  final RxnInt creditsLeft = RxnInt();
+  final RxBool isMessageLimitReached = false.obs;
+  final RxString messageLimitText =
+      'Message limit reached. Buy more credits to continue.'.obs;
 
   final Set<int> _messageIds = <int>{};
   void Function(dynamic)? _messageReceivedHandler;
   void Function(dynamic)? _userTypingHandler;
+  void Function(dynamic)? _creditsUpdateHandler;
+  void Function(dynamic)? _messageLimitReachedHandler;
   String? _resolvedOtherUserId;
   Timer? _typingTimer;
   Timer? _otherUserTypingTimer;
@@ -47,6 +55,17 @@ class ChatController extends GetxController {
 
   String get title =>
       otherUserName?.trim().isNotEmpty == true ? otherUserName!.trim() : 'Chat';
+
+  bool get isAskProChat => chatType?.trim().toLowerCase() == 'ask_pro';
+
+  bool get hasCreditsRemaining {
+    final credits = creditsLeft.value;
+    if (credits == null) return true;
+    return credits > 0;
+  }
+
+  bool get isMessagingDisabled =>
+      isMessageLimitReached.value || (isAskProChat && !hasCreditsRemaining);
 
   @override
   void onInit() {
@@ -69,20 +88,43 @@ class ChatController extends GetxController {
     if (_userTypingHandler != null) {
       LiveChatSocketService.instance.off('userTyping', _userTypingHandler);
     }
+    if (_creditsUpdateHandler != null) {
+      LiveChatSocketService.instance
+          .off('creditsUpdate', _creditsUpdateHandler);
+    }
+    if (_messageLimitReachedHandler != null) {
+      LiveChatSocketService.instance
+          .off('messageLimitReached', _messageLimitReachedHandler);
+    }
     super.onClose();
   }
 
   Future<void> _initSocket() async {
     try {
+      _registerSocketHandlers();
       await LiveChatSocketService.instance.connect();
       LiveChatSocketService.instance.joinChatWhenConnected(chatId.trim());
-      _messageReceivedHandler = _onMessageReceived;
-      LiveChatSocketService.instance
-          .on('messageReceived', _messageReceivedHandler!);
-      _userTypingHandler = _onUserTyping;
-      LiveChatSocketService.instance.on('userTyping', _userTypingHandler!);
     } catch (e, st) {
       LiveChatSocketService.log('chat init failed: $e\n$st');
+    }
+  }
+
+  void _registerSocketHandlers() {
+    _messageReceivedHandler = _onMessageReceived;
+    LiveChatSocketService.instance
+        .on('messageReceived', _messageReceivedHandler!);
+    _userTypingHandler = _onUserTyping;
+    LiveChatSocketService.instance.on('userTyping', _userTypingHandler!);
+    if (isAskProChat) {
+      _creditsUpdateHandler = _onCreditsUpdate;
+      LiveChatSocketService.instance
+          .on('creditsUpdate', _creditsUpdateHandler!);
+      _messageLimitReachedHandler = _onMessageLimitReached;
+      LiveChatSocketService.instance
+          .on('messageLimitReached', _messageLimitReachedHandler!);
+      LiveChatSocketService.log(
+        'ask_pro socket listeners registered for chatId=$chatId',
+      );
     }
   }
 
@@ -119,7 +161,16 @@ class ChatController extends GetxController {
     markChatAsRead();
   }
 
-  Map<String, dynamic>? _parseMessagePayload(dynamic data) {
+  Map<String, dynamic>? _parseSocketPayload(dynamic data) {
+    if (data is List) {
+      if (data.length >= 2 && data[1] is Map) {
+        return Map<String, dynamic>.from(data[1] as Map);
+      }
+      if (data.isNotEmpty && data.last is Map) {
+        return Map<String, dynamic>.from(data.last as Map);
+      }
+    }
+
     if (data is! Map) return null;
 
     final nested = data['data'];
@@ -129,9 +180,24 @@ class ChatController extends GetxController {
     return Map<String, dynamic>.from(data);
   }
 
+  bool _matchesEventChat(Map<String, dynamic> payload) {
+    final current = chatId.trim();
+    if (current.isEmpty) return false;
+
+    for (final key in ['chatId', 'askProChatId', 'chat_id', 'ask_pro_chat_id']) {
+      final id = payload[key]?.toString().trim() ?? '';
+      if (id.isNotEmpty && id == current) return true;
+    }
+    return false;
+  }
+
+  Map<String, dynamic>? _parseMessagePayload(dynamic data) {
+    return _parseSocketPayload(data);
+  }
+
   void _onUserTyping(dynamic data) {
     LiveChatSocketService.log('userTyping (chat): $data');
-    final payload = _parseMessagePayload(data);
+    final payload = _parseSocketPayload(data);
     if (payload == null) return;
 
     final userId = payload['userId']?.toString().trim() ?? '';
@@ -151,6 +217,62 @@ class ChatController extends GetxController {
         isOtherUserTyping.value = false;
       });
     }
+  }
+
+  void _onCreditsUpdate(dynamic data) {
+    LiveChatSocketService.log('creditsUpdate (chat): $data');
+    final payload = _parseSocketPayload(data);
+    if (payload == null) return;
+
+    if (!_matchesEventChat(payload)) {
+      LiveChatSocketService.log(
+        'creditsUpdate ignored for chatId=$chatId payload=$payload',
+      );
+      return;
+    }
+
+    final credits = _parseCreditsLeft(payload['creditsLeft']);
+    if (credits != null) {
+      creditsLeft.value = credits;
+      if (credits <= 0) {
+        _applyMessageLimitReached();
+      } else {
+        isMessageLimitReached.value = false;
+      }
+    }
+  }
+
+  void _onMessageLimitReached(dynamic data) {
+    LiveChatSocketService.log('messageLimitReached (chat): $data');
+    final payload = _parseSocketPayload(data);
+    if (payload == null) {
+      LiveChatSocketService.log('messageLimitReached parse failed: $data');
+      return;
+    }
+
+    if (!_matchesEventChat(payload)) {
+      LiveChatSocketService.log(
+        'messageLimitReached ignored for chatId=$chatId payload=$payload',
+      );
+      return;
+    }
+
+    final message = payload['message']?.toString();
+    _applyMessageLimitReached(message: message);
+    LiveChatSocketService.log('messageLimitReached applied for chatId=$chatId');
+  }
+
+  void _applyMessageLimitReached({String? message}) {
+    isMessageLimitReached.value = true;
+    creditsLeft.value = 0;
+    if (message?.trim().isNotEmpty == true) {
+      messageLimitText.value = message!.trim();
+    }
+  }
+
+  static int? _parseCreditsLeft(dynamic value) {
+    if (value is int) return value;
+    return int.tryParse(value?.toString() ?? '');
   }
 
   Future<void> markChatAsRead() async {

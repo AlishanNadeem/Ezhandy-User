@@ -59,10 +59,10 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  int count = 0;
   late final String _controllerTag;
   late final ChatController _controller;
   File? _selectedImage;
+  bool _creditsPopupVisible = false;
 
   bool get _isAskProChat =>
       widget.chatType?.trim().toLowerCase() == 'ask_pro';
@@ -74,6 +74,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller = Get.put(
       ChatController(
         chatId: widget.chatId ?? '',
+        chatType: widget.chatType,
         otherUserId: widget.otherUserId,
         otherUserName: widget.otherUserName,
         otherUserImage: widget.otherUserImage,
@@ -81,6 +82,15 @@ class _ChatScreenState extends State<ChatScreen> {
       tag: _controllerTag,
     );
     ever(_controller.messages, (_) => _scrollToBottom());
+    if (_isAskProChat) {
+      ever<bool>(_controller.isMessageLimitReached, (reached) {
+        if (reached) {
+          _showCreditsExhaustedPopup();
+        } else {
+          _creditsPopupVisible = false;
+        }
+      });
+    }
   }
 
   @override
@@ -113,6 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
       actionWidget: actionWidget(),
       child: Column(
         children: [
+          if (_isAskProChat) _buildCreditsLeftBanner(),
           Expanded(
             child: Obx(() {
               if (_controller.isLoading.value && _controller.messages.isEmpty) {
@@ -193,54 +204,93 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             );
           }),
-          if (_selectedImage != null) _selectedImagePreview(),
-          CustomContainer(
-            borderColor: AppColors.transparent,
-            radius: 0,
-            bgColor: AppColors.orange,
-            child: Padding(
-              padding: Platform.isAndroid
-                  ? EdgeInsets.zero
-                  : const EdgeInsets.only(bottom: AppPadding.padding25),
-              child: Row(
-                children: [
-                  // GestureDetector(
-                  //   child: Image.asset(
-                  //     AssetPath.emojiIcon,
-                  //     width: 27.w,
-                  //     height: 27.h,
-                  //   ),
-                  // ),
-                  // 10.horizontalSpace,
-                  Expanded(child: _messageTextField()),
-                  10.horizontalSpace,
-                  GestureDetector(
-                    onTap: () {
-                      AppDialogs.showImageSourceDialog(
-                        context,
-                        setFile: _setImageFile,
-                      );
-                    },
-                    child: Image.asset(
-                      AssetPath.cameraIcon,
-                      width: 30.w,
-                      height: 30.h,
-                    ),
+          Obx(() {
+            if (_isAskProChat && _controller.isMessageLimitReached.value) {
+              return _buildMessageLimitBanner();
+            }
+            return _buildMessageComposer();
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageComposer() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (_selectedImage != null) _selectedImagePreview(),
+        CustomContainer(
+          borderColor: AppColors.transparent,
+          radius: 0,
+          bgColor: AppColors.orange,
+          child: Padding(
+            padding: Platform.isAndroid
+                ? EdgeInsets.zero
+                : const EdgeInsets.only(bottom: AppPadding.padding25),
+            child: Row(
+              children: [
+                Expanded(child: _messageTextField()),
+                10.horizontalSpace,
+                GestureDetector(
+                  onTap: () {
+                    AppDialogs.showImageSourceDialog(
+                      context,
+                      setFile: _setImageFile,
+                    );
+                  },
+                  child: Image.asset(
+                    AssetPath.cameraIcon,
+                    width: 30.w,
+                    height: 30.h,
                   ),
-                  // 10.horizontalSpace,
-                  // GestureDetector(
-                  //   child: Image.asset(
-                  //     AssetPath.mikeIcon,
-                  //     width: 27.w,
-                  //     height: 27.h,
-                  //   ),
-                  // ),
-                  // 10.horizontalSpace,
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMessageLimitBanner() {
+    return Obx(
+      () => CustomContainer(
+        borderColor: AppColors.transparent,
+        radius: 0,
+        bgColor: AppColors.orange,
+        onTap: _showCreditsExhaustedPopup,
+        child: Padding(
+          padding: Platform.isAndroid
+              ? EdgeInsets.symmetric(
+                  horizontal: AppPadding.padding12,
+                  vertical: 14.h,
+                )
+              : EdgeInsets.fromLTRB(
+                  AppPadding.padding12,
+                  14.h,
+                  AppPadding.padding12,
+                  AppPadding.padding25,
+                ),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomText(
+                  text: _controller.messageLimitText.value,
+                  color: AppColors.white,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              8.horizontalSpace,
+              Icon(
+                Icons.lock_outline,
+                color: AppColors.white,
+                size: 20.sp,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -255,6 +305,37 @@ class _ChatScreenState extends State<ChatScreen> {
   void _removeSelectedImage() {
     setState(() {
       _selectedImage = null;
+    });
+  }
+
+  Widget _buildCreditsLeftBanner() {
+    return Obx(() {
+      final credits = _controller.creditsLeft.value;
+      if (credits == null) return const SizedBox.shrink();
+
+      final label = credits == 1
+          ? '1 message left'
+          : '$credits messages left';
+
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPadding.padding12,
+          vertical: 8.h,
+        ),
+        decoration: BoxDecoration(
+          color: credits <= 0
+              ? AppColors.orange.withValues(alpha: 0.12)
+              : AppColors.greyLight.withValues(alpha: 0.12),
+        ),
+        child: CustomText(
+          text: label,
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w600,
+          color: credits <= 0 ? AppColors.orange : AppColors.greyLight,
+          is_alignLeft: false,
+        ),
+      );
     });
   }
 
@@ -441,44 +522,50 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  void _showCreditsExhaustedPopup() {
+    if (!mounted || _creditsPopupVisible) return;
+    _creditsPopupVisible = true;
+
+    AppDialogs.showSuccessDialog(
+      context,
+      description:
+          'You’ve used all your message credits. Make a payment to send more messages.',
+      title: '\$9.99/ 5 more text messages',
+      image: AssetPath.proUserIcon,
+      isDoneShow: false,
+      btnTxt1: AppStrings.continuee,
+      onTap1: () {
+        AppDialogs.showSuccessDialog(
+          context,
+          description: AppStrings.paymentHasBeenDoneSuccessfully,
+          title: AppStrings.congratulation,
+          isDoneShow: true,
+          btnTxt1: AppStrings.ok,
+          onTap1: () {
+            AppNavigation.navigatorPopUntil(
+              context,
+              AppRoutes.chatScreenRoute,
+            );
+          },
+        );
+      },
+      btnTxt2: AppStrings.cancel,
+      onTap2: () {
+        _creditsPopupVisible = false;
+        AppNavigation.navigatorPop(context);
+      },
+    );
+  }
+
   void _sendMessage() {
     final text = messageController.text.trim();
     final image = _selectedImage;
 
     if (text.isEmpty && image == null) return;
 
-    if (_isAskProChat) {
-      if (count >= 5) {
-        AppDialogs.showSuccessDialog(
-          context,
-          description:
-              'You’ve sent 5 messages in this pro chat. Make a payment to send more 5 messages.',
-          title: '\$9.99/ 5 more text messages',
-          image: AssetPath.proUserIcon,
-          isDoneShow: false,
-          btnTxt1: AppStrings.continuee,
-          onTap1: () {
-            AppDialogs.showSuccessDialog(
-              context,
-              description: AppStrings.paymentHasBeenDoneSuccessfully,
-              title: AppStrings.congratulation,
-              isDoneShow: true,
-              btnTxt1: AppStrings.ok,
-              onTap1: () {
-                count = 0;
-                AppNavigation.navigatorPopUntil(
-                  context,
-                  AppRoutes.chatScreenRoute,
-                );
-              },
-            );
-          },
-          btnTxt2: AppStrings.cancel,
-          onTap2: () => AppNavigation.navigatorPop(context),
-        );
-        return;
-      }
-      count++;
+    if (_isAskProChat && _controller.isMessagingDisabled) {
+      _showCreditsExhaustedPopup();
+      return;
     }
 
     if (image != null) {
