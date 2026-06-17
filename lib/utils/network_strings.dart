@@ -167,6 +167,9 @@ class NetworkStrings {
   /// GET [ask-pro/status] — Ask a Pro subscription / access status (auth).
   static const String askProStatusEndpoint = 'ask-pro/status';
 
+  /// GET [ask-pro/pricing] — Ask a Pro pricing details for checkout popup (auth).
+  static const String askProPricingEndpoint = 'ask-pro/pricing';
+
   static const String askProCheckoutSuccessPath = '/ask-pro/checkout/success';
   static const String askProCheckoutCancelPath = '/ask-pro/checkout/cancel';
 
