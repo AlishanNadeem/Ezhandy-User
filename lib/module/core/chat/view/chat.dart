@@ -25,7 +25,7 @@ import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 
 class ChatScreen extends StatefulWidget {
   final bool isBooking;
-  final bool isCalls;
+  final String? chatType;
   final String? chatId;
   final String? otherUserId;
   final String? otherUserName;
@@ -33,7 +33,7 @@ class ChatScreen extends StatefulWidget {
 
   const ChatScreen({
     this.isBooking = false,
-    this.isCalls = false,
+    this.chatType,
     this.chatId,
     this.otherUserId,
     this.otherUserName,
@@ -44,7 +44,7 @@ class ChatScreen extends StatefulWidget {
   factory ChatScreen.fromArgs(ChatRoutingArgument? args) {
     return ChatScreen(
       isBooking: args?.isBooking ?? false,
-      isCalls: args?.isCalls ?? false,
+      chatType: args?.chatType,
       chatId: args?.chatId,
       otherUserId: args?.otherUserId,
       otherUserName: args?.otherUserName,
@@ -63,6 +63,9 @@ class _ChatScreenState extends State<ChatScreen> {
   late final String _controllerTag;
   late final ChatController _controller;
   File? _selectedImage;
+
+  bool get _isAskProChat =>
+      widget.chatType?.trim().toLowerCase() == 'ask_pro';
 
   @override
   void initState() {
@@ -333,7 +336,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //     ),
     //   );
     // } else
-    if (widget.isCalls) {
+    if (_isAskProChat) {
       return Padding(
         padding: EdgeInsets.only(
           right: AppPadding.padding12,
@@ -444,7 +447,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (text.isEmpty && image == null) return;
 
-    if (widget.isCalls) {
+    if (_isAskProChat) {
       if (count >= 5) {
         AppDialogs.showSuccessDialog(
           context,

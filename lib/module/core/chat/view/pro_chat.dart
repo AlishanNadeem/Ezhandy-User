@@ -98,8 +98,7 @@ class _ProChatState extends State<ProChat> {
                             context,
                             AppRoutes.chatScreenRoute,
                             arguments: ChatRoutingArgument(
-                              isBooking: false,
-                              isCalls: true,
+                              chatType: 'ask_pro',
                               chatId: chat.chatId,
                               otherUserId: chat.otherUser.id,
                               otherUserName: chat.displayName,
