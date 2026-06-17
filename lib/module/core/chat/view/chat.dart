@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:ezhandy_user/module/core/community/controller/ask_pro_controller.dart';
+import 'package:ezhandy_user/module/core/community/widgets/ask_pro_pricing_dialog.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/chat/controller/chat_controller.dart';
 import 'package:ezhandy_user/module/core/chat/model/chat_model.dart';
@@ -522,37 +524,30 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _showCreditsExhaustedPopup() {
+  Future<void> _showCreditsExhaustedPopup() async {
     if (!mounted || _creditsPopupVisible) return;
     _creditsPopupVisible = true;
 
-    AppDialogs.showSuccessDialog(
+    final pricing = await AskProController().fetchPricing();
+
+    if (!mounted) {
+      _creditsPopupVisible = false;
+      return;
+    }
+
+    if (pricing == null) {
+      _creditsPopupVisible = false;
+      AppDialogs.showToast(message: 'Unable to load Ask a Pro pricing');
+      return;
+    }
+
+    await AskProPricingDialog.show(
       context,
-      description:
-          'You’ve used all your message credits. Make a payment to send more messages.',
-      title: '\$9.99/ 5 more text messages',
-      image: AssetPath.proUserIcon,
-      isDoneShow: false,
-      btnTxt1: AppStrings.continuee,
-      onTap1: () {
-        AppDialogs.showSuccessDialog(
-          context,
-          description: AppStrings.paymentHasBeenDoneSuccessfully,
-          title: AppStrings.congratulation,
-          isDoneShow: true,
-          btnTxt1: AppStrings.ok,
-          onTap1: () {
-            AppNavigation.navigatorPopUntil(
-              context,
-              AppRoutes.chatScreenRoute,
-            );
-          },
-        );
-      },
-      btnTxt2: AppStrings.cancel,
-      onTap2: () {
-        _creditsPopupVisible = false;
-        AppNavigation.navigatorPop(context);
+      pricing: pricing,
+      onDismiss: () {
+        if (mounted) {
+          _creditsPopupVisible = false;
+        }
       },
     );
   }

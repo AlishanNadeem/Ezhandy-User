@@ -13,13 +13,15 @@ class AskProPricingDialog extends StatelessWidget {
   const AskProPricingDialog({
     super.key,
     required this.pricing,
-    required this.onContinue,
     required this.onCancel,
+    this.onContinue,
+    this.showContinue = true,
   });
 
   final AskProPricing pricing;
-  final VoidCallback onContinue;
+  final VoidCallback? onContinue;
   final VoidCallback onCancel;
+  final bool showContinue;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class AskProPricingDialog extends StatelessWidget {
             fontSize: 24.sp,
             fontWeight: FontWeight.w600,
             is_alignLeft: false,
+            textDecoration: TextDecoration.none,
           ),
           10.verticalSpace,
           if (pricing.description.isNotEmpty)
@@ -49,6 +52,7 @@ class AskProPricingDialog extends StatelessWidget {
               is_alignLeft: false,
               textAlign: TextAlign.center,
               color: AppColors.greyLight,
+              textDecoration: TextDecoration.none,
             ),
           if (pricing.features.isNotEmpty) ...[
             16.verticalSpace,
@@ -69,6 +73,7 @@ class AskProPricingDialog extends StatelessWidget {
                         text: feature,
                         fontSize: 13.sp,
                         color: AppColors.black,
+                        textDecoration: TextDecoration.none,
                       ),
                     ),
                   ],
@@ -77,26 +82,34 @@ class AskProPricingDialog extends StatelessWidget {
             ),
           ],
           24.verticalSpace,
-          Row(
-            children: [
-              Expanded(
-                child: CustomButton(
-                  borderRadius: 35.r,
-                  text: AppStrings.continuee,
-                  onclick: onContinue,
+          if (showContinue)
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    borderRadius: 35.r,
+                    text: AppStrings.continuee,
+                    onclick: onContinue ?? () {},
+                  ),
                 ),
-              ),
-              10.horizontalSpace,
-              Expanded(
-                child: CustomButton(
-                  borderRadius: 35.r,
-                  text: AppStrings.cancel,
-                  onclick: onCancel,
-                  color: AppColors.black,
+                10.horizontalSpace,
+                Expanded(
+                  child: CustomButton(
+                    borderRadius: 35.r,
+                    text: AppStrings.cancel,
+                    onclick: onCancel,
+                    color: AppColors.black,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            )
+          else
+            CustomButton(
+              borderRadius: 35.r,
+              text: AppStrings.cancel,
+              onclick: onCancel,
+              color: AppColors.black,
+            ),
         ],
       ),
     );
@@ -105,24 +118,29 @@ class AskProPricingDialog extends StatelessWidget {
   static Future<void> show(
     BuildContext context, {
     required AskProPricing pricing,
-    required VoidCallback onContinue,
+    VoidCallback? onContinue,
+    VoidCallback? onDismiss,
+    bool showContinue = true,
   }) {
-    return showDialog(
+    return showDialog<void>(
       barrierDismissible: false,
       barrierColor: AppColors.orange.withOpacity(0.8),
       context: context,
       builder: (dialogContext) {
         return AskProPricingDialog(
           pricing: pricing,
-          onContinue: () {
-            AppNavigation.navigateCloseDialog(dialogContext);
-            onContinue();
-          },
+          showContinue: showContinue,
+          onContinue: onContinue == null
+              ? null
+              : () {
+                  AppNavigation.navigateCloseDialog(dialogContext);
+                  onContinue();
+                },
           onCancel: () {
             AppNavigation.navigatorPop(dialogContext);
           },
         );
       },
-    );
+    ).whenComplete(() => onDismiss?.call());
   }
 }
