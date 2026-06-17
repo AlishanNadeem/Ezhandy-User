@@ -136,7 +136,10 @@ class _CheckoutWebViewScreenState extends State<CheckoutWebViewScreen> {
 
     final sessionId = widget.args.confirmSessionId?.trim();
     if (sessionId != null && sessionId.isNotEmpty) {
-      final confirmed = await AskProCheckoutRepository.confirmSession(sessionId);
+      final confirm = widget.args.confirmSession;
+      final confirmed = confirm != null
+          ? await confirm(sessionId)
+          : await AskProCheckoutRepository.confirmSession(sessionId);
       if (!mounted) return;
 
       if (!confirmed) {
@@ -150,6 +153,8 @@ class _CheckoutWebViewScreenState extends State<CheckoutWebViewScreen> {
 
     if (!mounted) return;
     AppNavigation.navigatorPop(context);
+
+    if (!widget.args.navigateOnSuccess) return;
 
     final successRoute = widget.args.successRoute;
     Future.microtask(() {

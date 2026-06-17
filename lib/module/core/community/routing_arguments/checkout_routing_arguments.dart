@@ -7,6 +7,8 @@ class CheckoutRoutingArguments {
   final String successRoute;
   final VoidCallback? onSuccess;
   final String? confirmSessionId;
+  final bool navigateOnSuccess;
+  final Future<bool> Function(String sessionId)? confirmSession;
 
   CheckoutRoutingArguments({
     required this.checkoutUrl,
@@ -15,5 +17,7 @@ class CheckoutRoutingArguments {
     required this.successRoute,
     this.onSuccess,
     this.confirmSessionId,
+    this.navigateOnSuccess = true,
+    this.confirmSession,
   });
 }

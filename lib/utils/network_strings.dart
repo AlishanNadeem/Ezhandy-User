@@ -173,6 +173,14 @@ class NetworkStrings {
   /// GET [ask-pro/by-chat/{chatId}] — Ask a Pro credits/status for a chat (auth).
   static String askProByChat(String chatId) => 'ask-pro/by-chat/$chatId';
 
+  /// POST [ask-pro/buy-credits/{askProChatId}] — Stripe checkout to buy chat credits (auth).
+  static String askProBuyCredits(String askProChatId) =>
+      'ask-pro/buy-credits/$askProChatId';
+
+  /// GET [ask-pro/confirm-credits?session_id=] — confirm buy-credits checkout (auth).
+  static String askProConfirmCredits(String sessionId) =>
+      'ask-pro/confirm-credits?session_id=$sessionId';
+
   /// GET [ask-pro/confirm?session_id=] — confirm Stripe checkout session (auth).
   static String askProConfirm(String sessionId) =>
       'ask-pro/confirm?session_id=$sessionId';
@@ -180,11 +188,33 @@ class NetworkStrings {
   static const String askProCheckoutSuccessPath = '/ask-pro/checkout/success';
   static const String askProCheckoutCancelPath = '/ask-pro/checkout/cancel';
 
+  static const String askProBuyCreditsSuccessPath =
+      '/ask-pro/buy-credits/success';
+  static const String askProBuyCreditsCancelPath =
+      '/ask-pro/buy-credits/cancel';
+
   static String get askProCheckoutSuccessUrl =>
       '$IMAGE_BASE_URL$askProCheckoutSuccessPath';
 
   static String get askProCheckoutCancelUrl =>
       '$IMAGE_BASE_URL$askProCheckoutCancelPath';
+
+  static String get askProBuyCreditsSuccessUrl =>
+      '$_httpsRedirectBase$askProBuyCreditsSuccessPath';
+
+  static String get askProBuyCreditsCancelUrl =>
+      '$_httpsRedirectBase$askProBuyCreditsCancelPath';
+
+  static String get _httpsRedirectBase {
+    final base = IMAGE_BASE_URL.trim();
+    if (base.isEmpty) return 'https://example.com';
+    final uri = Uri.tryParse(base);
+    if (uri == null) return base.startsWith('https') ? base : 'https://$base';
+    final normalized = uri.replace(scheme: 'https');
+    return normalized.hasPort && normalized.port != 80 && normalized.port != 443
+        ? '${normalized.scheme}://${normalized.host}:${normalized.port}'
+        : '${normalized.scheme}://${normalized.host}';
+  }
 
   /// POST [user/stripe/onboard] — Stripe Connect onboarding link (auth).
   static const String stripeOnboardEndpoint = 'user/stripe/onboard';

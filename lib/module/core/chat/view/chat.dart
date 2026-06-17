@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ezhandy_user/module/core/chat/data/repository/ask_pro_buy_credits_repository.dart';
 import 'package:ezhandy_user/module/core/community/controller/ask_pro_controller.dart';
 import 'package:ezhandy_user/module/core/community/widgets/ask_pro_pricing_dialog.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
@@ -549,10 +550,27 @@ class _ChatScreenState extends State<ChatScreen> {
     await AskProPricingDialog.show(
       context,
       pricing: pricing,
+      onContinue: () => _startBuyCreditsCheckout(),
       onDismiss: () {
         if (mounted) {
           _creditsPopupVisible = false;
         }
+      },
+    );
+  }
+
+  void _startBuyCreditsCheckout() {
+    final askProChatId = _controller.askProChatId.value.trim();
+    if (askProChatId.isEmpty) {
+      AppDialogs.showToast(message: 'Unable to start checkout');
+      return;
+    }
+
+    AskProBuyCreditsRepository().startBuyCredits(
+      context,
+      askProChatId: askProChatId,
+      onCheckoutSuccess: () {
+        _controller.fetchAskProByChat();
       },
     );
   }

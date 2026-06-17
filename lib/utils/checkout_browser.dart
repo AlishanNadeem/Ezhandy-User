@@ -14,6 +14,8 @@ class CheckoutBrowser {
     String? successRoute,
     VoidCallback? onSuccess,
     String? confirmSessionId,
+    bool navigateOnSuccess = true,
+    Future<bool> Function(String sessionId)? confirmSession,
   }) {
     AppNavigation.navigateTo(
       context,
@@ -25,6 +27,8 @@ class CheckoutBrowser {
         successRoute: successRoute ?? AppRoutes.createAProPostScreenRoute,
         onSuccess: onSuccess,
         confirmSessionId: confirmSessionId,
+        navigateOnSuccess: navigateOnSuccess,
+        confirmSession: confirmSession,
       ),
     );
   }

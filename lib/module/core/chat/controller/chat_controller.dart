@@ -34,6 +34,7 @@ class ChatController extends GetxController {
   final RxBool isMessageLimitReached = false.obs;
   final RxString messageLimitText =
       'Message limit reached. Buy more credits to continue.'.obs;
+  final RxString askProChatId = ''.obs;
 
   bool skipNextLimitPopup = false;
 
@@ -309,6 +310,10 @@ class ChatController extends GetxController {
     }
 
     final userCredits = _parseCreditsLeft(data['userCredits']) ?? 0;
+    final proChatId = data['askProChatId']?.toString().trim() ?? '';
+    if (proChatId.isNotEmpty) {
+      askProChatId.value = proChatId;
+    }
     creditsLeft.value = userCredits;
     isAskProCreditsReady.value = true;
 
