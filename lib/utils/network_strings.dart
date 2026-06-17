@@ -164,6 +164,9 @@ class NetworkStrings {
   /// POST [ask-pro/user/checkout] — Stripe checkout session for Ask a Pro (auth).
   static const String askProCheckoutEndpoint = 'ask-pro/user/checkout';
 
+  /// GET [ask-pro/status] — Ask a Pro subscription / access status (auth).
+  static const String askProStatusEndpoint = 'ask-pro/status';
+
   static const String askProCheckoutSuccessPath = '/ask-pro/checkout/success';
   static const String askProCheckoutCancelPath = '/ask-pro/checkout/cancel';
 

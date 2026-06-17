@@ -1,5 +1,5 @@
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
-import 'package:ezhandy_user/module/core/community/data/repository/ask_pro_checkout_repository.dart';
+import 'package:ezhandy_user/module/core/community/controller/ask_pro_controller.dart';
 import 'package:ezhandy_user/module/core/community/controller/community_posts_controller.dart';
 import 'package:ezhandy_user/module/core/community/model/community_post_model.dart';
 import 'package:ezhandy_user/module/core/community/routing_arguments/add_edit_post_routing_arguments.dart';
@@ -35,10 +35,12 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   final CommunityPostsController _postsController =
       Get.put(CommunityPostsController());
+  final AskProController _askProController = Get.put(AskProController());
 
   @override
   void dispose() {
     Get.delete<CommunityPostsController>();
+    Get.delete<AskProController>();
     super.dispose();
   }
 
@@ -73,26 +75,15 @@ class _CommunityScreenState extends State<CommunityScreen> {
     return Row(
       children: [
         Expanded(
-            child: CustomButton(
-          text: AppStrings.AskAPro,
-          onclick: () {
-            AppDialogs.showSuccessDialog(context,
-                description:
-                    "Get expert help instantly. Make a payment to ask a Pro.",
-                title: "\$4.99/ 5 text messages",
-                image: AssetPath.proUserIcon,
-                isDoneShow: false,
-                btnTxt1: AppStrings.continuee,
-                onTap1: () {
-                  AppNavigation.navigateCloseDialog(context);
-                  AskProCheckoutRepository().startCheckout(context);
-                },
-                btnTxt2: AppStrings.cancel,
-                onTap2: () {
-                  AppNavigation.navigatorPop(context);
-                });
-          },
-        )),
+          child: Obx(
+            () => CustomButton(
+              text: AppStrings.AskAPro,
+              onclick: _askProController.isCheckingStatus.value
+                  ? () {}
+                  : () => _askProController.handleAskProTap(context),
+            ),
+          ),
+        ),
         10.horizontalSpace,
         Expanded(
             child: CustomButton(
