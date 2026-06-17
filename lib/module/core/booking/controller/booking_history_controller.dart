@@ -5,6 +5,12 @@ import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:get/get.dart';
 
 class BookingHistoryController extends GetxController {
+  BookingHistoryController({
+    this.listEndpoint = NetworkStrings.userBookingsEndpoint,
+  });
+
+  final String listEndpoint;
+
   final RxList<UserBooking> bookings = <UserBooking>[].obs;
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
@@ -30,7 +36,7 @@ class BookingHistoryController extends GetxController {
     isLoading.value = true;
     try {
       final response = await DioClient().getRequest(
-        endPoint: NetworkStrings.userBookingsEndpoint,
+        endPoint: listEndpoint,
         isLoader: false,
         isHeaderRequire: true,
       );

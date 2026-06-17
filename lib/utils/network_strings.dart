@@ -84,6 +84,9 @@ class NetworkStrings {
   /// GET [bookings/user] — current user's bookings (auth).
   static const String userBookingsEndpoint = 'bookings/user';
 
+  /// GET [bookings/bookings/history] — user's past booking history (auth).
+  static const String bookingsHistoryEndpoint = 'bookings/bookings/history';
+
   /// POST [bookings] — create booking(s) (auth).
   static const String createBookingsEndpoint = 'bookings';
 

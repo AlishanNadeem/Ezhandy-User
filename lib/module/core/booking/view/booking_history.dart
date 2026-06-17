@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
+import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 class BookingHistory extends StatefulWidget {
@@ -25,20 +26,27 @@ class BookingHistory extends StatefulWidget {
 }
 
 class _BookingHistoryState extends State<BookingHistory> {
+  static const _controllerTag = 'booking_history';
+
   final TextEditingController _searchController = TextEditingController();
 
   BookingHistoryController get _controller {
-    if (Get.isRegistered<BookingHistoryController>()) {
-      return Get.find<BookingHistoryController>();
+    if (Get.isRegistered<BookingHistoryController>(tag: _controllerTag)) {
+      return Get.find<BookingHistoryController>(tag: _controllerTag);
     }
-    return Get.put(BookingHistoryController());
+    return Get.put(
+      BookingHistoryController(
+        listEndpoint: NetworkStrings.bookingsHistoryEndpoint,
+      ),
+      tag: _controllerTag,
+    );
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    if (Get.isRegistered<BookingHistoryController>()) {
-      Get.delete<BookingHistoryController>();
+    if (Get.isRegistered<BookingHistoryController>(tag: _controllerTag)) {
+      Get.delete<BookingHistoryController>(tag: _controllerTag);
     }
     super.dispose();
   }
