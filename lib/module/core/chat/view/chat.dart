@@ -62,6 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
   int count = 0;
   late final String _controllerTag;
   late final ChatController _controller;
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -189,6 +190,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             );
           }),
+          if (_selectedImage != null) _selectedImagePreview(),
           CustomContainer(
             borderColor: AppColors.transparent,
             radius: 0,
@@ -210,6 +212,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(child: _messageTextField()),
                   10.horizontalSpace,
                   GestureDetector(
+                    onTap: () {
+                      AppDialogs.showImageSourceDialog(
+                        context,
+                        setFile: _setImageFile,
+                      );
+                    },
                     child: Image.asset(
                       AssetPath.cameraIcon,
                       width: 30.w,
@@ -226,6 +234,53 @@ class _ChatScreenState extends State<ChatScreen> {
                   // ),
                   // 10.horizontalSpace,
                 ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _setImageFile(File? file) {
+    if (!mounted) return;
+    setState(() {
+      _selectedImage = file;
+    });
+  }
+
+  void _removeSelectedImage() {
+    setState(() {
+      _selectedImage = null;
+    });
+  }
+
+  Widget _selectedImagePreview() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppPadding.padding12,
+        vertical: 8.h,
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.r),
+            child: Image.file(
+              _selectedImage!,
+              height: 72.h,
+              width: 72.w,
+              fit: BoxFit.cover,
+            ),
+          ),
+          10.horizontalSpace,
+          Expanded(
+            child: GestureDetector(
+              onTap: _removeSelectedImage,
+              child: CustomText(
+                text: 'Remove image',
+                color: AppColors.orange,
+                fontWeight: FontWeight.bold,
+                textDecoration: TextDecoration.underline,
               ),
             ),
           ),
