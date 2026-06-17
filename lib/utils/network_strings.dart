@@ -75,6 +75,9 @@ class NetworkStrings {
   /// GET [favourites/services] — list of favourite service rows (auth).
   static const String favouriteServicesListEndpoint = 'favourites/services';
 
+  /// GET [favourites/providers] — list of favourite providers (auth).
+  static const String favouriteProvidersListEndpoint = 'favourites/providers';
+
   /// GET [payment/user] — current user payment transactions (auth).
   static const String userPaymentsEndpoint = 'payment/user';
 

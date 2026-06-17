@@ -7,6 +7,7 @@ import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
+import 'package:ezhandy_user/widgets/profile_widget/user_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -78,7 +79,12 @@ class _FavouritesServicesState extends State<FavouritesServices>
                   splashFactory: NoSplash.splashFactory,
                   overlayColor:
                       const WidgetStatePropertyAll(AppColors.transparent),
-                  onTap: (index) => setState(() {}),
+                  onTap: (index) {
+                    setState(() {});
+                    if (index == 1) {
+                      _controller.fetchFavouriteProviders();
+                    }
+                  },
                   tabs: [
                     _tabLabel(AppStrings.services, 0),
                     _tabLabel(AppStrings.providers, 1),
@@ -224,13 +230,154 @@ class _FavouritesServicesState extends State<FavouritesServices>
   }
 
   Widget _providersTab() {
-    return Center(
+    return Obx(() {
+      final list = _controller.providerItems;
+      final loading = _controller.isProvidersLoading.value;
+
+      if (loading && list.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (list.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.only(top: 48.h),
+            child: CustomText(
+              text: AppStrings.noFavouriteProvidersFound,
+              color: AppColors.greyLight,
+              is_alignLeft: false,
+            ),
+          ),
+        );
+      }
+
+      return ListView.separated(
+        padding: EdgeInsets.only(
+          top: AppPadding.padding20,
+          bottom: AppPadding.padding25,
+        ),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          final row = list[index];
+          final provider =
+              FavouritesServicesController.providerMapFromRow(row);
+          final providerId =
+              FavouritesServicesController.providerApiIdFromRow(row);
+          final heartBusy =
+              _controller.removingProviderId.value == providerId;
+
+          return _providerCard(
+            provider: provider,
+            heartBusy: heartBusy,
+            onTap: providerId.isEmpty
+                ? () {}
+                : () {
+                    AppNavigation.navigateTo(
+                      context,
+                      AppRoutes.providerProfileScreenRoute,
+                      arguments: ServiceRoutingArgument(
+                        providerId: providerId,
+                      ),
+                    );
+                  },
+            onUnfavorite: providerId.isEmpty || heartBusy
+                ? () {}
+                : () => _controller.removeProviderFromFavourites(providerId),
+          );
+        },
+        separatorBuilder: (context, index) => 20.verticalSpace,
+      );
+    });
+  }
+
+  Widget _providerCard({
+    required Map<String, dynamic> provider,
+    required VoidCallback onTap,
+    required VoidCallback onUnfavorite,
+    bool heartBusy = false,
+  }) {
+    final name = provider['fullName']?.toString().trim().isNotEmpty == true
+        ? provider['fullName'].toString()
+        : AppStrings.dummyName;
+    final about = provider['aboutUs']?.toString().trim() ?? '';
+    final address = provider['address']?.toString().trim() ?? '';
+    final subtitle = about.isNotEmpty ? about : address;
+    final rating = provider['rating'];
+    final ratingText = rating == null ? '0' : rating.toString();
+    final imageUrl = resolveMediaUrl(provider['profileImage']);
+
+    return CustomContainer(
+      onTap: onTap,
+      isPadding: false,
       child: Padding(
-        padding: EdgeInsets.only(top: 48.h),
-        child: CustomText(
-          text: AppStrings.noFavouriteProvidersFound,
-          color: AppColors.greyLight,
-          is_alignLeft: false,
+        padding: const EdgeInsets.only(
+          top: AppPadding.padding14,
+          bottom: AppPadding.padding14,
+          left: AppPadding.padding14,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            UserImageWidget(
+              image: imageUrl.isEmpty ? null : imageUrl,
+              size: 28,
+            ),
+            5.horizontalSpace,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: name,
+                    fontWeight: FontWeight.w500,
+                    maxLines: 1,
+                  ),
+                  if (subtitle.isNotEmpty) ...[
+                    4.verticalSpace,
+                    CustomText(
+                      text: subtitle,
+                      maxLines: 2,
+                      fontSize: 11.sp,
+                      color: AppColors.grey,
+                    ),
+                  ],
+                  5.verticalSpace,
+                  Row(
+                    children: [
+                      CustomText(
+                        text: '0 reviews',
+                        maxLines: 1,
+                        fontSize: 12.sp,
+                      ),
+                      10.horizontalSpace,
+                      Icon(
+                        Icons.star,
+                        color: AppColors.orange,
+                        size: 15.sp,
+                      ),
+                      CustomText(
+                        text: ratingText,
+                        color: AppColors.orange,
+                        fontSize: 12.sp,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14.w),
+              child: GestureDetector(
+                onTap: heartBusy ? null : onUnfavorite,
+                child: Icon(
+                  Icons.favorite_rounded,
+                  size: 28.sp,
+                  color: heartBusy
+                      ? AppColors.grey.withValues(alpha: 0.5)
+                      : AppColors.orange,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
