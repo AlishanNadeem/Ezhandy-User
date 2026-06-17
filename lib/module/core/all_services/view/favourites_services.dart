@@ -22,7 +22,10 @@ class FavouritesServices extends StatefulWidget {
   State<FavouritesServices> createState() => _FavouritesServicesState();
 }
 
-class _FavouritesServicesState extends State<FavouritesServices> {
+class _FavouritesServicesState extends State<FavouritesServices>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   FavouritesServicesController get _controller {
     if (Get.isRegistered<FavouritesServicesController>()) {
       return Get.find<FavouritesServicesController>();
@@ -31,7 +34,14 @@ class _FavouritesServicesState extends State<FavouritesServices> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
   void dispose() {
+    _tabController.dispose();
     if (Get.isRegistered<FavouritesServicesController>()) {
       Get.delete<FavouritesServicesController>();
     }
@@ -49,7 +59,70 @@ class _FavouritesServicesState extends State<FavouritesServices> {
         title: AppStrings.myFavorites,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding12),
-          child: Obx(() {
+          child: Column(
+            children: [
+              15.verticalSpace,
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.greyBorder.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(15.r),
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.r),
+                    color: AppColors.orange,
+                  ),
+                  dividerColor: AppColors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  overlayColor:
+                      const WidgetStatePropertyAll(AppColors.transparent),
+                  onTap: (index) => setState(() {}),
+                  tabs: [
+                    _tabLabel(AppStrings.services, 0),
+                    _tabLabel(AppStrings.providers, 1),
+                  ],
+                ),
+              ),
+              10.verticalSpace,
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _servicesTab(),
+                    _providersTab(),
+                  ],
+                ),
+              ),
+              25.verticalSpace,
+            ],
+          ),
+        ));
+  }
+
+  Tab _tabLabel(String label, int index) {
+    return Tab(
+      child: ListenableBuilder(
+        listenable: _tabController,
+        builder: (context, _) {
+          final selected = _tabController.index == index;
+          return CustomText(
+            text: label,
+            is_alignLeft: false,
+            fontSize: 14.sp,
+            fontFamily: AppStrings.quicksand,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            color: selected ? AppColors.white : AppColors.black,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _servicesTab() {
+    return Obx(() {
             final list = _controller.items;
             final loading = _controller.isLoading.value;
 
@@ -72,7 +145,6 @@ class _FavouritesServicesState extends State<FavouritesServices> {
             return ListView.separated(
               padding: EdgeInsets.only(
                   top: AppPadding.padding20, bottom: AppPadding.padding25),
-              shrinkWrap: true,
               itemCount: list.length,
               itemBuilder: (context, index) {
                 final row = list[index];
@@ -148,8 +220,20 @@ class _FavouritesServicesState extends State<FavouritesServices> {
                 return 10.verticalSpace;
               },
             );
-          }),
-        ));
+          });
+  }
+
+  Widget _providersTab() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(top: 48.h),
+        child: CustomText(
+          text: AppStrings.noFavouriteProvidersFound,
+          color: AppColors.greyLight,
+          is_alignLeft: false,
+        ),
+      ),
+    );
   }
 
   String _cardAmount(Map<String, dynamic> service) {

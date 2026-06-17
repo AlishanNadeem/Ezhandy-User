@@ -1189,6 +1189,8 @@ class AppStrings {
   ///Chart
   static const String favorites = "Favorites";
   static const String noFavouriteServicesFound = "No favourite services found";
+  static const String noFavouriteProvidersFound = "No favourite providers found";
+  static const String providers = "Providers";
   static const String noTransactionsFound = "No transactions found";
   static const String noBookingsFound = "No bookings found";
   static const String subtotal = "Sub Total";
