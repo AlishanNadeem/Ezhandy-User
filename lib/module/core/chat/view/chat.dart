@@ -87,6 +87,10 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_isAskProChat) {
       ever<bool>(_controller.isMessageLimitReached, (reached) {
         if (reached) {
+          if (_controller.skipNextLimitPopup) {
+            _controller.skipNextLimitPopup = false;
+            return;
+          }
           _showCreditsExhaustedPopup();
         } else {
           _creditsPopupVisible = false;
@@ -206,12 +210,15 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             );
           }),
-          Obx(() {
-            if (_isAskProChat && _controller.isMessageLimitReached.value) {
-              return _buildMessageLimitBanner();
-            }
-            return _buildMessageComposer();
-          }),
+          if (_isAskProChat)
+            Obx(() {
+              if (_controller.isMessageLimitReached.value) {
+                return _buildMessageLimitBanner();
+              }
+              return _buildMessageComposer();
+            })
+          else
+            _buildMessageComposer(),
         ],
       ),
     );
@@ -256,42 +263,40 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageLimitBanner() {
-    return Obx(
-      () => CustomContainer(
-        borderColor: AppColors.transparent,
-        radius: 0,
-        bgColor: AppColors.orange,
-        onTap: _showCreditsExhaustedPopup,
-        child: Padding(
-          padding: Platform.isAndroid
-              ? EdgeInsets.symmetric(
-                  horizontal: AppPadding.padding12,
-                  vertical: 14.h,
-                )
-              : EdgeInsets.fromLTRB(
-                  AppPadding.padding12,
-                  14.h,
-                  AppPadding.padding12,
-                  AppPadding.padding25,
-                ),
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomText(
-                  text: _controller.messageLimitText.value,
-                  color: AppColors.white,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+    return CustomContainer(
+      borderColor: AppColors.transparent,
+      radius: 0,
+      bgColor: AppColors.orange,
+      onTap: _showCreditsExhaustedPopup,
+      child: Padding(
+        padding: Platform.isAndroid
+            ? EdgeInsets.symmetric(
+                horizontal: AppPadding.padding12,
+                vertical: 14.h,
+              )
+            : EdgeInsets.fromLTRB(
+                AppPadding.padding12,
+                14.h,
+                AppPadding.padding12,
+                AppPadding.padding25,
               ),
-              8.horizontalSpace,
-              Icon(
-                Icons.lock_outline,
+        child: Row(
+          children: [
+            Expanded(
+              child: CustomText(
+                text: _controller.messageLimitText.value,
                 color: AppColors.white,
-                size: 20.sp,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
               ),
-            ],
-          ),
+            ),
+            8.horizontalSpace,
+            Icon(
+              Icons.lock_outline,
+              color: AppColors.white,
+              size: 20.sp,
+            ),
+          ],
         ),
       ),
     );

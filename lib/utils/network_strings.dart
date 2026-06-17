@@ -170,6 +170,9 @@ class NetworkStrings {
   /// GET [ask-pro/pricing] — Ask a Pro pricing details for checkout popup (auth).
   static const String askProPricingEndpoint = 'ask-pro/pricing';
 
+  /// GET [ask-pro/by-chat/{chatId}] — Ask a Pro credits/status for a chat (auth).
+  static String askProByChat(String chatId) => 'ask-pro/by-chat/$chatId';
+
   /// GET [ask-pro/confirm?session_id=] — confirm Stripe checkout session (auth).
   static String askProConfirm(String sessionId) =>
       'ask-pro/confirm?session_id=$sessionId';

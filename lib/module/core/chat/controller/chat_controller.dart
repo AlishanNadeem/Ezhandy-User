@@ -30,9 +30,12 @@ class ChatController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isOtherUserTyping = false.obs;
   final RxnInt creditsLeft = RxnInt();
+  final RxBool isAskProCreditsReady = false.obs;
   final RxBool isMessageLimitReached = false.obs;
   final RxString messageLimitText =
       'Message limit reached. Buy more credits to continue.'.obs;
+
+  bool skipNextLimitPopup = false;
 
   final Set<int> _messageIds = <int>{};
   void Function(dynamic)? _messageReceivedHandler;
@@ -59,6 +62,7 @@ class ChatController extends GetxController {
   bool get isAskProChat => chatType?.trim().toLowerCase() == 'ask_pro';
 
   bool get hasCreditsRemaining {
+    if (isAskProChat && !isAskProCreditsReady.value) return false;
     final credits = creditsLeft.value;
     if (credits == null) return true;
     return credits > 0;
@@ -74,6 +78,9 @@ class ChatController extends GetxController {
       markChatAsRead();
       fetchChatHistory();
       _initSocket();
+      if (isAskProChat) {
+        fetchAskProByChat();
+      }
     }
   }
 
@@ -273,6 +280,54 @@ class ChatController extends GetxController {
   static int? _parseCreditsLeft(dynamic value) {
     if (value is int) return value;
     return int.tryParse(value?.toString() ?? '');
+  }
+
+  Future<void> fetchAskProByChat() async {
+    final id = chatId.trim();
+    if (!isAskProChat || id.isEmpty) return;
+
+    final response = await DioClient().getRequest(
+      endPoint: NetworkStrings.askProByChat(id),
+      isHeaderRequire: true,
+      isLoader: false,
+    );
+
+    await DioClient().validateResponse(
+      response: response,
+      responseListener: CallbackResponseListener(
+        onSuccessCallback: (res) => _applyAskProByChatResponse(res),
+        onFailureCallback: (_) => isAskProCreditsReady.value = true,
+      ),
+    );
+  }
+
+  void _applyAskProByChatResponse(dynamic response) {
+    final data = _extractAskProByChatData(response);
+    if (data == null) {
+      isAskProCreditsReady.value = true;
+      return;
+    }
+
+    final userCredits = _parseCreditsLeft(data['userCredits']) ?? 0;
+    creditsLeft.value = userCredits;
+    isAskProCreditsReady.value = true;
+
+    if (userCredits <= 0) {
+      skipNextLimitPopup = true;
+      _applyMessageLimitReached();
+    } else {
+      isMessageLimitReached.value = false;
+    }
+  }
+
+  static Map<String, dynamic>? _extractAskProByChatData(dynamic response) {
+    final outer = response is Map ? response['data'] : null;
+    if (outer is! Map) return null;
+
+    final inner = outer['data'];
+    if (inner is! Map) return null;
+
+    return Map<String, dynamic>.from(inner);
   }
 
   Future<void> markChatAsRead() async {
