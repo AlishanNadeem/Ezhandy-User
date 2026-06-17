@@ -1,13 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ezhandy_user/module/core/products/controller/product_detail_controller.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
-import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
+import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
@@ -62,11 +62,7 @@ class _ProductDetailState extends State<ProductDetail> {
         }
 
         final product = _controller.product.value ?? {};
-
-        final imageUrl = product['mainImagePath'] != null
-            ? "${product['mainImagePath']}"
-            : null;
-        final imageList = imageUrl != null ? [imageUrl] : <String>[];
+        final imageList = _productImageUrls(product);
 
         return Column(
           children: [
@@ -76,6 +72,27 @@ class _ProductDetailState extends State<ProductDetail> {
         );
       }),
     );
+  }
+
+  List<String> _productImageUrls(Map<String, dynamic> product) {
+    final urls = <String>[];
+
+    final additional = product['additionalImages'];
+    if (additional is List) {
+      for (final item in additional) {
+        final url = resolveMediaUrl(item);
+        if (url.isNotEmpty && !urls.contains(url)) {
+          urls.add(url);
+        }
+      }
+    }
+
+    final mainImage = resolveMediaUrl(product['mainImagePath']);
+    if (mainImage.isNotEmpty && !urls.contains(mainImage)) {
+      urls.add(mainImage);
+    }
+
+    return urls;
   }
 
   // ── Details Container ──
