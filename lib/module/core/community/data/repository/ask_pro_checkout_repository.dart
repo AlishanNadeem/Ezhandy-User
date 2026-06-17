@@ -31,23 +31,68 @@ class AskProCheckoutRepository extends ResponseListener {
     );
   }
 
-  String? _extractCheckoutUrl(dynamic response) {
-    final outer = response['data'];
+  static Future<bool> confirmSession(String sessionId) async {
+    final id = sessionId.trim();
+    if (id.isEmpty) return false;
+
+    var success = false;
+
+    final response = await DioClient().getRequest(
+      endPoint: NetworkStrings.askProConfirm(id),
+      isHeaderRequire: true,
+      isLoader: true,
+    );
+
+    await DioClient().validateResponse(
+      response: response,
+      responseListener: CallbackResponseListener(
+        onSuccessCallback: (_) => success = true,
+        onFailureCallback: (_) => success = false,
+      ),
+      message: true,
+    );
+
+    return success;
+  }
+
+  static Map<String, dynamic>? _extractCheckoutData(dynamic response) {
+    final outer = response is Map ? response['data'] : null;
     if (outer is! Map) return null;
 
     final inner = outer['data'];
     if (inner is! Map) return null;
 
-    final url = inner['url'];
-    return url is String && url.isNotEmpty ? url : null;
+    return Map<String, dynamic>.from(inner);
+  }
+
+  static String? _extractCheckoutUrl(dynamic response) {
+    final data = _extractCheckoutData(response);
+    final url = data?['url'];
+    return url is String && url.trim().isNotEmpty ? url.trim() : null;
+  }
+
+  static String? _extractSessionId(dynamic response) {
+    final data = _extractCheckoutData(response);
+    final sessionId = data?['sessionId'];
+    return sessionId is String && sessionId.trim().isNotEmpty
+        ? sessionId.trim()
+        : null;
   }
 
   @override
   void onSuccess({response}) {
     log(response.toString());
+
     final checkoutUrl = _extractCheckoutUrl(response);
+    final sessionId = _extractSessionId(response);
+
     if (checkoutUrl == null) {
       AppDialogs.showToast(message: 'Unable to start checkout');
+      return;
+    }
+
+    if (sessionId == null) {
+      AppDialogs.showToast(message: 'Unable to start checkout session');
       return;
     }
 
@@ -56,6 +101,7 @@ class AskProCheckoutRepository extends ResponseListener {
       checkoutUrl: checkoutUrl,
       successUrl: NetworkStrings.askProCheckoutSuccessUrl,
       cancelUrl: NetworkStrings.askProCheckoutCancelUrl,
+      confirmSessionId: sessionId,
     );
   }
 }

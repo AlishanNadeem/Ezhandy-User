@@ -1,5 +1,7 @@
+import 'package:ezhandy_user/module/core/community/data/repository/ask_pro_checkout_repository.dart';
 import 'package:ezhandy_user/module/core/community/routing_arguments/checkout_routing_arguments.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
+import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
@@ -51,8 +53,9 @@ class _CheckoutWebViewScreenState extends State<CheckoutWebViewScreen> {
               if (mounted) setState(() => _loading = true);
               _handleRedirect(url);
             },
-            onPageFinished: (_) {
+            onPageFinished: (url) {
               if (mounted) setState(() => _loading = false);
+              _handleRedirect(url);
             },
             onWebResourceError: (error) {
               if (!mounted || _handledRedirect) return;
@@ -63,8 +66,8 @@ class _CheckoutWebViewScreenState extends State<CheckoutWebViewScreen> {
             },
             onNavigationRequest: (request) {
               if (_isSuccessUrl(request.url)) {
-                _onCheckoutSuccess();
-                return NavigationDecision.prevent;
+                _handleRedirect(request.url);
+                return NavigationDecision.navigate;
               }
               if (_isCancelUrl(request.url)) {
                 _onCheckoutCancel();
@@ -115,7 +118,7 @@ class _CheckoutWebViewScreenState extends State<CheckoutWebViewScreen> {
   }
 
   void _handleRedirect(String url) {
-    if (_handledRedirect) return;
+    if (_handledRedirect || url.trim().isEmpty) return;
 
     if (_isSuccessUrl(url)) {
       _onCheckoutSuccess();
@@ -127,15 +130,28 @@ class _CheckoutWebViewScreenState extends State<CheckoutWebViewScreen> {
     }
   }
 
-  void _onCheckoutSuccess() {
+  Future<void> _onCheckoutSuccess() async {
     if (_handledRedirect) return;
     _handledRedirect = true;
 
+    final sessionId = widget.args.confirmSessionId?.trim();
+    if (sessionId != null && sessionId.isNotEmpty) {
+      final confirmed = await AskProCheckoutRepository.confirmSession(sessionId);
+      if (!mounted) return;
+
+      if (!confirmed) {
+        AppDialogs.showToast(message: 'Unable to confirm payment');
+        AppNavigation.navigatorPop(context);
+        return;
+      }
+    }
+
     widget.args.onSuccess?.call();
 
-    final successRoute = widget.args.successRoute;
+    if (!mounted) return;
     AppNavigation.navigatorPop(context);
 
+    final successRoute = widget.args.successRoute;
     Future.microtask(() {
       final navContext = Constants.navigatorKey.currentContext;
       if (navContext != null) {

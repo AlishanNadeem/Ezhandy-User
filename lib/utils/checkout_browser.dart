@@ -13,6 +13,7 @@ class CheckoutBrowser {
     required String cancelUrl,
     String? successRoute,
     VoidCallback? onSuccess,
+    String? confirmSessionId,
   }) {
     AppNavigation.navigateTo(
       context,
@@ -23,6 +24,7 @@ class CheckoutBrowser {
         cancelUrl: cancelUrl,
         successRoute: successRoute ?? AppRoutes.createAProPostScreenRoute,
         onSuccess: onSuccess,
+        confirmSessionId: confirmSessionId,
       ),
     );
   }

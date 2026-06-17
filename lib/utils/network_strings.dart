@@ -170,6 +170,10 @@ class NetworkStrings {
   /// GET [ask-pro/pricing] — Ask a Pro pricing details for checkout popup (auth).
   static const String askProPricingEndpoint = 'ask-pro/pricing';
 
+  /// GET [ask-pro/confirm?session_id=] — confirm Stripe checkout session (auth).
+  static String askProConfirm(String sessionId) =>
+      'ask-pro/confirm?session_id=$sessionId';
+
   static const String askProCheckoutSuccessPath = '/ask-pro/checkout/success';
   static const String askProCheckoutCancelPath = '/ask-pro/checkout/cancel';
 

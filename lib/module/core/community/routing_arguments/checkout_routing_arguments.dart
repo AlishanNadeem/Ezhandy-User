@@ -6,6 +6,7 @@ class CheckoutRoutingArguments {
   final String cancelUrl;
   final String successRoute;
   final VoidCallback? onSuccess;
+  final String? confirmSessionId;
 
   CheckoutRoutingArguments({
     required this.checkoutUrl,
@@ -13,5 +14,6 @@ class CheckoutRoutingArguments {
     required this.cancelUrl,
     required this.successRoute,
     this.onSuccess,
+    this.confirmSessionId,
   });
 }
