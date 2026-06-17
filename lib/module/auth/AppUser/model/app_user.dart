@@ -43,6 +43,7 @@ class AppUserDataUserModel {
   bool? isSubscription;
   String? issuedAt;
   String? expiresAt;
+  String? stripeAccountId;
 
   AppUserDataUserModel({
     this.sub,
@@ -63,6 +64,7 @@ class AppUserDataUserModel {
     this.isSubscription,
     this.issuedAt,
     this.expiresAt,
+    this.stripeAccountId,
   });
   AppUserDataUserModel.fromJson(Map<String, dynamic> json) {
     sub = json['sub']?.toString();
@@ -83,6 +85,7 @@ class AppUserDataUserModel {
     isSubscription = json['isSubscription'];
     issuedAt = json['issuedAt']?.toString();
     expiresAt = json['expiresAt']?.toString();
+    stripeAccountId = json['stripeAccountId']?.toString();
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -104,6 +107,7 @@ class AppUserDataUserModel {
     data['isSubscription'] = isSubscription;
     data['issuedAt'] = issuedAt;
     data['expiresAt'] = expiresAt;
+    data['stripeAccountId'] = stripeAccountId;
     return data;
   }
 }

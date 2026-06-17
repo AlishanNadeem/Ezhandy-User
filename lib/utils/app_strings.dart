@@ -535,6 +535,7 @@ class AppStrings {
   static const String review = "Review";
   static const String goToHome = "Go To Home";
   static const String withdraw = "Withdraw";
+  static const String setupStripeAccount = "Setup Stripe Account";
 
   static const String amountToBankAccount =
       "Are you sure you want to withdraw this amount to your bank account?";

@@ -184,30 +184,55 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                     ),
                   ),
                 ),
-                CustomButton(
-                  text: AppStrings.withdraw,
-                  onclick: () {
-                    AppDialogs.showSuccessDialog(context,
-                        description: AppStrings.amountToBankAccount,
-                        title: AppStrings.withdraw + "!",
-                        image: AssetPath.bankIcon,
-                        isDoneShow: false,
-                        btnTxt1: AppStrings.cancel,
-                        onTap1: () {
-                          AppNavigation.navigatorPop(context);
-                        },
-                        btnTxt2: AppStrings.confirm,
-                        onTap2: () {
-                          AppNavigation.navigatorPop(context);
-                        });
-                  },
-                ),
+                Obx(() {
+                  final hasStripeAccount = _hasStripeAccount;
+                  return CustomButton(
+                    text: hasStripeAccount
+                        ? AppStrings.withdraw
+                        : AppStrings.setupStripeAccount,
+                    onclick: () {
+                      if (hasStripeAccount) {
+                        _showWithdrawDialog(context);
+                      } else {
+                        _onSetupStripeAccount(context);
+                      }
+                    },
+                  );
+                }),
                 25.verticalSpace
               ],
             );
           }),
         ));
   }
+
+  bool get _hasStripeAccount {
+    final id =
+        AuthController.i.appUser.value.data?.userModel?.stripeAccountId;
+    if (id == null) return false;
+    final trimmed = id.trim();
+    return trimmed.isNotEmpty && trimmed.toLowerCase() != 'null';
+  }
+
+  void _showWithdrawDialog(BuildContext context) {
+    AppDialogs.showSuccessDialog(
+      context,
+      description: AppStrings.amountToBankAccount,
+      title: AppStrings.withdraw + "!",
+      image: AssetPath.bankIcon,
+      isDoneShow: false,
+      btnTxt1: AppStrings.cancel,
+      onTap1: () {
+        AppNavigation.navigatorPop(context);
+      },
+      btnTxt2: AppStrings.confirm,
+      onTap2: () {
+        AppNavigation.navigatorPop(context);
+      },
+    );
+  }
+
+  void _onSetupStripeAccount(BuildContext context) {}
 
   /// Matches previous placeholder style; uses API [totalEarned] when present.
   String _earningLabel(dynamic v) {
