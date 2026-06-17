@@ -51,7 +51,7 @@ class _AddEditProductState extends State<AddEditProduct> {
   TextEditingController messageController = TextEditingController();
   bool keyboardVisible = false;
   List<File> documentList = [];
-  String? existingImageUrl;
+  List<String> existingImageUrls = [];
   String? editingProductId;
   String? categoryValue;
 
@@ -253,10 +253,25 @@ class _AddEditProductState extends State<AddEditProduct> {
     //   addressController.text = product['address']?.toString() ?? '';
     // }
 
-    final imagePath = product['mainImagePath']?.toString();
-    if (imagePath != null && imagePath.isNotEmpty) {
-      existingImageUrl = resolveMediaUrl(imagePath);
+    final urls = <String>[];
+
+    final mainImagePath = product['mainImagePath']?.toString();
+    if (mainImagePath != null && mainImagePath.isNotEmpty) {
+      final mainUrl = resolveMediaUrl(mainImagePath);
+      if (mainUrl.isNotEmpty) urls.add(mainUrl);
     }
+
+    final additional = product['additionalImages'];
+    if (additional is List) {
+      for (final item in additional) {
+        final url = resolveMediaUrl(item);
+        if (url.isNotEmpty && !urls.contains(url)) {
+          urls.add(url);
+        }
+      }
+    }
+
+    existingImageUrls = urls;
   }
 
   // Widget _emailTextField() {
@@ -317,8 +332,7 @@ class _AddEditProductState extends State<AddEditProduct> {
   }
 
   Widget documentWidget() {
-    final imageCount =
-        documentList.length + (existingImageUrl != null ? 1 : 0);
+    final imageCount = documentList.length + existingImageUrls.length;
 
     return SizedBox(
       height: 117.h,
@@ -332,19 +346,20 @@ class _AddEditProductState extends State<AddEditProduct> {
             );
           }
 
-          if (existingImageUrl != null && index == 0) {
+          if (index < existingImageUrls.length) {
+            final imageUrl = existingImageUrls[index];
             return _imageCard(
-              image: existingImageUrl!,
+              image: imageUrl,
               isNetwork: true,
               onRemoveTapped: () {
                 setState(() {
-                  existingImageUrl = null;
+                  existingImageUrls.removeAt(index);
                 });
               },
             );
           }
 
-          final fileIndex = existingImageUrl != null ? index - 1 : index;
+          final fileIndex = index - existingImageUrls.length;
           return _imageCard(
             image: documentList[fileIndex].path,
             onRemoveTapped: () {
@@ -604,12 +619,19 @@ Widget buttonWidget(context) {
         formKey.currentState!.save();
         FocusScope.of(context).unfocus();
 
-        final image =
-            documentList.isNotEmpty ? documentList.first : null;
+        if (AddEditType.add.name == widget.type && documentList.isEmpty) {
+          AppDialogs.showToast(message: 'Please upload at least one image.');
+          return;
+        }
 
         if (AddEditType.edit.name == widget.type) {
           if (editingProductId == null || editingProductId!.isEmpty) {
             print("❌ No product id for update");
+            return;
+          }
+
+          if (documentList.isEmpty && existingImageUrls.isEmpty) {
+            AppDialogs.showToast(message: 'Please upload at least one image.');
             return;
           }
 
@@ -618,7 +640,7 @@ Widget buttonWidget(context) {
             title: productNameController.text,
             description: descriptionController.text,
             price: priceController.text,
-            image: image,
+            images: List<File>.from(documentList),
             onSuccess: _showProductUpdatedSuccessDialog,
           );
           return;
@@ -628,7 +650,7 @@ Widget buttonWidget(context) {
           title: productNameController.text,
           description: descriptionController.text,
           price: priceController.text,
-          image: image,
+          images: List<File>.from(documentList),
           onSuccess: _showProductAddedSuccessDialog,
         );
       },

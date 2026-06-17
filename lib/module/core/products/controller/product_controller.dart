@@ -49,11 +49,16 @@ class ProductController extends GetxController {
     required String title,
     required String description,
     required String price,
-    File? image,
+    List<File> images = const [],
     VoidCallback? onSuccess,
   }) async {
     if (selectedCategoryId == null) {
       print("❌ No category selected");
+      return;
+    }
+
+    if (images.isEmpty) {
+      print("❌ No images selected");
       return;
     }
 
@@ -65,14 +70,12 @@ class ProductController extends GetxController {
       "price": double.tryParse(price) ?? 0.0,
       "isActive": true,
       "categoryId": selectedCategoryId,
-      if (image != null)
-        "image": await dio.MultipartFile.fromFile(
-          image.path,
-          filename: image.path.split('/').last,
-        ),
     });
 
-    print("📦 CREATE PRODUCT BODY: title=$title, price=$price, categoryId=$selectedCategoryId");
+    await _appendImages(formData, images);
+
+    print(
+        "📦 CREATE PRODUCT BODY: title=$title, price=$price, categoryId=$selectedCategoryId, images=${images.length}");
 
     try {
       final response = await DioClient().postRequest(
@@ -103,7 +106,7 @@ class ProductController extends GetxController {
     required String title,
     required String description,
     required String price,
-    File? image,
+    List<File> images = const [],
     VoidCallback? onSuccess,
   }) async {
     final id = productId.trim();
@@ -125,15 +128,12 @@ class ProductController extends GetxController {
       "price": double.tryParse(price) ?? 0.0,
       "isActive": true,
       "categoryId": selectedCategoryId,
-      if (image != null)
-        "image": await dio.MultipartFile.fromFile(
-          image.path,
-          filename: image.path.split('/').last,
-        ),
     });
 
+    await _appendImages(formData, images);
+
     print(
-        "📦 UPDATE PRODUCT BODY: id=$id, title=$title, price=$price, categoryId=$selectedCategoryId");
+        "📦 UPDATE PRODUCT BODY: id=$id, title=$title, price=$price, categoryId=$selectedCategoryId, images=${images.length}");
 
     try {
       final response = await DioClient().patchRequest(
@@ -158,6 +158,25 @@ class ProductController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  static Future<void> _appendImages(
+    dio.FormData formData,
+    List<File> images,
+  ) async {
+    for (final file in images) {
+      formData.files.add(
+        MapEntry(
+          'images',
+          await dio.MultipartFile.fromFile(
+            file.path,
+            filename: _fileName(file),
+          ),
+        ),
+      );
+    }
+  }
+
+  static String _fileName(File file) => file.path.split('/').last;
 } // ← END of ProductController
 
 // ← OUTSIDE the class
