@@ -917,6 +917,8 @@ class AppStrings {
   static const String myBookings = "My Bookings";
   static const String messages = "Messages";
   static const String noChatsFound = "No chats found";
+  static const String chatLockedUntilBookingMessage =
+      "Chat is locked until you create another booking with this provider.";
   static const String startConversation = "Start conversation";
   static const String noMessagesFound = "No messages yet";
   static const String restaurantProfile = "Restaurant Profile";

@@ -161,6 +161,7 @@ class ChatController extends GetxController {
         text: item.content,
         isSender: userId.isEmpty || item.senderId != userId,
         time: item.createdAt ?? DateTime.now(),
+        messageType: item.messageType,
         senderName: item.senderName,
         senderImage: item.senderImage,
         filePath: item.filePath,
@@ -395,6 +396,7 @@ class ChatController extends GetxController {
                   text: item.content,
                   isSender: userId.isEmpty || item.senderId != userId,
                   time: item.createdAt ?? DateTime.now(),
+                  messageType: item.messageType,
                   senderName: item.senderName,
                   senderImage: item.senderImage,
                   filePath: item.filePath,
@@ -479,6 +481,7 @@ class ChatController extends GetxController {
         text: trimmed,
         isSender: false,
         time: DateTime.now(),
+        messageType: 'text',
         senderName: AuthController.i.appUser.value.data?.userModel?.fullName,
         senderImage:
             AuthController.i.appUser.value.data?.userModel?.profileImage,
@@ -516,10 +519,50 @@ class ChatController extends GetxController {
         text: caption,
         isSender: false,
         time: DateTime.now(),
+        messageType: 'image',
         senderName: AuthController.i.appUser.value.data?.userModel?.fullName,
         senderImage:
             AuthController.i.appUser.value.data?.userModel?.profileImage,
         filePath: image.path,
+      ),
+    );
+  }
+
+  Future<void> sendVideoFile(File video, {String caption = ''}) async {
+    _stopTyping();
+
+    final toUserId = receiverId ?? '';
+    final id = chatId.trim();
+
+    if (toUserId.isEmpty || id.isEmpty) {
+      LiveChatSocketService.log(
+        'uploadFile skipped: receiverId=$toUserId chatId=$id',
+      );
+      return;
+    }
+
+    final fileName = video.path.split(Platform.pathSeparator).last;
+    final mimeType = _mimeTypeFromPath(fileName);
+    final bytes = await video.readAsBytes();
+
+    LiveChatSocketService.instance.uploadFile(
+      receiverId: toUserId,
+      chatId: id,
+      fileBytes: bytes,
+      fileName: fileName,
+      mimeType: mimeType,
+    );
+
+    messages.add(
+      ChatModel(
+        text: caption,
+        isSender: false,
+        time: DateTime.now(),
+        messageType: 'video',
+        senderName: AuthController.i.appUser.value.data?.userModel?.fullName,
+        senderImage:
+            AuthController.i.appUser.value.data?.userModel?.profileImage,
+        filePath: video.path,
       ),
     );
   }
@@ -538,6 +581,21 @@ class ChatController extends GetxController {
         return 'image/webp';
       case 'heic':
         return 'image/heic';
+      case 'mp4':
+        return 'video/mp4';
+      case 'mov':
+        return 'video/quicktime';
+      case 'avi':
+        return 'video/x-msvideo';
+      case 'mkv':
+        return 'video/x-matroska';
+      case 'webm':
+        return 'video/webm';
+      case 'm4v':
+        return 'video/x-m4v';
+      case '3gp':
+      case '3gpp':
+        return 'video/3gpp';
       default:
         return 'application/octet-stream';
     }

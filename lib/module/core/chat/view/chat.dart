@@ -33,6 +33,7 @@ class ChatScreen extends StatefulWidget {
   final String? otherUserId;
   final String? otherUserName;
   final String? otherUserImage;
+  final bool isLocked;
 
   const ChatScreen({
     this.isBooking = false,
@@ -41,6 +42,7 @@ class ChatScreen extends StatefulWidget {
     this.otherUserId,
     this.otherUserName,
     this.otherUserImage,
+    this.isLocked = false,
     super.key,
   });
 
@@ -52,6 +54,7 @@ class ChatScreen extends StatefulWidget {
       otherUserId: args?.otherUserId,
       otherUserName: args?.otherUserName,
       otherUserImage: args?.otherUserImage,
+      isLocked: args?.isLocked ?? false,
     );
   }
 
@@ -181,6 +184,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         name: _displayName(current),
                         text: current.text,
                         isSender: current.isSender,
+                        messageType: current.messageType,
                         image: _displayImage(current),
                         filePath: current.filePath,
                       ),
@@ -191,26 +195,27 @@ class _ChatScreenState extends State<ChatScreen> {
               );
             }),
           ),
-          Obx(() {
-            if (!_controller.isOtherUserTyping.value) {
-              return const SizedBox.shrink();
-            }
-            return Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppPadding.padding12,
-                vertical: 6.h,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: CustomText(
-                  text:
-                      '${_controller.otherUserName ?? AppStrings.dummyName} is typing...',
-                  fontSize: 12.sp,
-                  color: AppColors.grey,
+          if (!widget.isLocked)
+            Obx(() {
+              if (!_controller.isOtherUserTyping.value) {
+                return const SizedBox.shrink();
+              }
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppPadding.padding12,
+                  vertical: 6.h,
                 ),
-              ),
-            );
-          }),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: CustomText(
+                    text:
+                        '${_controller.otherUserName ?? AppStrings.dummyName} is typing...',
+                    fontSize: 12.sp,
+                    color: AppColors.grey,
+                  ),
+                ),
+              );
+            }),
           if (_isAskProChat)
             Obx(() {
               if (_controller.isMessageLimitReached.value) {
@@ -218,6 +223,8 @@ class _ChatScreenState extends State<ChatScreen> {
               }
               return _buildMessageComposer();
             })
+          else if (widget.isLocked)
+            _buildChatLockedBanner()
           else
             _buildMessageComposer(),
         ],
@@ -260,6 +267,45 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildChatLockedBanner() {
+    return CustomContainer(
+      borderColor: AppColors.transparent,
+      radius: 0,
+      bgColor: AppColors.orange,
+      child: Padding(
+        padding: Platform.isAndroid
+            ? EdgeInsets.symmetric(
+                horizontal: AppPadding.padding12,
+                vertical: 14.h,
+              )
+            : EdgeInsets.fromLTRB(
+                AppPadding.padding12,
+                14.h,
+                AppPadding.padding12,
+                AppPadding.padding25,
+              ),
+        child: Row(
+          children: [
+            Expanded(
+              child: CustomText(
+                text: AppStrings.chatLockedUntilBookingMessage,
+                color: AppColors.white,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            8.horizontalSpace,
+            Icon(
+              Icons.lock_outline,
+              color: AppColors.white,
+              size: 20.sp,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

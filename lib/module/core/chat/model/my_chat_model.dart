@@ -56,6 +56,7 @@ class MyChatItem {
   final MyChatUser otherUser;
   final MyChatLastMessage? lastMessage;
   final DateTime? lastMessageTime;
+  final bool isLocked;
 
   MyChatItem({
     required this.chatId,
@@ -64,6 +65,7 @@ class MyChatItem {
     required this.otherUser,
     this.lastMessage,
     this.lastMessageTime,
+    this.isLocked = false,
   });
 
   factory MyChatItem.fromJson(Map<String, dynamic> json) {
@@ -85,6 +87,7 @@ class MyChatItem {
       lastMessage: lastMap != null ? MyChatLastMessage.fromJson(lastMap) : null,
       lastMessageTime: parseDateTime(json['lastMessageTime']) ??
           (lastMap != null ? parseDateTime(lastMap['createdAt']) : null),
+      isLocked: json['isLocked'] == true,
     );
   }
 

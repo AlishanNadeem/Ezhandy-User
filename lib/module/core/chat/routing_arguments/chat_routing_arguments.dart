@@ -5,6 +5,7 @@ class ChatRoutingArgument {
   String? otherUserId;
   String? otherUserName;
   String? otherUserImage;
+  bool? isLocked;
 
   ChatRoutingArgument({
     this.isBooking,
@@ -13,5 +14,6 @@ class ChatRoutingArgument {
     this.otherUserId,
     this.otherUserName,
     this.otherUserImage,
+    this.isLocked,
   });
 }

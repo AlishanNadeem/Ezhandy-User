@@ -116,10 +116,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
                           AppRoutes.chatScreenRoute,
                           arguments: ChatRoutingArgument(
                             isBooking: true,
+                            chatType: chat.chatType,
                             chatId: chat.chatId,
                             otherUserId: chat.otherUser.id,
                             otherUserName: chat.displayName,
                             otherUserImage: chat.otherUser.profileImage,
+                            isLocked: chat.isLocked,
                           ),
                         ).then((_) {
                           if (mounted) _controller.fetchMyChats();

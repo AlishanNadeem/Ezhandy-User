@@ -4,7 +4,8 @@
     <application
         android:label="Ezhandy"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -39,6 +40,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Avoid Impeller + video_player Vulkan crash on Android emulator/devices -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBmaS0B0qwokES4a_CiFNVkVJGkimXkNsk" />

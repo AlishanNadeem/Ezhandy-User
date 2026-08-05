@@ -48,7 +48,7 @@ class ChatHistoryMessage {
       chatId: json['chatId']?.toString() ?? '',
       senderName: name,
       senderImage: image,
-      filePath: _nullableString(json['filePath'] ?? json['file_path']),
+      filePath: _extractFilePath(json),
       createdAt: MyChatItem.parseDateTime(json['createdAt']),
     );
   }
@@ -57,6 +57,50 @@ class ChatHistoryMessage {
     final text = value?.toString().trim();
     if (text == null || text.isEmpty) return null;
     return text;
+  }
+
+  static String? _extractFilePath(Map<String, dynamic> json) {
+    for (final key in [
+      'filePath',
+      'file_path',
+      'mediaUrl',
+      'media_url',
+      'videoUrl',
+      'video_url',
+      'attachment',
+      'url',
+    ]) {
+      final value = _nullableString(json[key]);
+      if (value != null) return value;
+    }
+
+    final media = json['media'];
+    if (media is Map) {
+      for (final key in ['url', 'path', 'filePath', 'file_path']) {
+        final value = _nullableString(media[key]);
+        if (value != null) return value;
+      }
+    }
+
+    final type = json['messageType']?.toString().trim().toLowerCase() ?? '';
+    if (type == 'video' || type == 'image') {
+      final content = _nullableString(json['content']);
+      if (content != null && _looksLikeMediaPath(content)) {
+        return content;
+      }
+    }
+
+    return null;
+  }
+
+  static bool _looksLikeMediaPath(String value) {
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return true;
+    }
+    if (value.startsWith('/')) return true;
+    return RegExp(r'\.(mp4|mov|avi|mkv|webm|m4v|3gp|jpg|jpeg|png|gif|webp)$',
+            caseSensitive: false)
+        .hasMatch(value);
   }
 
   static int _int(dynamic value) {

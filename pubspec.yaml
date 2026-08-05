@@ -76,6 +76,7 @@ dependencies:
   webview_flutter_wkwebview: 3.23.0
   socket_io_client: ^3.1.6
   google_maps_flutter: ^2.12.3
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:
