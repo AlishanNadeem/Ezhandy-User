@@ -17,7 +17,6 @@ import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
-import 'package:ezhandy_user/widgets/toast_dialogs_sheet/toast.dart';
 
 class AffiliateEarning extends StatefulWidget {
   const AffiliateEarning({super.key});
@@ -116,10 +115,6 @@ class _AffiliateEarningState extends State<AffiliateEarning> {
                                           : () async {
                                               await Clipboard.setData(
                                                 ClipboardData(text: code),
-                                              );
-                                              ToastMessage(
-                                                toastmsg:
-                                                    'Referral code copied to clipboard',
                                               );
                                             },
                                     )

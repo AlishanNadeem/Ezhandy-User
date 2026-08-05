@@ -131,7 +131,7 @@ class _HomeState extends State<Home> {
               CustomText(
                   text:
                       "${Utils.capitalizeWords(AuthController.i.appUser.value.data?.userModel?.fullName ?? "dummy")}",
-                  fontFamily: AppStrings.quicksand,
+                  fontFamily: AppStrings.montserrat,
                   // color: AppColors.blueDark,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold),
@@ -280,7 +280,7 @@ if (_homeController.servicesList.isEmpty) {
 
     // Show data
     return Row(
-      children: _homeController.servicesList.take(5).map((service) {
+      children: _homeController.servicesList.take(4).map((service) {
         return Expanded(
           child: imageTextWidget(
             ontap: () {

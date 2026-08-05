@@ -38,7 +38,7 @@ class TermsPrivacyTextWidget extends StatelessWidget {
                     },
                   style: const TextStyle(
                     color: AppColors.white,
-                    fontFamily: AppStrings.quicksand,
+                    fontFamily: AppStrings.montserrat,
                     fontWeight: FontWeight.bold,
                     // fontStyle: FontStyle.italic,
                     fontSize: 14,
@@ -60,7 +60,7 @@ class TermsPrivacyTextWidget extends StatelessWidget {
                     },
                   style: const TextStyle(
                     color: AppColors.white,
-                    fontFamily: AppStrings.quicksand,
+                    fontFamily: AppStrings.montserrat,
                     fontWeight: FontWeight.bold,
                     // fontStyle: FontStyle.italic,
                     fontSize: 14,

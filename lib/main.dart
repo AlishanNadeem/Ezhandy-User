@@ -113,7 +113,7 @@ class MyApp extends StatelessWidget {
                 // primaryColor: Colors.blue, // Set your primary color here
                 // scaffoldBackgroundColor: Colors.white,
                 scaffoldBackgroundColor: AppColors.black,
-                fontFamily: AppStrings.quicksand,
+                fontFamily: AppStrings.montserrat,
                 primarySwatch: customColor,
                 unselectedWidgetColor: AppColors.transparent,
                 appBarTheme: const AppBarTheme(

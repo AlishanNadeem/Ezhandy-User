@@ -264,7 +264,6 @@ class DioClient {
       if (jsonResponse != null) {
         print("sa" + response.statusCode.toString());
         print("sa1" + jsonResponse['isSuccess'].toString());
-        if (jsonResponse['message'] != null && message == true) ToastMessage(toastmsg: jsonResponse['message']);
         if (response.statusCode == NetworkStrings.SUCCESS_CODE||response.statusCode == 201) {
           if (jsonResponse['isSuccess'] == NetworkStrings.API_SUCCESS_STATUS) {
             print("abc" + jsonResponse['isSuccess'].toString());

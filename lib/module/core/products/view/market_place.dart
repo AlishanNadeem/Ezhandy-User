@@ -288,33 +288,20 @@ class _MarketPlaceState extends State<MarketPlace>
                           horizontal: 5.w,
                           vertical: 3.h,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  3.verticalSpace,
-                                  CustomText(
-                                    text: product['title'] ?? '',
-                                    maxLines: 1,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  2.verticalSpace,
-                                  CustomText(
-                                    text: "\$ ${product['price'] ?? '0.00'}",
-                                    color: AppColors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ],
-                              ),
+                            3.verticalSpace,
+                            CustomText(
+                              text: product['title'] ?? '',
+                              maxLines: 1,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Image.asset(
-                              AssetPath.cartIcon,
+                            2.verticalSpace,
+                            CustomText(
+                              text: "\$ ${product['price'] ?? '0.00'}",
                               color: AppColors.orange,
-                              width: 20.w,
-                              height: 20.h,
+                              fontWeight: FontWeight.bold,
                             ),
                           ],
                         ),

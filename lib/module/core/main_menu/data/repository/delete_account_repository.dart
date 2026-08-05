@@ -2,8 +2,6 @@ import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
-import 'package:ezhandy_user/utils/app_dialogs.dart';
-import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
@@ -34,8 +32,6 @@ class DeleteAccountRepository extends ResponseListener {
   @override
   void onSuccess({response}) async {
     await _logoutCompletely();
-
-    AppDialogs.showToast(message: AppStrings.accountDeleteSuccessfully);
 
     final navContext = context ?? Constants.navigatorKey.currentContext;
     if (navContext != null) {

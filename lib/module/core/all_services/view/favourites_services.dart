@@ -118,7 +118,7 @@ class _FavouritesServicesState extends State<FavouritesServices>
             text: label,
             is_alignLeft: false,
             fontSize: 14.sp,
-            fontFamily: AppStrings.quicksand,
+            fontFamily: AppStrings.montserrat,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             color: selected ? AppColors.white : AppColors.black,
           );
