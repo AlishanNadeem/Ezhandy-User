@@ -236,7 +236,7 @@ class BookingDetailsController extends GetxController {
   }
 
   void markAsPaidLocally() {
-    statusOverride.value = AppStrings.completedPaid;
+    statusOverride.value = AppStrings.completed;
   }
 
   Future<bool> cancelBooking({required String statusReason}) async {

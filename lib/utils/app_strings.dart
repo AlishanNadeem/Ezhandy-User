@@ -523,6 +523,9 @@ class AppStrings {
   static const String appointmentType = "Appointment Type";
   // static const String bookingId = "Booking ID";
   static const String charges = "Charges";
+  static const String paymentStatus = "Payment Status";
+  static const String paid = "Paid";
+  static const String unpaid = "Unpaid";
 
 //   Booking
   static const String community = "Community";

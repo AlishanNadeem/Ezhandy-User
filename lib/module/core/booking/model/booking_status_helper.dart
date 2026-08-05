@@ -26,9 +26,8 @@ class BookingStatusHelper {
       case started:
         return AppStrings.started;
       case completed:
-        return AppStrings.completed;
       case userVerifiedIsDone:
-        return isPaid ? AppStrings.completedPaid : AppStrings.completedUnPaid;
+        return AppStrings.completed;
       case cancelled:
         return AppStrings.cancelled;
       default:

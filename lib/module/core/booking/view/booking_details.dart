@@ -513,6 +513,13 @@ class _BookingDetailsState extends State<BookingDetails> {
             TwoTextRow(
                 firstText: "${AppStrings.charges}:",
                 secondText: _formatMoney(detail?.totalAmount)),
+          if (detail != null)
+            TwoTextRow(
+              firstText: "${AppStrings.paymentStatus}:",
+              secondText: detail.isPaid ? AppStrings.paid : AppStrings.unpaid,
+              secondColor:
+                  detail.isPaid ? AppColors.green : AppColors.red,
+            ),
           10.verticalSpace,
         ],
       ),
