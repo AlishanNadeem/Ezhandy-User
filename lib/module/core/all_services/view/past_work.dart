@@ -5,7 +5,9 @@ import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
 import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
+import 'package:ezhandy_user/utils/enums.dart';
 import 'package:ezhandy_user/utils/media_url_helper.dart';
+import 'package:ezhandy_user/utils/utils.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:flutter/material.dart';
@@ -178,38 +180,55 @@ class _PastWorkState extends State<PastWork> {
       );
     }
 
-    return SizedBox(
-      height: 120.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: imagePaths.length,
-        itemBuilder: (context, index) {
-          final url = resolveMediaUrl(imagePaths[index]);
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(10.r),
-            child: SizedBox(
-              width: .45.sw,
-              child: Image.network(
-                url,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: AppColors.greyLight.withValues(alpha: 0.3),
-                  alignment: Alignment.center,
-                  child: Icon(Icons.broken_image_outlined, size: 32.sp),
-                ),
-                loadingBuilder: (_, child, progress) {
-                  if (progress == null) return child;
-                  return Container(
-                    color: AppColors.greyLight.withValues(alpha: 0.2),
-                    alignment: Alignment.center,
-                    child: const CircularProgressIndicator(strokeWidth: 2),
-                  );
-                },
-              ),
-            ),
-          );
-        },
-        separatorBuilder: (_, __) => 10.horizontalSpace,
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemCount: imagePaths.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10.h,
+        crossAxisSpacing: 10.w,
+        childAspectRatio: 1,
+      ),
+      itemBuilder: (context, index) {
+        return _imageTile(imagePaths[index]);
+      },
+    );
+  }
+
+  Widget _imageTile(String path) {
+    final url = resolveMediaUrl(path);
+    return GestureDetector(
+      onTap: () {
+        if (url.isEmpty) return;
+        Utils.onTapViewImage(
+          context: context,
+          image: url,
+          mediaType: MediaPathType.network.name,
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.r),
+        child: Image.network(
+          url,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            color: AppColors.greyLight.withValues(alpha: 0.3),
+            alignment: Alignment.center,
+            child: Icon(Icons.broken_image_outlined, size: 32.sp),
+          ),
+          loadingBuilder: (_, child, progress) {
+            if (progress == null) return child;
+            return Container(
+              color: AppColors.greyLight.withValues(alpha: 0.2),
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(strokeWidth: 2),
+            );
+          },
+        ),
       ),
     );
   }

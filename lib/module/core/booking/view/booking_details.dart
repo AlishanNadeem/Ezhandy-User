@@ -99,7 +99,7 @@ class _BookingDetailsState extends State<BookingDetails> {
       return BackgroundImage(
           leading: AssetPath.backIcon,
           onclickLead: Get.back,
-          title: AppStrings.booking,
+          title: AppStrings.bookingDetails,
           actionWidget: c.showChatAction
               ? Padding(
                   padding: const EdgeInsets.only(right: AppPadding.padding12),
