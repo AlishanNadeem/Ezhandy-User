@@ -121,48 +121,55 @@ class _WorkDocumentsState extends State<WorkDocuments> {
       );
     }
 
-    return SizedBox(
-      height: 120.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: imagePaths.length,
-        itemBuilder: (context, index) {
-          final url = resolveMediaUrl(imagePaths[index]);
-          return GestureDetector(
-            onTap: () {
-              if (url.isEmpty) return;
-              Utils.onTapViewImage(
-                context: context,
-                image: url,
-                mediaType: MediaPathType.network.name,
-              );
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.r),
-              child: SizedBox(
-                width: .45.sw,
-                child: Image.network(
-                  url,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: AppColors.greyLight.withValues(alpha: 0.3),
-                    alignment: Alignment.center,
-                    child: Icon(Icons.broken_image_outlined, size: 32.sp),
-                  ),
-                  loadingBuilder: (_, child, progress) {
-                    if (progress == null) return child;
-                    return Container(
-                      color: AppColors.greyLight.withValues(alpha: 0.2),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(strokeWidth: 2),
-                    );
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-        separatorBuilder: (_, __) => 10.horizontalSpace,
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemCount: imagePaths.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10.h,
+        crossAxisSpacing: 10.w,
+        childAspectRatio: 1,
+      ),
+      itemBuilder: (context, index) {
+        return _imageTile(imagePaths[index]);
+      },
+    );
+  }
+
+  Widget _imageTile(String path) {
+    final url = resolveMediaUrl(path);
+    return GestureDetector(
+      onTap: () {
+        if (url.isEmpty) return;
+        Utils.onTapViewImage(
+          context: context,
+          image: url,
+          mediaType: MediaPathType.network.name,
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.r),
+        child: Image.network(
+          url,
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            color: AppColors.greyLight.withValues(alpha: 0.3),
+            alignment: Alignment.center,
+            child: Icon(Icons.broken_image_outlined, size: 32.sp),
+          ),
+          loadingBuilder: (_, child, progress) {
+            if (progress == null) return child;
+            return Container(
+              color: AppColors.greyLight.withValues(alpha: 0.2),
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(strokeWidth: 2),
+            );
+          },
+        ),
       ),
     );
   }

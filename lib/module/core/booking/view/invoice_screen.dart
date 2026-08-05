@@ -143,8 +143,6 @@ class InvoiceScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                    'Invoice No: ${invoice.id.toString().padLeft(7, '0')}'),
                 Text('Bill to: ${billToName.isNotEmpty ? billToName : '—'}'),
                 if (invoice.bookingId > 0)
                   Text('Booking ID: #${invoice.bookingId}'),
