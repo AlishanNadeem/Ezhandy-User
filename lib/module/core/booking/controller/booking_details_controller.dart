@@ -132,7 +132,12 @@ class BookingDetailsController extends GetxController {
     );
   }
 
-  bool get showChatAction => !isPending && !isRejected && !isCancelled;
+  bool get showChatAction =>
+      !isPending &&
+      !isRejected &&
+      !isCancelled &&
+      !isCompletedPaid &&
+      !_labelMatches(status, AppStrings.completedUnPaid);
 
   String? get providerId => detail.value?.provider?.id.trim();
 

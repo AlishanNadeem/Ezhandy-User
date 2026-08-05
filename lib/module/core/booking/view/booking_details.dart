@@ -534,7 +534,7 @@ class _BookingDetailsState extends State<BookingDetails> {
               secondText: provider?.mobileNumber ?? '—'),
           TwoTextRow(
               firstText: "${AppStrings.address}:",
-              secondText: _formatOptionalText(detail?.location)),
+              secondText: _formatOptionalText(provider?.address)),
           10.verticalSpace,
         ],
       ),
