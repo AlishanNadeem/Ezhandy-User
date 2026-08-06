@@ -26,9 +26,10 @@ class TransactionHistoryController extends GetxController {
       responseListener: CallbackResponseListener(
         onSuccessCallback: (r) {
           final data = r is Map ? r['data'] : null;
-          if (data is List) {
+          final logs = data is Map ? data['logs'] : null;
+          if (logs is List) {
             items.assignAll(
-              data
+              logs
                   .map((e) => e is Map<String, dynamic>
                       ? e
                       : Map<String, dynamic>.from(e as Map))

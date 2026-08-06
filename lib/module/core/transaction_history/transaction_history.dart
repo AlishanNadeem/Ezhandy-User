@@ -52,35 +52,45 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               return const Center(child: CircularProgressIndicator());
             }
             final list = _controller.items;
-            if (list.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 48.h),
-                  child: CustomText(
-                    text: AppStrings.noTransactionsFound,
-                    color: AppColors.greyLight,
-                    is_alignLeft: false,
-                  ),
-                ),
-              );
-            }
-            return ListView.separated(
-              padding: EdgeInsets.only(
-                  top: AppPadding.padding20, bottom: AppPadding.padding25),
-              shrinkWrap: true,
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                final row = list[index];
-                return singleWidget(
-                  date: _formatCreatedAt(row['createdAt']),
-                  additionalFee: _formatCommission(row['commission']),
-                  bookingId: _bookingIdForUi(row),
-                  total: _amountForUi(row),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return 10.verticalSpace;
-              },
+            return RefreshIndicator(
+              onRefresh: _controller.fetchTransactions,
+              color: AppColors.orange,
+              child: list.isEmpty
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 48.h),
+                          child: CustomText(
+                            text: AppStrings.noTransactionsFound,
+                            color: AppColors.greyLight,
+                            is_alignLeft: false,
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                          top: AppPadding.padding20,
+                          bottom: AppPadding.padding25),
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        final row = list[index];
+                        return singleWidget(
+                          date: _formatCreatedAt(
+                              row['date'] ?? row['createdAt']),
+                          additionalFee: _formatCommission(row['commission']),
+                          label: _labelForUi(row),
+                          total: _amountForUi(row),
+                          type: row['type']?.toString(),
+                          provider: row['provider']?.toString(),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return 10.verticalSpace;
+                      },
+                    ),
             );
           }),
         ));
@@ -98,12 +108,9 @@ class _TransactionHistoryState extends State<TransactionHistory> {
     return '\$${commission.toString()}';
   }
 
-  String _bookingIdForUi(Map<String, dynamic> row) {
-    final ids = row['bookingIds'];
-    if (ids is List && ids.isNotEmpty) {
-      return ids.first.toString();
-    }
-    return row['referenceId']?.toString() ??
+  String _labelForUi(Map<String, dynamic> row) {
+    return row['label']?.toString() ??
+        row['referenceId']?.toString() ??
         row['id']?.toString() ??
         '—';
   }
@@ -114,7 +121,10 @@ class _TransactionHistoryState extends State<TransactionHistory> {
     return v.toString();
   }
 
-  Widget singleWidget({date, bookingId, additionalFee, total}) {
+  Widget singleWidget({date, label, additionalFee, total, type, provider}) {
+    final showProvider =
+        type != 'booking_payment' && provider != null && provider != '';
+
     return CustomContainer(
       child: Column(
         children: [
@@ -128,11 +138,11 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                 color: AppColors.greyLight,
                 fontSize: 10.sp,
               ),
-              CustomText(
-                text: "${AppStrings.additional}: $additionalFee",
-                color: AppColors.greyLight,
-                fontSize: 10.sp,
-              )
+              // CustomText(
+              //   text: "${AppStrings.additional}: $additionalFee",
+              //   color: AppColors.greyLight,
+              //   fontSize: 10.sp,
+              // )
             ],
           ),
           10.verticalSpace,
@@ -140,11 +150,14 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomText(
-                  text: "${AppStrings.bookingId}: #$bookingId",
-                  fontWeight: FontWeight.bold,
-                  // color: AppColors.greyLight,
-                  // fontSize: 14.sp,
+                Expanded(
+                  child: CustomText(
+                    text: label,
+                    fontWeight: FontWeight.bold,
+                    maxLines: 2,
+                    // color: AppColors.greyLight,
+                    // fontSize: 14.sp,
+                  ),
                 ),
                 CustomText(
                   text: "\$ $total",
@@ -152,6 +165,17 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                   // fontSize: 14.sp,
                 )
               ]),
+          if (showProvider) ...[
+            5.verticalSpace,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: CustomText(
+                text: "Provider: $provider",
+                color: AppColors.greyLight,
+                fontSize: 10.sp,
+              ),
+            ),
+          ],
           5.verticalSpace,
         ],
       ),

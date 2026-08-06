@@ -78,8 +78,8 @@ class NetworkStrings {
   /// GET [favourites/providers] — list of favourite providers (auth).
   static const String favouriteProvidersListEndpoint = 'favourites/providers';
 
-  /// GET [payment/user] — current user payment transactions (auth).
-  static const String userPaymentsEndpoint = 'payment/user';
+  /// GET [payment/user-wallet] — current user wallet, summary, and transaction logs (auth).
+  static const String userPaymentsEndpoint = 'payment/user-wallet';
 
   /// GET [bookings/user] — current user's bookings (auth).
   static const String userBookingsEndpoint = 'bookings/user';
