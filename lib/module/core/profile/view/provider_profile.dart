@@ -508,6 +508,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
   }) {
     final imageUrl = _resolveMediaUrl(_serviceTypeImagePath(service));
     final amount = service['hourlyRate'] ?? service['visitCharges'] ?? '0';
+    final isQuickService = service['isQuickService'] == true;
 
     return GestureDetector(
       onTap: onTap,
@@ -528,19 +529,9 @@ class _ProviderProfileState extends State<ProviderProfile> {
           children: [
             10.verticalSpace,
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (showFavoriteToggle)
-                  GestureDetector(
-                    onTap: ontapLike,
-                    child: Icon(
-                      isFav
-                          ? Icons.favorite_rounded
-                          : Icons.favorite_border_rounded,
-                      size: 30.sp,
-                    ),
-                  )
-                else
-                  Icon(Icons.favorite_border_rounded, size: 30.sp),
+                if (isQuickService) _quickServiceTag(),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.all(15),
@@ -559,19 +550,51 @@ class _ProviderProfileState extends State<ProviderProfile> {
               ],
             ),
             const Spacer(),
-            detailsContainer(service),
+            detailsContainer(
+              service,
+              isFav: isFav,
+              showFavoriteToggle: showFavoriteToggle,
+              ontapLike: ontapLike,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget detailsContainer(Map<String, dynamic> service) {
+  Widget _quickServiceTag() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: AppColors.black,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.r),
+          bottomLeft: Radius.zero,
+          topRight: Radius.circular(30.r),
+          bottomRight: Radius.circular(30.r),
+        ),
+      ),
+      child: CustomText(
+        text: 'Quick Service',
+        color: AppColors.white,
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+
+  Widget detailsContainer(
+    Map<String, dynamic> service, {
+    bool isFav = false,
+    bool showFavoriteToggle = true,
+    VoidCallback? ontapLike,
+  }) {
     final iconUrl = _resolveMediaUrl(_serviceTypeIconPath(service));
     return Padding(
       padding: EdgeInsets.all(AppPadding.padding12),
       child: CustomContainer(
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (iconUrl.isNotEmpty)
               ClipRRect(
@@ -611,6 +634,22 @@ class _ProviderProfileState extends State<ProviderProfile> {
                 ],
               ),
             ),
+            10.horizontalSpace,
+            if (showFavoriteToggle)
+              GestureDetector(
+                onTap: ontapLike,
+                child: Icon(
+                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  size: 24.sp,
+                  color: AppColors.orange,
+                ),
+              )
+            else
+              Icon(
+                Icons.favorite_border_rounded,
+                size: 24.sp,
+                color: AppColors.orange,
+              ),
           ],
         ),
       ),
