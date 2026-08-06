@@ -142,6 +142,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
         defaultBuilder: (context, day, _) => _dayCell(day),
         outsideBuilder: (context, day, _) => _dayCell(day, isOutside: true),
         disabledBuilder: (context, day, _) => _dayCell(day, isDisabled: true),
+        // Without this, TableCalendar renders "today" using its own
+        // `todayDecoration` (transparent) instead of our defaultBuilder
+        // once it's no longer the selected day, making it look blank/white.
+        todayBuilder: (context, day, _) => _dayCell(day),
       ),
       onDaySelected: (selected, focused) {
         if (!isAvailable(selected)) return;
