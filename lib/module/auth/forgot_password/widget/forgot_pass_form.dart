@@ -16,7 +16,6 @@ import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/utils/validator_extensions.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
-import 'package:ezhandy_user/widgets/logo_and_backgrounds/app_logo.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/toast_dialogs_sheet/toast.dart';
 
@@ -32,37 +31,18 @@ class ForgotPassForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding16),
-      child: Column(
-        children: [
-          // Non-scrollable content (e.g., logo)
-          // AppLogo(scale: 5.sp),
-          20.verticalSpace,
-          passwordRecoveryTextWidget(),
-          // dividerWidget(),
-          // Divider(color: AppColors.red,thickness: 2.sp,endIndent: 290,),
-          15.verticalSpace,
-          // Scrollable content starts here
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: forgotFormKey,
-                child: Column(children: [
-                  //----------------Email Address Field----------------
-                  CustomText(
-                      text: AppStrings
-                          .resetYourPasswordInJustAFewClicksAndRegainAccessInstantly),
-                  20.verticalSpace,
-                  CustomText(text: AppStrings.emailAddress + "*"),
-                  10.verticalSpace,
-                  emailAddressWidget(),
-                  SizedBox(height: 30.h),
-                  //----------------Get Code Button----------------
-                  buttonWidget(context),
-                ]),
-              ),
-            ),
-          ),
-        ],
+      child: Form(
+        key: forgotFormKey,
+        child: Column(
+          children: [
+            20.verticalSpace,
+            CustomText(text: AppStrings.emailAddress + "*"),
+            10.verticalSpace,
+            emailAddressWidget(),
+            SizedBox(height: 30.h),
+            buttonWidget(context),
+          ],
+        ),
       ),
     );
   }
@@ -91,16 +71,6 @@ class ForgotPassForm extends StatelessWidget {
       keyboardType: TextInputType.emailAddress,
       controller: emailController,
       validator: (value) => value?.validateEmail,
-    );
-  }
-
-  CustomText passwordRecoveryTextWidget() {
-    return CustomText(
-      text: AppStrings.passwordRecovery,
-      // is_alignLeft: false,
-      fontSize: 23.sp,
-      fontWeight: FontWeight.bold,
-      // color: AppColors.blueDark,
     );
   }
 
