@@ -7,6 +7,8 @@ class ProviderServiceDetailModel {
   final String providerName;
   final String providerImage;
   final String serviceTypeName;
+  final bool isQuickService;
+  final String quickServiceExtraFee;
 
   ProviderServiceDetailModel({
     required this.title,
@@ -17,6 +19,8 @@ class ProviderServiceDetailModel {
     required this.providerName,
     required this.providerImage,
     required this.serviceTypeName,
+    required this.isQuickService,
+    required this.quickServiceExtraFee,
   });
 
   static Map<String, dynamic>? _asMap(dynamic value) {
@@ -38,6 +42,8 @@ class ProviderServiceDetailModel {
       providerName: user?['fullName']?.toString() ?? '',
       providerImage: user?['profileImage']?.toString() ?? '',
       serviceTypeName: serviceType?['name']?.toString() ?? '',
+      isQuickService: json['isQuickService'] == true,
+      quickServiceExtraFee: json['quickServiceExtraFee']?.toString() ?? '0',
     );
   }
 }

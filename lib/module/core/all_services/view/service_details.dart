@@ -186,6 +186,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 singleContainer(
                   imageUrl: _resolveMediaUrl(detail.imageUrl),
                   isFav: controller.isServiceFavorite.value,
+                  isQuick: detail.isQuickService,
                   ontapLike: _onHeartTap,
                   onTap: () {},
                 ),
@@ -210,6 +211,17 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                     ),
                   ],
                 ),
+                if (detail.isQuickService) ...[
+                  10.verticalSpace,
+                  Row(
+                    children: [
+                      keyValueWidget(
+                        key: AppStrings.quickServiceExtraFee,
+                        value: '\$${detail.quickServiceExtraFee}',
+                      ),
+                    ],
+                  ),
+                ],
                 10.verticalSpace,
                 CustomText(
                   text: 'A minimum of 2 hours of service booking is mandatory.',
@@ -240,6 +252,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
     final hasActive = controller.hasActiveBooking.value && activeCheck != null;
 
+    final isQuickService = controller.detail.value?.isQuickService ?? false;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -250,7 +264,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         CustomButton(
           text: hasActive
               ? AppStrings.viewMyBooking
-              : (widget.type == ServiceType.instant.name
+              : (isQuickService
                   ? AppStrings.bookQuickServices
                   : 'Book Service'),
           onclick: hasActive
@@ -329,8 +343,11 @@ class _ServiceDetailsState extends State<ServiceDetails> {
   }
 
   void _showBookServiceDialog() {
+    final detail = _controller?.detail.value;
+    final isQuickService = detail?.isQuickService ?? false;
+
     AppDialogs.showSuccessDialog(context,
-        description: widget.type == ServiceType.instant.name
+        description: isQuickService
             ? AppStrings.bookQuiceServiceDetails
             : AppStrings.bookServiceDetails,
         image: AssetPath.tumbIcon,
@@ -339,7 +356,6 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         onTap1: () {
           AppNavigation.navigatorPop(context);
 
-          final detail = _controller?.detail.value;
           final service = detail != null
               ? <String, dynamic>{
                   'id': widget.providerServiceId,
@@ -351,7 +367,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 }
               : null;
 
-          if (widget.type == ServiceType.instant.name) {
+          if (isQuickService) {
             AppNavigation.navigateTo(
               context,
               AppRoutes.serviceSelectionScreenRoute,
@@ -397,6 +413,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
     required String imageUrl,
     required VoidCallback ontapLike,
     required bool isFav,
+    bool isQuick = false,
   }) {
     final image = imageUrl.isNotEmpty
         ? DecorationImage(
@@ -409,6 +426,22 @@ class _ServiceDetailsState extends State<ServiceDetails> {
             image: AssetImage(AssetPath.tempCleaningImage),
           );
 
+    final favoriteIcon = Obx(() {
+      final c = _controller;
+
+      final filled = c?.isServiceFavorite.value ?? isFav;
+
+      final busy = c?.isServiceFavoriteToggling.value ?? false;
+
+      return GestureDetector(
+        onTap: busy ? null : ontapLike,
+        child: Icon(
+          filled ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+          size: 30.sp,
+        ),
+      );
+    });
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -419,28 +452,36 @@ class _ServiceDetailsState extends State<ServiceDetails> {
           borderRadius: BorderRadius.circular(10.r),
           image: image,
         ),
-        child: Column(
+        child: Stack(
           children: [
-            10.verticalSpace,
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Obx(() {
-                final c = _controller;
-
-                final filled = c?.isServiceFavorite.value ?? isFav;
-
-                final busy = c?.isServiceFavoriteToggling.value ?? false;
-
-                return GestureDetector(
-                  onTap: busy ? null : ontapLike,
-                  child: Icon(
-                    filled
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    size: 30.sp,
+            if (isQuick)
+              Positioned(
+                top: 10.h,
+                left: 0,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 16.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.black,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.r),
+                      bottomLeft: Radius.zero,
+                      topRight: Radius.circular(30.r),
+                      bottomRight: Radius.circular(30.r),
+                    ),
                   ),
-                );
-              }),
+                  child: CustomText(
+                    text: 'Quick Service',
+                    color: AppColors.white,
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            Positioned(
+              top: 10.h,
+              right: 10.w,
+              child: favoriteIcon,
             ),
           ],
         ),

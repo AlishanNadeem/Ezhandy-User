@@ -370,6 +370,7 @@ class AppStrings {
 //   Booking History
   static const String visitCharges = "Visit Charges";
   static const String hourlyRate = "Hourly rate";
+  static const String quickServiceExtraFee = "Quick Service Extra Fee";
   static const String bookingId = "Booking ID";
   static const String bookingDate = "Booking Date";
   static const String serviceDate = "Service Date";
