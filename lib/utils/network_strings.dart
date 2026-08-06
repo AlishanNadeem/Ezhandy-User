@@ -94,6 +94,10 @@ class NetworkStrings {
   static const String createBookingDraftCheckoutEndpoint =
       'payment/create-booking-draft-checkout';
 
+  /// POST [payment/verify-booking-checkout] — verify a booking checkout session by id (auth).
+  static const String verifyBookingCheckoutEndpoint =
+      'payment/verify-booking-checkout';
+
   /// POST [payment/bookings/create-and-pay] — create booking(s) and pay (auth).
   static const String createBookingAndPayEndpoint =
       'payment/bookings/create-and-pay';

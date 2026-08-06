@@ -493,26 +493,29 @@ class _ServiceSelectionState extends State<ServiceSelection> {
     final secondaryServiceId =
         ServiceSelectionController.resolveServiceId(_secondaryService);
 
-    final success = await _createBookingController.createBookingAndPay(
+    await _createBookingController.startBookingCheckout(
+      context: context,
       args: args,
       durationMinutes: duration,
       secondaryServiceId: secondaryServiceId,
+      onSuccess: _onCheckoutVerified,
     );
+  }
 
-    if (!mounted) return;
-
-    if (!success) {
-      AppDialogs.showToast(message: 'Unable to confirm booking.');
-      return;
-    }
-
-    AppDialogs.showSuccessDialog(
-      context,
-      description: AppStrings.yourBookingHasBeenDone,
-      title: AppStrings.congratulation,
-      btnTxt1: AppStrings.ok,
-      onTap1: () => _onBookingSuccess(),
-    );
+  /// Called after the Stripe checkout webview redirects to the success url
+  /// and the booking has been verified. Runs in a microtask so it fires
+  /// after the checkout webview has finished popping off the navigator.
+  void _onCheckoutVerified() {
+    Future.microtask(() {
+      if (!mounted) return;
+      AppDialogs.showSuccessDialog(
+        context,
+        description: AppStrings.yourBookingHasBeenDone,
+        title: AppStrings.congratulation,
+        btnTxt1: AppStrings.ok,
+        onTap1: () => _onBookingSuccess(),
+      );
+    });
   }
 
   void _onBookingSuccess() {
