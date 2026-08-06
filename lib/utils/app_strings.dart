@@ -279,9 +279,9 @@ class AppStrings {
 
   /// Forgot Password
   static const String passwordRecovery = "Forgot Password";
-  static const String forgetPassword = "Forget Password";
+  static const String forgetPassword = "Forgot Password";
   static const String forgetPasswordSubtitle =
-      "Please enter the code sent to your email or phone to continue.";
+      "Please enter the code sent to your email.";
   static const String
       resetYourPasswordInJustAFewClicksAndRegainAccessInstantly =
       "Reset your password in just a few clicks and regain access instantly";

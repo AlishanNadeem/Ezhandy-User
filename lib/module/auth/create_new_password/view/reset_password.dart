@@ -22,6 +22,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       onclickLead: () {
         Get.back();
       },
+      resizeToAvoidBottomInset: true,
       // appBarheight: 50.h,
       // title: AppStrings.resetPassword,
       // is_registration: true,

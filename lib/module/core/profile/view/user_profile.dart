@@ -58,11 +58,10 @@ class _UserProfileState extends State<UserProfile> {
                         TwoTextRow(
                           secondColor: AppColors.black,
                           firstText: AppStrings.phoneNumber,
-                          secondText: Constants
-                              .maskTextInputFormatterPhoneUSWithCode
-                              .maskText(AuthController.i.appUser.value.data
-                                      ?.userModel?.mobileNumber ??
-                                  "1234567890"),
+                          secondText: _displayPhoneNumber(
+                            AuthController.i.appUser.value.data?.userModel
+                                ?.mobileNumber,
+                          ),
                         ),
                         Divider(color: AppColors.blueDark),
                         10.verticalSpace,
@@ -158,5 +157,11 @@ class _UserProfileState extends State<UserProfile> {
       // args == AppStrings.CREATE_PROFILE ? null :
       // 5,
     );
+  }
+
+  String _displayPhoneNumber(String? value) {
+    final phone = value?.trim() ?? '';
+    if (phone.isEmpty) return '-';
+    return phone;
   }
 }

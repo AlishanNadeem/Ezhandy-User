@@ -36,43 +36,34 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding16),
-      child: Column(
-        children: [
-          // Non-scrollable content (e.g., logo)
-          // AppLogo(scale: 5.sp),
-          AppLogo(scale: 3.5.sp),
-          15.verticalSpace,
-          passwordRecoveryTextWidget(),
-
-          5.verticalSpace,
-          // Scrollable content starts here
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: rsesetpassKey,
-                child: Column(children: [
-                  //----------------Email Address Field----------------
-                  CustomText(
-                      is_alignLeft: false,
-                      text: AppStrings.forgotYourPasswordNoWorries),
-                  20.verticalSpace,
-                  CustomText(text: AppStrings.password),
-                  10.verticalSpace,
-                  _passwordTextField(),
-                  20.verticalSpace,
-                  CustomText(text: AppStrings.confirmPassword),
-                  10.verticalSpace,
-                  _confirmPasswordTextField(),
-                  SizedBox(height: 30.h),
-                  //----------------Get Code Button----------------
-                  buttonWidget(context),
-                ]),
-              ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: AppPadding.padding16)
+          .copyWith(bottom: 24.h),
+      child: Form(
+        key: rsesetpassKey,
+        child: Column(
+          children: [
+            AppLogo(scale: 3.5.sp),
+            15.verticalSpace,
+            passwordRecoveryTextWidget(),
+            5.verticalSpace,
+            CustomText(
+              is_alignLeft: false,
+              text: AppStrings.forgotYourPasswordNoWorries,
             ),
-          ),
-        ],
+            20.verticalSpace,
+            CustomText(text: AppStrings.password),
+            10.verticalSpace,
+            _passwordTextField(),
+            20.verticalSpace,
+            CustomText(text: AppStrings.confirmPassword),
+            10.verticalSpace,
+            _confirmPasswordTextField(),
+            SizedBox(height: 30.h),
+            buttonWidget(context),
+            25.verticalSpace,
+          ],
+        ),
       ),
     );
   }

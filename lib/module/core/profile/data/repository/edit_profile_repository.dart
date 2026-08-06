@@ -76,7 +76,7 @@ class EditProfileRepository extends ResponseListener {
     AuthController.i.appUser.value.data?.userModel?.fullName =
         response['data']['user']['fullName'];
     AuthController.i.appUser.value.data?.userModel?.mobileNumber =
-        response['data']['user']['mobileNumberp'];
+        response['data']['user']['mobileNumber'];
     AuthController.i.appUser.value.data?.userModel?.profileImage =
         response['data']['user']['profileImage'];
 

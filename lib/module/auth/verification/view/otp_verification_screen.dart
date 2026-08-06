@@ -40,6 +40,7 @@ class _OTPVerificationState extends State<OTPVerification> {
           AppNavigation.navigatorPop(context);
           isTimeComplete = true;
         },
+        resizeToAvoidBottomInset: true,
         // title: AppStrings.otp,
         // appBarheight: 50.h,
         child: OtpVerificationForm(

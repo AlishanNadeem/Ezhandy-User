@@ -19,6 +19,7 @@ import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class EditUserProfile extends StatefulWidget {
   EditUserProfile({super.key});
@@ -40,15 +41,15 @@ class _EditUserProfileState extends State<EditUserProfile> {
   // final TextEditingController statusController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   File? _profileImage;
+  late MaskTextInputFormatter _phoneMaskFormatter;
 
   // bool switchOff = false;
 
   bool keyboardVisible = false;
   @override
   void initState() {
-    setController();
-    // TODO: implement initState
     super.initState();
+    setController();
   }
 
   @override
@@ -192,7 +193,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
       prefxicon: AssetPath.callIcon,
       label: false,
       keyboardType: TextInputType.number,
-      inputFormatters: [Constants.maskTextInputFormatterPhoneUSWithCode],
+      inputFormatters: [_phoneMaskFormatter],
       controller: phoneController,
       // validator: (value) => value?.validateEmpty(AppStrings.phon),
       // error_text: error_email,
@@ -240,8 +241,26 @@ class _EditUserProfileState extends State<EditUserProfile> {
         AuthController.i.appUser.value.data?.userModel?.fullName ?? "dummy");
     emailController.text =
         AuthController.i.appUser.value.data?.userModel?.email ?? "";
-    phoneController.text = Constants.maskTextInputFormatterPhoneUSWithCode
-        .maskText(
-            AuthController.i.appUser.value.data?.userModel?.mobileNumber ?? "");
+    final phone =
+        AuthController.i.appUser.value.data?.userModel?.mobileNumber?.trim() ??
+            '';
+    final digits = _nationalPhoneDigits(phone);
+    _phoneMaskFormatter = MaskTextInputFormatter(
+      mask: '+1 (###) ###-####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy,
+      initialText: digits.isEmpty ? null : digits,
+    );
+    phoneController.text = _phoneMaskFormatter.getMaskedText();
+  }
+
+  String _nationalPhoneDigits(String phone) {
+    var digits = phone.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('1') && digits.length == 11) {
+      digits = digits.substring(1);
+    } else if (digits.length > 10) {
+      digits = digits.substring(digits.length - 10);
+    }
+    return digits;
   }
 }

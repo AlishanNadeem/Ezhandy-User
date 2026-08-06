@@ -77,50 +77,32 @@ class _OtpVerificationFormState extends State<OtpVerificationForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppPadding.padding16),
-      child: Column(
-        children: [
-          AppLogo(scale: 3.5.sp),
-          15.verticalSpace,
-          passwordRecoveryTextWidget(),
-          5.verticalSpace,
-
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: otpKey,
-                child: Column(
-                  children: [
-                    CustomText(
-                        is_alignLeft: false,
-                        text:
-                            //  widget.type == OtpType.forget.name
-                            //     ? AppStrings.otpCodeForgetMessage
-                            //     : widget.emailAndPhone == OtpCodeType.email.name
-                            //         ? AppStrings.otpCodeEmailMessage
-                            //         :
-                            AppStrings.otpCodePhoneMessage),
-                    20.verticalSpace,
-                    // CustomText(text: AppStrings.verificationCode + "*"),
-                    // 10.verticalSpace,
-                    pinCodeWidget(context),
-                    20.verticalSpace,
-                    _verifyButton(context),
-                    10.verticalSpace,
-                    // _otpResendTextTimerWidget(),
-                                              _circularCountDownTimerWidget(),
-
-                  ],
-                ),
-              ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: AppPadding.padding16)
+          .copyWith(bottom: 24.h),
+      child: Form(
+        key: otpKey,
+        child: Column(
+          children: [
+            AppLogo(scale: 3.5.sp),
+            15.verticalSpace,
+            passwordRecoveryTextWidget(),
+            5.verticalSpace,
+            CustomText(
+              is_alignLeft: false,
+              text: AppStrings.otpCodeEmailMessage,
             ),
-          ),
-          Visibility(
-              visible: !widget.keyboardVisible,
-              child: didntReceiveCodeWidget()),
-          25.verticalSpace
-        ],
+            20.verticalSpace,
+            pinCodeWidget(context),
+            20.verticalSpace,
+            _verifyButton(context),
+            10.verticalSpace,
+            _circularCountDownTimerWidget(),
+            20.verticalSpace,
+            if (!widget.keyboardVisible) didntReceiveCodeWidget(),
+            25.verticalSpace,
+          ],
+        ),
       ),
     );
   }
