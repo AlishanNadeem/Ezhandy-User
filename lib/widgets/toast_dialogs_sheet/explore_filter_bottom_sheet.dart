@@ -139,7 +139,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       }
 
       final categoryNames = _productController.categoryList
-          .map((e) => e['name'].toString())
+          .map((e) => e['title'].toString())
           .toList();
 
       return CustomDropDown2(
@@ -156,7 +156,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           setState(() {
             categoryValue = value.toString();
             final selected = _productController.categoryList.firstWhere(
-              (e) => e['name'] == value,
+              (e) => e['title'] == value,
               orElse: () => null,
             );
             selectedCategoryId =
