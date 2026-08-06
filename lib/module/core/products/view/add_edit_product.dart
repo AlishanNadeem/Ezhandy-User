@@ -50,6 +50,7 @@ class _AddEditProductState extends State<AddEditProduct> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController messageController = TextEditingController();
   bool keyboardVisible = false;
+  static const int maxImages = 5;
   List<File> documentList = [];
   List<String> existingImageUrls = [];
   String? editingProductId;
@@ -78,7 +79,7 @@ class _AddEditProductState extends State<AddEditProduct> {
 
     final resolvedName = _resolveCategoryDropdownValue(
       _productController.categoryList
-          .map((e) => e['name']?.toString() ?? '')
+          .map((e) => e['title']?.toString() ?? '')
           .where((name) => name.isNotEmpty)
           .toList(),
     );
@@ -87,7 +88,7 @@ class _AddEditProductState extends State<AddEditProduct> {
 
     String? resolvedId = _productController.selectedCategoryId;
     for (final category in _productController.categoryList) {
-      if (category['name']?.toString() == resolvedName) {
+      if (category['title']?.toString() == resolvedName) {
         resolvedId = category['id']?.toString();
         break;
       }
@@ -116,7 +117,7 @@ class _AddEditProductState extends State<AddEditProduct> {
     if (selectedId != null && selectedId.isNotEmpty) {
       for (final category in _productController.categoryList) {
         if (category['id']?.toString() == selectedId) {
-          final name = category['name']?.toString();
+          final name = category['title']?.toString();
           if (name != null && categoryNames.contains(name)) {
             return name;
           }
@@ -210,6 +211,11 @@ class _AddEditProductState extends State<AddEditProduct> {
 
   _setCameraDocumentFile(File? file) {
     if (file == null) return;
+    if (documentList.length + existingImageUrls.length >= maxImages) {
+      AppDialogs.showToast(
+          message: 'You can upload up to $maxImages images only.');
+      return;
+    }
     setState(() {
       documentList.add(file);
     });
@@ -223,7 +229,7 @@ class _AddEditProductState extends State<AddEditProduct> {
 
     final category = product['category'];
     if (category is Map) {
-      categoryValue = category['name']?.toString();
+      categoryValue = category['title']?.toString();
       _productController.selectedCategoryId = category['id']?.toString();
     } else if (category is String && category.trim().isNotEmpty) {
       categoryValue = category.trim();
@@ -333,6 +339,7 @@ class _AddEditProductState extends State<AddEditProduct> {
 
   Widget documentWidget() {
     final imageCount = documentList.length + existingImageUrls.length;
+    final canAddMore = imageCount < maxImages;
 
     return SizedBox(
       height: 117.h,
@@ -372,7 +379,7 @@ class _AddEditProductState extends State<AddEditProduct> {
         separatorBuilder: (context, index) {
           return const SizedBox(width: 5);
         },
-        itemCount: imageCount + 1,
+        itemCount: imageCount + (canAddMore ? 1 : 0),
       ),
     );
   }
@@ -443,7 +450,7 @@ class _AddEditProductState extends State<AddEditProduct> {
     }
 
     final categoryNames = _productController.categoryList
-        .map((e) => e['name'].toString())
+        .map((e) => e['title'].toString())
         .toList();
 
     final dropdownValue = _resolveCategoryDropdownValue(categoryNames);
@@ -462,7 +469,7 @@ class _AddEditProductState extends State<AddEditProduct> {
         setState(() {
           categoryValue = value.toString();
           final selected = _productController.categoryList.firstWhere(
-            (e) => e['name']?.toString() == value,
+            (e) => e['title']?.toString() == value,
             orElse: () => null,
           );
           if (selected != null) {
@@ -641,6 +648,7 @@ Widget buttonWidget(context) {
             description: descriptionController.text,
             price: priceController.text,
             images: List<File>.from(documentList),
+            existingImages: List<String>.from(existingImageUrls),
             onSuccess: _showProductUpdatedSuccessDialog,
           );
           return;
@@ -658,34 +666,46 @@ Widget buttonWidget(context) {
   });
 }
 
+  // `SuccessfulDialog` wraps its content in an outer GestureDetector whose
+  // onTap is the same callback as the "OK" button's onTap, so a single tap
+  // can invoke the callback twice. Guard with a flag so we only ever pop
+  // back to the listing page once, instead of over-popping past it.
+  bool _isDismissingSuccessDialog = false;
+
   void _showProductAddedSuccessDialog() {
     if (!mounted) return;
+    _isDismissingSuccessDialog = false;
     AppDialogs.showSuccessDialog(
       context,
       description: AppStrings.productHasBeenAddedSuccessfully,
       title: AppStrings.congratulation,
       isDoneShow: true,
       btnTxt1: AppStrings.ok,
-      onTap1: () {
-        AppNavigation.navigatorPop(context);
-        _refreshMarketplaceAndPop();
-      },
+      onTap1: _dismissSuccessDialogAndGoToListing,
     );
   }
 
   void _showProductUpdatedSuccessDialog() {
     if (!mounted) return;
+    _isDismissingSuccessDialog = false;
     AppDialogs.showSuccessDialog(
       context,
       description: AppStrings.productHasBeenUpdatedSuccessfully,
       title: AppStrings.congratulation,
       isDoneShow: true,
       btnTxt1: AppStrings.ok,
-      onTap1: () {
-        AppNavigation.navigatorPop(context);
-        _refreshMarketplaceAndPop();
-      },
+      onTap1: _dismissSuccessDialogAndGoToListing,
     );
+  }
+
+  void _dismissSuccessDialogAndGoToListing() {
+    if (_isDismissingSuccessDialog) return;
+    _isDismissingSuccessDialog = true;
+    // Pop the success dialog.
+    AppNavigation.navigatorPop(context);
+    // Pop this Add/Edit Product screen so the user lands back on the
+    // Marketplace listing page, refreshed with the latest data.
+    _refreshMarketplaceAndPop();
   }
 
   void _refreshMarketplaceAndPop() {

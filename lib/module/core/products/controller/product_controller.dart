@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:ezhandy_user/dio_client/dio_client.dart';
@@ -107,6 +108,7 @@ class ProductController extends GetxController {
     required String description,
     required String price,
     List<File> images = const [],
+    List<String> existingImages = const [],
     VoidCallback? onSuccess,
   }) async {
     final id = productId.trim();
@@ -128,12 +130,15 @@ class ProductController extends GetxController {
       "price": double.tryParse(price) ?? 0.0,
       "isActive": true,
       "categoryId": selectedCategoryId,
+      // Kept (untouched) images are sent by URL; anything not present here
+      // and not in `images` is treated by the backend as removed.
+      "existingImages": jsonEncode(existingImages),
     });
 
     await _appendImages(formData, images);
 
     print(
-        "📦 UPDATE PRODUCT BODY: id=$id, title=$title, price=$price, categoryId=$selectedCategoryId, images=${images.length}");
+        "📦 UPDATE PRODUCT BODY: id=$id, title=$title, price=$price, categoryId=$selectedCategoryId, existingImages=${existingImages.length}, images=${images.length}");
 
     try {
       final response = await DioClient().patchRequest(
