@@ -471,88 +471,89 @@ class _ChatScreenState extends State<ChatScreen> {
     //     ),
     //   );
     // } else
-    if (_isAskProChat) {
-      return Padding(
-        padding: EdgeInsets.only(
-          right: AppPadding.padding12,
-          top: 5.h,
-          bottom: 5.h,
-        ),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                AppDialogs.showSuccessDialog(
-                  context,
-                  description: 'Make a payment for audio call.',
-                  title: '\$9.99/ for 10 minutes',
-                  image: AssetPath.proUserIcon,
-                  isDoneShow: false,
-                  btnTxt1: AppStrings.continuee,
-                  onTap1: () {
-                    AppDialogs.showSuccessDialog(
-                      context,
-                      description: AppStrings.paymentHasBeenDoneSuccessfully,
-                      title: AppStrings.congratulation,
-                      isDoneShow: true,
-                      btnTxt1: AppStrings.ok,
-                      onTap1: () {
-                        AppNavigation.navigatorPopUntil(
-                          context,
-                          AppRoutes.chatScreenRoute,
-                        );
-                      },
-                    );
-                  },
-                  btnTxt2: AppStrings.cancel,
-                  onTap2: () => AppNavigation.navigatorPop(context),
-                );
-              },
-              child: Image.asset(
-                AssetPath.audioCallIcon,
-                width: 20.w,
-                height: 20.h,
-              ),
-            ),
-            10.horizontalSpace,
-            GestureDetector(
-              onTap: () {
-                AppDialogs.showSuccessDialog(
-                  context,
-                  description: 'Make a payment for video session.',
-                  title: '\$9.99/ for 15 minutes',
-                  image: AssetPath.proUserIcon,
-                  isDoneShow: false,
-                  btnTxt1: AppStrings.continuee,
-                  onTap1: () {
-                    AppDialogs.showSuccessDialog(
-                      context,
-                      description: AppStrings.paymentHasBeenDoneSuccessfully,
-                      title: AppStrings.congratulation,
-                      isDoneShow: true,
-                      btnTxt1: AppStrings.ok,
-                      onTap1: () {
-                        AppNavigation.navigatorPopUntil(
-                          context,
-                          AppRoutes.chatScreenRoute,
-                        );
-                      },
-                    );
-                  },
-                  btnTxt2: AppStrings.cancel,
-                  onTap2: () => AppNavigation.navigatorPop(context),
-                );
-              },
-              child: Image.asset(
-                AssetPath.videoCallIcon,
-                width: 25.w,
-                height: 25.h,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+    // Audio / video call icons temporarily hidden
+    // if (_isAskProChat) {
+    //   return Padding(
+    //     padding: EdgeInsets.only(
+    //       right: AppPadding.padding12,
+    //       top: 5.h,
+    //       bottom: 5.h,
+    //     ),
+    //     child: Row(
+    //       children: [
+    //         GestureDetector(
+    //           onTap: () {
+    //             AppDialogs.showSuccessDialog(
+    //               context,
+    //               description: 'Make a payment for audio call.',
+    //               title: '\$9.99/ for 10 minutes',
+    //               image: AssetPath.proUserIcon,
+    //               isDoneShow: false,
+    //               btnTxt1: AppStrings.continuee,
+    //               onTap1: () {
+    //                 AppDialogs.showSuccessDialog(
+    //                   context,
+    //                   description: AppStrings.paymentHasBeenDoneSuccessfully,
+    //                   title: AppStrings.congratulation,
+    //                   isDoneShow: true,
+    //                   btnTxt1: AppStrings.ok,
+    //                   onTap1: () {
+    //                     AppNavigation.navigatorPopUntil(
+    //                       context,
+    //                       AppRoutes.chatScreenRoute,
+    //                     );
+    //                   },
+    //                 );
+    //               },
+    //               btnTxt2: AppStrings.cancel,
+    //               onTap2: () => AppNavigation.navigatorPop(context),
+    //             );
+    //           },
+    //           child: Image.asset(
+    //             AssetPath.audioCallIcon,
+    //             width: 20.w,
+    //             height: 20.h,
+    //           ),
+    //         ),
+    //         10.horizontalSpace,
+    //         GestureDetector(
+    //           onTap: () {
+    //             AppDialogs.showSuccessDialog(
+    //               context,
+    //               description: 'Make a payment for video session.',
+    //               title: '\$9.99/ for 15 minutes',
+    //               image: AssetPath.proUserIcon,
+    //               isDoneShow: false,
+    //               btnTxt1: AppStrings.continuee,
+    //               onTap1: () {
+    //                 AppDialogs.showSuccessDialog(
+    //                   context,
+    //                   description: AppStrings.paymentHasBeenDoneSuccessfully,
+    //                   title: AppStrings.congratulation,
+    //                   isDoneShow: true,
+    //                   btnTxt1: AppStrings.ok,
+    //                   onTap1: () {
+    //                     AppNavigation.navigatorPopUntil(
+    //                       context,
+    //                       AppRoutes.chatScreenRoute,
+    //                     );
+    //                   },
+    //                 );
+    //               },
+    //               btnTxt2: AppStrings.cancel,
+    //               onTap2: () => AppNavigation.navigatorPop(context),
+    //             );
+    //           },
+    //           child: Image.asset(
+    //             AssetPath.videoCallIcon,
+    //             width: 25.w,
+    //             height: 25.h,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
     return const SizedBox.shrink();
   }
 
