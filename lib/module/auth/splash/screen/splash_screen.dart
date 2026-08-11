@@ -65,6 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if ((SharedPreference().getUser()) != null) {
       AuthController.i.appUser.value = SharedPreference().getUser()!;
+      AuthController.i.isLoginSignUp.value = true;
       // AuthController.i.appUser.value.data!.SocialType.toString()=='phone'?
       // AppConstant.is_phone=true:null;
       // AuthController.i.appUser.value.data!.socialType.toString() == 'phone'
