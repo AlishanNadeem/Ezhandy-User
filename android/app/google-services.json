@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "967775161780",
-    "project_id": "ezhandy-d64cd",
-    "storage_bucket": "ezhandy-d64cd.firebasestorage.app"
+    "project_number": "163569817774",
+    "project_id": "ezhandy",
+    "storage_bucket": "ezhandy.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:967775161780:android:2f86ef7b9d1f4922ec36e1",
+        "mobilesdk_app_id": "1:163569817774:android:e822eaa30684294d95353f",
         "android_client_info": {
           "package_name": "com.pixelgenesys.ezhandy.provider"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAJB1UVc3cRbBLvkW7KW9wfKcct2pxMs_g"
+          "current_key": "AIzaSyCi_7ayw_W7lBr7Ekdpa-oAk-SSMK1gEp4"
         }
       ],
       "services": {
@@ -26,7 +26,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:967775161780:android:9ee9f20f93b7f94cec36e1",
+        "mobilesdk_app_id": "1:163569817774:android:9c3c9064a65e7fe295353f",
         "android_client_info": {
           "package_name": "com.pixelgenesys.ezhandy.user"
         }
@@ -34,7 +34,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAJB1UVc3cRbBLvkW7KW9wfKcct2pxMs_g"
+          "current_key": "AIzaSyCi_7ayw_W7lBr7Ekdpa-oAk-SSMK1gEp4"
         }
       ],
       "services": {
