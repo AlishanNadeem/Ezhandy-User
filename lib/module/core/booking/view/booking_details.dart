@@ -201,7 +201,7 @@ class _BookingDetailsState extends State<BookingDetails> {
                                   rejectReasonWidget(detail),
                                 if (c.showReportMessage)
                                   reportMessageWidget(),
-                                if (c.showActionButtons && c.isPending) ...[
+                                if (c.isPending || c.isAssigned) ...[
                                   15.verticalSpace,
                                   CustomButton(
                                     text: AppStrings.cancelAndRefund,
