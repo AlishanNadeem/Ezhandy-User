@@ -19,6 +19,7 @@ import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 
 import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:get/get.dart';
+import 'package:ezhandy_user/widgets/button_widgets/notification_bell_button.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -139,20 +140,15 @@ class _HomeState extends State<Home> {
           ),
         ],
         Spacer(),
-        notificationWidget(context)
+        NotificationBellButton(
+          onTap: () {
+            !AuthController.i.isLoginSignUp.value
+                ? signinSignUpPopup()
+                : AppNavigation.navigateTo(
+                    context, AppRoutes.notificationScreenRoute);
+          },
+        )
       ],
-    );
-  }
-
-  GestureDetector notificationWidget(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        !AuthController.i.isLoginSignUp.value
-            ? signinSignUpPopup()
-            : AppNavigation.navigateTo(
-                context, AppRoutes.notificationScreenRoute);
-      },
-      child: Image.asset(AssetPath.bellIcon, width: 20.w, height: 20.h),
     );
   }
 

@@ -152,6 +152,10 @@ class NetworkStrings {
   /// GET [notifications] — user notifications list (auth).
   static const String notificationsEndpoint = 'notifications';
 
+  /// GET [notifications/unread-count] — unread notifications count (auth).
+  static const String notificationsUnreadCountEndpoint =
+      'notifications/unread-count';
+
   /// PATCH [notifications/{id}/read] — mark notification as read (auth).
   static String notificationRead(String notificationId) =>
       'notifications/$notificationId/read';

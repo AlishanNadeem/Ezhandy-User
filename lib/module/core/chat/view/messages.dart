@@ -10,6 +10,7 @@ import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
 import 'package:ezhandy_user/widgets/Container/custom_container.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
+import 'package:ezhandy_user/widgets/button_widgets/notification_bell_button.dart';
 import 'package:ezhandy_user/widgets/profile_widget/user_image_widget.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -175,17 +176,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
           fontSize: 20.sp,
         ),
         const Spacer(),
-        notificationWidget(context),
+        NotificationBellButton(
+          onTap: () {
+            AppNavigation.navigateTo(
+                context, AppRoutes.notificationScreenRoute);
+          },
+        ),
       ],
-    );
-  }
-
-  GestureDetector notificationWidget(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        AppNavigation.navigateTo(context, AppRoutes.notificationScreenRoute);
-      },
-      child: Image.asset(AssetPath.bellIcon, width: 20.w, height: 20.h),
     );
   }
 

@@ -20,19 +20,12 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  NotificationController get _controller {
-    if (Get.isRegistered<NotificationController>()) {
-      return Get.find<NotificationController>();
-    }
-    return Get.put(NotificationController());
-  }
+  NotificationController get _controller => NotificationController.i;
 
   @override
-  void dispose() {
-    if (Get.isRegistered<NotificationController>()) {
-      Get.delete<NotificationController>();
-    }
-    super.dispose();
+  void initState() {
+    super.initState();
+    _controller.fetchNotifications();
   }
 
   DateTime? _parseNotificationDate(dynamic value) {
@@ -71,12 +64,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final item = items[index];
-                      final notificationId = item['id']?.toString() ?? '';
                       return SlidableWidget(
                         child: GestureDetector(
-                          onTap: notificationId.isEmpty
-                              ? null
-                              : () => _controller.markAsRead(notificationId),
+                          onTap: () =>
+                              _controller.onNotificationTap(context, item),
                           behavior: HitTestBehavior.opaque,
                           child: notificationWidget(
                             isUnRead: !NotificationController.isNotificationRead(item),

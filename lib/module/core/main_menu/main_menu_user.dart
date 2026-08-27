@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/notification/controller/notification_controller.dart';
 import 'package:ezhandy_user/utils/app_dialogs.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
 import 'package:ezhandy_user/utils/app_padding.dart';
@@ -54,6 +55,9 @@ class _MainMenuState extends State<MainMenu> {
     HomeController.i.selectedTab.value = 0;
     // Permanent HomeController survives logout; refill after SessionClear.
     HomeController.i.getServices();
+    if (AuthController.i.isLoginSignUp.value) {
+      NotificationController.i.fetchUnreadCount();
+    }
     super.initState();
   }
 
@@ -79,22 +83,21 @@ class _MainMenuState extends State<MainMenu> {
 
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Obx(() {
-        return GestureDetector(
-            onTap: () {
-              // FocusScope.of(context).unfocus();
-            },
-            child: Container(
-              width: 1.sw,
-              height: 1.sh,
-              color: AppColors.white,
-              child: Platform.isAndroid
-                  ? SafeArea(
-                      child: withoutSafeArea(),
-                    )
-                  : withoutSafeArea(),
-            ));
-      }),
+      child: GestureDetector(
+        onTap: () {
+          // FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          width: 1.sw,
+          height: 1.sh,
+          color: AppColors.white,
+          child: Platform.isAndroid
+              ? SafeArea(
+                  child: withoutSafeArea(),
+                )
+              : withoutSafeArea(),
+        ),
+      ),
     );
   }
 

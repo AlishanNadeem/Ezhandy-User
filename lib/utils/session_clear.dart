@@ -1,6 +1,7 @@
 import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/notification/controller/notification_controller.dart';
 import 'package:ezhandy_user/utils/shared_preference.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +21,7 @@ class SessionClear {
     }
 
     // Drops all non-permanent GetX controllers that hold API lists/cache.
-    // AuthController + HomeController stay (registered as permanent in main.dart).
+    // Auth / Home / Notification stay (registered permanent in main.dart).
     Get.deleteAll();
 
     if (Get.isRegistered<AuthController>()) {
@@ -31,6 +32,10 @@ class SessionClear {
       HomeController.i.selectedTab.value = 0;
       HomeController.i.servicesList.clear();
       HomeController.i.isLoading.value = false;
+    }
+
+    if (Get.isRegistered<NotificationController>()) {
+      NotificationController.i.clearCache();
     }
   }
 }

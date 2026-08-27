@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
 import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
+import 'package:ezhandy_user/module/core/notification/controller/notification_controller.dart';
 import 'package:ezhandy_user/services/firebase_messaging_service.dart';
 import 'package:ezhandy_user/utils/routes/app_router.dart';
 import 'package:ezhandy_user/utils/app_colors.dart';
@@ -89,6 +90,7 @@ class MyApp extends StatelessWidget {
      /// 🔹 Initialize Controllers AFTER Firebase
     Get.put(AuthController(), permanent: true);
     Get.put(HomeController(), permanent: true);
+    Get.put(NotificationController(), permanent: true);
 
     final botToastBuilder = BotToastInit();
     return ScreenUtilInit(
