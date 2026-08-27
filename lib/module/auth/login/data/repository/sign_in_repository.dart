@@ -73,6 +73,7 @@ class SignInRepository extends ResponseListener {
               type: OtpType.signup.name, emailAndPhone: Email));
     } else {
       AuthController.i.appUser.value = a;
+      AuthController.i.isLoginSignUp.value = true;
       SharedPreference().setUser(user: convert.jsonEncode(a));
       SharedPreference().setBearerToken(token: a.data?.accessToken);
       log((a.data?.accessToken).toString());
