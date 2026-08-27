@@ -50,6 +50,7 @@ class ProductController extends GetxController {
     required String title,
     required String description,
     required String price,
+    bool isActive = true,
     List<File> images = const [],
     VoidCallback? onSuccess,
   }) async {
@@ -69,14 +70,14 @@ class ProductController extends GetxController {
       "title": title,
       "description": description,
       "price": double.tryParse(price) ?? 0.0,
-      "isActive": true,
+      "isActive": isActive,
       "categoryId": selectedCategoryId,
     });
 
     await _appendImages(formData, images);
 
     print(
-        "📦 CREATE PRODUCT BODY: title=$title, price=$price, categoryId=$selectedCategoryId, images=${images.length}");
+        "📦 CREATE PRODUCT BODY: title=$title, price=$price, isActive=$isActive, categoryId=$selectedCategoryId, images=${images.length}");
 
     try {
       final response = await DioClient().postRequest(
@@ -107,6 +108,7 @@ class ProductController extends GetxController {
     required String title,
     required String description,
     required String price,
+    bool isActive = true,
     List<File> images = const [],
     List<String> existingImages = const [],
     VoidCallback? onSuccess,
@@ -128,7 +130,7 @@ class ProductController extends GetxController {
       "title": title,
       "description": description,
       "price": double.tryParse(price) ?? 0.0,
-      "isActive": true,
+      "isActive": isActive,
       "categoryId": selectedCategoryId,
       // Kept (untouched) images are sent by URL; anything not present here
       // and not in `images` is treated by the backend as removed.
@@ -138,7 +140,7 @@ class ProductController extends GetxController {
     await _appendImages(formData, images);
 
     print(
-        "📦 UPDATE PRODUCT BODY: id=$id, title=$title, price=$price, categoryId=$selectedCategoryId, existingImages=${existingImages.length}, images=${images.length}");
+        "📦 UPDATE PRODUCT BODY: id=$id, title=$title, price=$price, isActive=$isActive, categoryId=$selectedCategoryId, existingImages=${existingImages.length}, images=${images.length}");
 
     try {
       final response = await DioClient().patchRequest(

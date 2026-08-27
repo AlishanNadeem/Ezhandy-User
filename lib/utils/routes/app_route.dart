@@ -50,6 +50,12 @@ class AppRoutes {
   static const String legalIntelligenceSupportScreenRoute =
       "legal_intelligence_support_screenRoute";
   static const String marketPlaceScreenRoute = "market_pkace_screenRoute";
+  static const String marketplaceSubscriptionPlansScreenRoute =
+      "marketplace_subscription_plans_screenRoute";
+  static const String marketplaceSubscriptionLogsScreenRoute =
+      "marketplace_subscription_logs_screenRoute";
+  static const String marketplaceSubscriptionStatsScreenRoute =
+      "marketplace_subscription_stats_screenRoute";
   static const String addEditProductScreenRoute =
       "add_edit_product_screenRoute";
   static const String productDetailScreenRoute = "product_detail_screenRoute";

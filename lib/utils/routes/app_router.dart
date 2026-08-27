@@ -50,6 +50,9 @@ import 'package:ezhandy_user/module/core/products/routing_arguments/add_edit_pro
 import 'package:ezhandy_user/module/core/products/view/add_edit_product.dart';
 import 'package:ezhandy_user/module/core/products/view/add_to_cart.dart';
 import 'package:ezhandy_user/module/core/products/view/market_place.dart';
+import 'package:ezhandy_user/module/core/products/view/marketplace_subscription_logs.dart';
+import 'package:ezhandy_user/module/core/products/view/marketplace_subscription_plans.dart';
+import 'package:ezhandy_user/module/core/products/view/marketplace_subscription_stats.dart';
 import 'package:ezhandy_user/module/core/products/view/product_details.dart';
 import 'package:ezhandy_user/module/core/profile/view/edit_user_profile.dart';
 import 'package:ezhandy_user/module/core/profile/view/provider_profile.dart';
@@ -245,6 +248,12 @@ class AppRouter {
             return ScheduleBooking.fromArgs(scheduleArgs);
           case AppRoutes.marketPlaceScreenRoute:
             return MarketPlace();
+          case AppRoutes.marketplaceSubscriptionPlansScreenRoute:
+            return const MarketplaceSubscriptionPlans();
+          case AppRoutes.marketplaceSubscriptionLogsScreenRoute:
+            return const MarketplaceSubscriptionLogs();
+          case AppRoutes.marketplaceSubscriptionStatsScreenRoute:
+            return const MarketplaceSubscriptionStats();
           case AppRoutes.proChatScreenRoute:
             return ProChat();
           case AppRoutes.createAProPostScreenRoute:

@@ -20,10 +20,12 @@ import 'package:ezhandy_user/utils/app_strings.dart';
 import 'package:ezhandy_user/utils/asset_path.dart';
 import 'package:ezhandy_user/widgets/button_widgets/custom_button.dart';
 import 'package:ezhandy_user/widgets/logo_and_backgrounds/background.dart';
+import 'package:ezhandy_user/widgets/switch/animated_switch.dart';
 import 'package:ezhandy_user/widgets/text_fields/custom_text_field.dart';
 import 'package:ezhandy_user/widgets/text_widgets/text_widget.dart';
 import 'package:ezhandy_user/utils/media_url_helper.dart';
 import 'package:ezhandy_user/module/core/products/controller/market_place_controller.dart';
+import 'package:ezhandy_user/module/core/products/controller/marketplace_subscription_controller.dart';
 import 'package:ezhandy_user/module/core/products/controller/product_controller.dart';
 
 class AddEditProduct extends StatefulWidget {
@@ -55,6 +57,7 @@ class _AddEditProductState extends State<AddEditProduct> {
   List<String> existingImageUrls = [];
   String? editingProductId;
   String? categoryValue;
+  bool isActiveProduct = true;
 
   @override
   void initState() {
@@ -152,6 +155,22 @@ class _AddEditProductState extends State<AddEditProduct> {
                     child: Column(children: [
                       //----------------Email Address Field----------------
                       20.verticalSpace,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomText(text: AppStrings.active),
+                          ),
+                          AnimatedSwitch(
+                            isSwitched: isActiveProduct,
+                            onCallBack: (value) {
+                              setState(() {
+                                isActiveProduct = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      20.verticalSpace,
                       CustomText(text: "Product Name" + "*"),
                       10.verticalSpace,
                       _productNameTextField(),
@@ -226,6 +245,8 @@ class _AddEditProductState extends State<AddEditProduct> {
     productNameController.text = product['title']?.toString() ?? '';
     descriptionController.text = product['description']?.toString() ?? '';
     priceController.text = product['price']?.toString() ?? '';
+    isActiveProduct = product['isActive'] == true ||
+        product['isActive']?.toString().toLowerCase() == 'true';
 
     final category = product['category'];
     if (category is Map) {
@@ -647,6 +668,7 @@ Widget buttonWidget(context) {
             title: productNameController.text,
             description: descriptionController.text,
             price: priceController.text,
+            isActive: isActiveProduct,
             images: List<File>.from(documentList),
             existingImages: List<String>.from(existingImageUrls),
             onSuccess: _showProductUpdatedSuccessDialog,
@@ -658,6 +680,7 @@ Widget buttonWidget(context) {
           title: productNameController.text,
           description: descriptionController.text,
           price: priceController.text,
+          isActive: isActiveProduct,
           images: List<File>.from(documentList),
           onSuccess: _showProductAddedSuccessDialog,
         );
@@ -713,6 +736,9 @@ Widget buttonWidget(context) {
       final c = Get.find<MarketPlaceController>();
       c.getMyProducts();
       c.getProducts();
+    }
+    if (Get.isRegistered<MarketplaceSubscriptionController>()) {
+      Get.find<MarketplaceSubscriptionController>().fetchStatus();
     }
     AppNavigation.navigatorPop(context);
   }

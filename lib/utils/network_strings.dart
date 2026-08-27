@@ -645,6 +645,37 @@ class NetworkStrings {
 
   /// GET [products/owner/{ownerId}] — products for the logged-in user.
   static String productsByOwner(String ownerId) => 'products/owner/$ownerId';
+
+  /// GET [marketplace-subscriptions/my-status] — marketplace subscription + product limits (auth).
+  static const String marketplaceSubscriptionStatusEndpoint =
+      'marketplace-subscriptions/my-status';
+
+  /// GET [marketplace-subscriptions/plans] — marketplace subscription plans (auth).
+  static const String marketplaceSubscriptionPlansEndpoint =
+      'marketplace-subscriptions/plans';
+
+  /// GET [marketplace-subscriptions/my-history] — marketplace subscription purchase history (auth).
+  static const String marketplaceSubscriptionHistoryEndpoint =
+      'marketplace-subscriptions/my-history';
+
+  /// POST [marketplace-subscriptions/create-checkout-session] — Stripe checkout for marketplace plan (auth).
+  static const String marketplaceSubscriptionCheckoutEndpoint =
+      'marketplace-subscriptions/create-checkout-session';
+
+  /// POST [marketplace-subscriptions/verify-checkout-session] — verify marketplace checkout (auth).
+  static const String marketplaceSubscriptionVerifyCheckoutEndpoint =
+      'marketplace-subscriptions/verify-checkout-session';
+
+  static const String marketplaceSubscriptionCheckoutSuccessPath =
+      '/marketplace-subscription/checkout/success';
+  static const String marketplaceSubscriptionCheckoutCancelPath =
+      '/marketplace-subscription/checkout/cancel';
+
+  static String get marketplaceSubscriptionCheckoutSuccessUrl =>
+      '$IMAGE_BASE_URL$marketplaceSubscriptionCheckoutSuccessPath';
+
+  static String get marketplaceSubscriptionCheckoutCancelUrl =>
+      '$IMAGE_BASE_URL$marketplaceSubscriptionCheckoutCancelPath';
   // static const String addProductEndpoint = "add_update_product";
   // static const String productDetailEndpoint = "product-details";
   // static const String deleteProductEndpoint = "delete-product";

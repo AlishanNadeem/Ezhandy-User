@@ -421,7 +421,7 @@ class AppStrings {
   static const String historyOfBookings = "History Of Bookings";
   static const String favourites = "Favourites";
   static const String aboutUs = "About Us";
-  static const String marketPlace = "Market Place";
+  static const String marketPlace = "Marketplace";
   static const String contactUs = "Contact Us";
   static const String privacyPolicy = "Privacy Policy";
   static const String refundPolicy = "Refund Policy";
@@ -1204,6 +1204,28 @@ class AppStrings {
   static const String payments = "Payments";
   static const String refunds = "Refunds";
   static const String referrals = "Referrals";
+  static const String marketplaceSubscriptionRequiredMessage =
+      "You need to purchase a Marketplace Subscription to add products.";
+  static const String productLimitReachedMessage =
+      "Product limit reached. Upgrade your plan to add more products.";
+  static const String unableToCheckMarketplaceSubscription =
+      "Unable to check marketplace subscription status";
+  static const String noActiveMarketplaceSubscription =
+      "No active marketplace subscription";
+  static const String remainingProducts = "Remaining Products";
+  static const String productsUsed = "Products Published";
+  static const String currentPlan = "Current Plan";
+  static const String viewSubscriptions = "View Subscriptions";
+  static const String marketplaceSubscriptions = "Marketplace Subscriptions";
+  static const String subscriptionStats = "Subscription Stats";
+  static const String viewSubscriptionStats = "View subscription stats";
+  static const String maxProductsLabel = "Max Products";
+  static const String noSubscriptionPlansFound = "No subscription plans found";
+  static const String noSubscriptionLogsFound = "No subscription logs found";
+  static const String pleaseSelectAPlan = "Please select a subscription plan";
+  static const String alreadyOnThisPlan = "You are already on this plan";
+  static const String popular = "Popular";
+  static const String statusLabel = "Status";
   static const String noBookingsFound = "No bookings found";
   static const String subtotal = "Sub Total";
   static const String chinese = "Chinese";
