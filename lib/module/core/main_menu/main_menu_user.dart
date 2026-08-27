@@ -52,7 +52,8 @@ class _MainMenuState extends State<MainMenu> {
   @override
   void initState() {
     HomeController.i.selectedTab.value = 0;
-
+    // Permanent HomeController survives logout; refill after SessionClear.
+    HomeController.i.getServices();
     super.initState();
   }
 

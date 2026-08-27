@@ -1,13 +1,10 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
-import 'package:ezhandy_user/module/auth/AppUser/model/app_user.dart';
-import 'package:ezhandy_user/module/auth/controller/auth_controller.dart';
-import 'package:ezhandy_user/module/core/home/controller/home_controller.dart';
 import 'package:ezhandy_user/utils/constant.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
 import 'package:ezhandy_user/utils/routes/app_route.dart';
-import 'package:ezhandy_user/utils/shared_preference.dart';
+import 'package:ezhandy_user/utils/session_clear.dart';
 import 'package:flutter/material.dart';
 
 class DeleteAccountRepository extends ResponseListener {
@@ -31,7 +28,7 @@ class DeleteAccountRepository extends ResponseListener {
 
   @override
   void onSuccess({response}) async {
-    await _logoutCompletely();
+    await SessionClear.clearApiCaches(clearAllPrefs: true);
 
     final navContext = context ?? Constants.navigatorKey.currentContext;
     if (navContext != null) {
@@ -40,14 +37,5 @@ class DeleteAccountRepository extends ResponseListener {
         AppRoutes.loginScreenRoute,
       );
     }
-  }
-
-  Future<void> _logoutCompletely() async {
-    final prefs = SharedPreference();
-    await prefs.sharedPreference;
-    prefs.clear();
-
-    AuthController.i.appUser.value = AppUser();
-    HomeController.i.selectedTab.value = 0;
   }
 }
