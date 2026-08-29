@@ -1,5 +1,6 @@
 import 'package:ezhandy_user/dio_client/dio_client.dart';
 import 'package:ezhandy_user/module/core/booking/routing_arguments/booking_routing_arguments.dart';
+import 'package:ezhandy_user/module/core/chat/routing_arguments/chat_routing_arguments.dart';
 import 'package:ezhandy_user/utils/listeners.dart';
 import 'package:ezhandy_user/utils/network_strings.dart';
 import 'package:ezhandy_user/utils/routes/app_navigation.dart';
@@ -185,6 +186,21 @@ class NotificationController extends GetxController {
       return;
     }
 
+    if (type.contains('CHAT')) {
+      final chatId = _chatIdFromNotification(notification);
+      if (chatId == null || chatId.isEmpty) return;
+
+      AppNavigation.navigateTo(
+        context,
+        AppRoutes.chatScreenRoute,
+        arguments: ChatRoutingArgument(
+          isBooking: false,
+          chatId: chatId,
+        ),
+      );
+      return;
+    }
+
     if (type.contains('COMMUNITY')) {
       AppNavigation.navigateTo(context, AppRoutes.myPostsScreenRoute);
     }
@@ -201,5 +217,18 @@ class NotificationController extends GetxController {
     if (raw == null) return null;
     if (raw is int) return raw;
     return int.tryParse(raw.toString());
+  }
+
+  String? _chatIdFromNotification(Map<String, dynamic> notification) {
+    final data = notification['data'];
+    dynamic raw;
+    if (data is Map) {
+      raw = data['chatId'];
+    } else {
+      raw = notification['chatId'];
+    }
+    final id = raw?.toString().trim();
+    if (id == null || id.isEmpty) return null;
+    return id;
   }
 }
