@@ -84,7 +84,11 @@ class BookingDetailsController extends GetxController {
 
   bool get showProviderDetails => detail.value?.provider != null;
 
-  bool get showStatusReason => isRejected || isCancelled;
+  bool get showStatusReason {
+    if (!isRejected && !isCancelled) return false;
+    final reason = detail.value?.statusReason?.trim();
+    return reason != null && reason.isNotEmpty;
+  }
 
   bool get hasExistingReport {
     final d = detail.value;
